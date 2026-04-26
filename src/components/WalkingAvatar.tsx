@@ -38,7 +38,7 @@ function WalkingAvatar() {
     // Set up idle action (looping)
     if (idleClip) {
       const action = mixer.clipAction(idleClip);
-      action.setLoop(THREE.LoopRepeat);
+      action.setLoop(THREE.LoopRepeat, Infinity);
       action.clampWhenFinished = false;
       idleActionRef.current = action;
     }
@@ -46,7 +46,7 @@ function WalkingAvatar() {
     // Set up walk action (looping)
     if (walkClip) {
       const action = mixer.clipAction(walkClip);
-      action.setLoop(THREE.LoopRepeat);
+      action.setLoop(THREE.LoopRepeat, Infinity);
       action.clampWhenFinished = false;
       walkActionRef.current = action;
     }
