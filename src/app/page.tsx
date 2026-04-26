@@ -414,16 +414,28 @@ function HomeContent() {
   const [introMode, setIntroMode] = useState(false);
   const [introPhase, setIntroPhase] = useState(-1); // -1 = not started, 0-3 = text phases, 4 = done
   const [exploreMode, setExploreMode] = useState(false);
-  const [themeIndex, setThemeIndex] = useState(2);
-
+  const [themeIndex, setThemeIndex] = useState(2); // 2 = Neon (forced)
+  
+  // Force cache bust on load to show new developers
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const saved = localStorage.getItem("web4city_theme");
-    if (saved !== null) {
-      const n = parseInt(saved, 10);
-      if (n >= 0 && n <= 3) setThemeIndex(n);
+    if (typeof window !== 'undefined') {
+      // Clear city cache to force reload with new developers
+      try {
+        localStorage.removeItem('web4city-city-cache');
+        console.log('🔄 City cache cleared - will reload with all 612 developers');
+      } catch {}
     }
   }, []);
+
+  // Theme always forced to Neon (index 2) - no localStorage override
+  // useEffect(() => {
+  //   if (typeof window === "undefined") return;
+  //   const saved = localStorage.getItem("web4city_theme");
+  //   if (saved !== null) {
+  //     const n = parseInt(saved, 10);
+  //     if (n >= 0 && n <= 3) setThemeIndex(n);
+  //   }
+  // }, []);
 
 
   const [hud, setHud] = useState({ speed: 0, altitude: 0 });
@@ -791,21 +803,21 @@ function HomeContent() {
       .catch(() => { });
   }, [sessionUserId]);
 
-  // Cycle theme: save to localStorage + sync to DB if logged in
-  const cycleTheme = useCallback(() => {
-    setThemeIndex((i) => {
-      const next = (i + 1) % THEMES.length;
-      localStorage.setItem("web4city_theme", String(next));
-      if (sessionUserId) {
-        fetch("/api/preferences/theme", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ city_theme: next }),
-        }).catch(() => { });
-      }
-      return next;
-    });
-  }, [sessionUserId]);
+  // Cycle theme REMOVED - always Neon now
+  // const cycleTheme = useCallback(() => {
+  //   setThemeIndex((i) => {
+  //     const next = (i + 1) % THEMES.length;
+  //     localStorage.setItem("web4city_theme", String(next));
+  //     if (sessionUserId) {
+  //       fetch("/api/preferences/theme", {
+  //         method: "PATCH",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ city_theme: next }),
+  //       }).catch(() => { });
+  //     }
+  //     return next;
+  //   });
+  // }, [sessionUserId]);
 
   // Save ?ref= to localStorage (7-day expiry)
   useEffect(() => {
@@ -2815,16 +2827,8 @@ function HomeContent() {
             </button>
           </div>
 
-          {/* Theme switcher + Radio (bottom-left) — above ticker */}
+          {/* Radio (bottom-left) — above ticker (Theme switcher removed - always Neon) */}
           <div className="pointer-events-auto fixed bottom-10 left-3 z-31 flex flex-col-reverse items-start gap-2 sm:left-4 sm:flex-row sm:items-center">
-            <button
-              onClick={cycleTheme}
-              className="btn-press flex items-center gap-1.5 border-[3px] border-border bg-bg/70 px-2.5 py-1 text-[10px] backdrop-blur-sm transition-colors hover:border-border-light"
-            >
-              <span style={{ color: theme.accent }}>&#9654;</span>
-              <span className="text-cream">{theme.name}</span>
-              <span className="text-dim">{themeIndex + 1}/{THEMES.length}</span>
-            </button>
             <RadioSlot />
           </div>
 
@@ -3307,26 +3311,8 @@ function HomeContent() {
               </a>
             </div>
 
-            {/* ── Theme ── */}
-            <div className="border-t border-border px-5 py-4">
-              <p className="mb-3 text-[10px] text-muted uppercase tracking-widest">Theme</p>
-              <div className="grid grid-cols-4 gap-2">
-                {THEMES.map((t, i) => (
-                  <button
-                    key={t.name}
-                    onClick={() => { setThemeIndex(i); try { localStorage.setItem("web4city_theme", String(i)); } catch { } }}
-                    className="py-2.5 text-[10px] border-2 transition-colors"
-                    style={{
-                      borderColor: themeIndex === i ? t.accent : "var(--color-border)",
-                      color: themeIndex === i ? t.accent : "var(--color-muted)",
-                      backgroundColor: themeIndex === i ? t.accent + "18" : "transparent",
-                    }}
-                  >
-                    {t.name}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* ── Theme (Hidden - Always Neon) ── */}
+            {/* Theme selector hidden - forced to Neon (index 2) */}
 
             {/* ── Stats footer ── */}
             <div className="border-t border-border px-5 py-4 flex items-center gap-4">
@@ -5080,17 +5066,9 @@ function HomeContent() {
         </div>
       )}
 
-      {/* ─── Bottom-left controls: Theme + Radio (portal slot) + Intro ─── */}
+      {/* ─── Bottom-left controls: Radio (portal slot) + Intro (Theme removed - always Neon) ─── */}
       {!flyMode && !introMode && !rabbitCinematic && !exploreMode && (
         <div className="pointer-events-auto fixed bottom-8 left-3 z-25 flex flex-col-reverse items-start gap-2 sm:bottom-10 sm:left-4 sm:flex-row sm:items-center">
-          <button
-            onClick={cycleTheme}
-            className="btn-press flex items-center gap-1.5 border-[3px] border-border bg-bg/70 px-2.5 py-1 text-[10px] backdrop-blur-sm transition-colors hover:border-border-light"
-          >
-            <span style={{ color: theme.accent }}>&#9654;</span>
-            <span className="text-cream">{theme.name}</span>
-            <span className="text-dim">{themeIndex + 1}/{THEMES.length}</span>
-          </button>
           <RadioSlot />
           <button
             onClick={replayIntro}

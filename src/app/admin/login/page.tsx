@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
       </div>
 
       <div className="mt-4 text-center text-xs text-dim">
-        <p>Admin: eddiezebra</p>
+        <p>Admin: web4city</p>
       </div>
     </div>
   );

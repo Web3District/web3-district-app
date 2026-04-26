@@ -20,7 +20,7 @@ export function SummaryCards({ totals, periodDays }: SummaryCardsProps) {
     : null;
 
   return (
-    <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+    <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4" suppressHydrationWarning>
       <div className="border border-border bg-bg-raised p-4">
         <p className="text-xs text-muted">VIEWS</p>
         <p className="mt-1 text-3xl text-cream">

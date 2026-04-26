@@ -202,8 +202,9 @@ export async function GET(request: Request) {
     }
   }
 
-  // Support ?next= param for post-login redirect (e.g. /shop)
+  // Support ?next= param for post-login redirect (e.g. /shop, /admin/ads)
   const next = searchParams.get("next");
+  
   if (next === "/shop" && githubLogin) {
     const { data: dev } = await admin
       .from("developers")
@@ -216,6 +217,18 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.redirect(`${origin}/shop/${githubLogin}`);
+  }
+
+  // Admin redirect - check if user is admin
+  if (next && next.startsWith("/admin") && githubLogin) {
+    const adminLogins = (process.env.ADMIN_GITHUB_LOGINS ?? "").split(",").map((s) => s.trim().toLowerCase());
+    
+    if (adminLogins.includes(githubLogin)) {
+      // User is admin, redirect to admin dashboard
+      return NextResponse.redirect(`${origin}/admin/ads`);
+    }
+    // Not an admin, redirect to home
+    return NextResponse.redirect(`${origin}/?error=not_admin`);
   }
 
   return NextResponse.redirect(`${origin}/?user=${githubLogin}`);
