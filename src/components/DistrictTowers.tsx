@@ -37,14 +37,14 @@ function WalkingAvatar() {
 
     if (idleClip) {
       const action = mixer.clipAction(idleClip);
-      action.setLoop(THREE.LoopRepeat);
+      action.setLoop(THREE.LoopRepeat, Infinity);
       action.clampWhenFinished = false;
       idleActionRef.current = action;
     }
 
     if (walkClip) {
       const action = mixer.clipAction(walkClip);
-      action.setLoop(THREE.LoopRepeat);
+      action.setLoop(THREE.LoopRepeat, Infinity);
       action.clampWhenFinished = false;
       walkActionRef.current = action;
     }
