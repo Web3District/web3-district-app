@@ -34,8 +34,10 @@ import InviteCard, { type InvitePreview } from "@/components/InviteCard";
 import XpBar from "@/components/XpBar";
 import { rankFromLevel, tierFromLevel, levelProgress, xpForLevel } from "@/lib/xp";
 import LoadingScreen, { type LoadingStage } from "@/components/LoadingScreen";
+import RadioSlot from "@/components/RadioSlot";
 import { getCityCache, setCityCache, clearCityCache } from "@/lib/cityCache";
 import { DEFAULT_SKY_ADS, buildAdLink, trackAdEvent, trackAdEvents, appendClickId, isBuildingAd } from "@/lib/skyAds";
+import { generateSeedCity, getSeedDevelopers } from "@/lib/seedData";
 import { track } from "@vercel/analytics";
 import {
   identifyUser,
@@ -184,7 +186,7 @@ const ERROR_MESSAGES: Record<string, { primary: (u: string) => string; secondary
   },
   "org": {
     primary: (u) => `"@${u}" is an organization, not a person`,
-    secondary: "Git City is for individual profiles. Try searching for one of its contributors by their personal username.",
+    secondary: "Web4City is for individual profiles. Try searching for one of its contributors by their personal username.",
   },
   "no-activity": {
     primary: (u) => `"@${u}" has no public activity yet`,
@@ -398,7 +400,7 @@ function HomeContent() {
   const [districtZones, setDistrictZones] = useState<DistrictZone[]>([]);
   const [loading, setLoading] = useState(false);
   // Loading state machine — skip on return visits that still have cached data
-  const [loadStage, setLoadStage] = useState<LoadingStage>("init");
+  const [loadStage, setLoadStage] = useState<LoadingStage>("done");
   const [loadProgress, setLoadProgress] = useState(0);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{
@@ -412,11 +414,11 @@ function HomeContent() {
   const [introMode, setIntroMode] = useState(false);
   const [introPhase, setIntroPhase] = useState(-1); // -1 = not started, 0-3 = text phases, 4 = done
   const [exploreMode, setExploreMode] = useState(false);
-  const [themeIndex, setThemeIndex] = useState(0);
+  const [themeIndex, setThemeIndex] = useState(2);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const saved = localStorage.getItem("gitcity_theme");
+    const saved = localStorage.getItem("web4city_theme");
     if (saved !== null) {
       const n = parseInt(saved, 10);
       if (n >= 0 && n <= 3) setThemeIndex(n);
@@ -506,7 +508,7 @@ function HomeContent() {
   const [rabbitCinematicPhase, setRabbitCinematicPhase] = useState(-1);
   const [rabbitProgress, setRabbitProgress] = useState(0);
   useEffect(() => {
-    const saved = parseInt(localStorage.getItem("gitcity_rabbit_progress") ?? "0", 10) || 0;
+    const saved = parseInt(localStorage.getItem("web4city_rabbit_progress") ?? "0", 10) || 0;
     if (saved > 0) setRabbitProgress(saved);
   }, []);
   const [rabbitSighting, setRabbitSighting] = useState<number | null>(null);
@@ -645,6 +647,7 @@ function HomeContent() {
   // Auth state listener
   useEffect(() => {
     const supabase = createBrowserSupabase();
+    if (!supabase) return;
     supabase.auth.getSession().then(({ data: { session: s } }: { data: { session: Session | null } }) => {
       setSession(s);
       if (s) {
@@ -782,7 +785,7 @@ function HomeContent() {
       .then((data) => {
         if (data && typeof data.city_theme === "number" && data.city_theme >= 0 && data.city_theme <= 3) {
           setThemeIndex(data.city_theme);
-          localStorage.setItem("gitcity_theme", String(data.city_theme));
+          localStorage.setItem("web4city_theme", String(data.city_theme));
         }
       })
       .catch(() => { });
@@ -792,7 +795,7 @@ function HomeContent() {
   const cycleTheme = useCallback(() => {
     setThemeIndex((i) => {
       const next = (i + 1) % THEMES.length;
-      localStorage.setItem("gitcity_theme", String(next));
+      localStorage.setItem("web4city_theme", String(next));
       if (sessionUserId) {
         fetch("/api/preferences/theme", {
           method: "PATCH",
@@ -1103,7 +1106,7 @@ function HomeContent() {
         if (!res.ok) return;
         const data = await res.json();
         const serverProgress = data?.progress ?? 0;
-        const localProgress = parseInt(localStorage.getItem("gitcity_rabbit_progress") ?? "0", 10) || 0;
+        const localProgress = parseInt(localStorage.getItem("web4city_rabbit_progress") ?? "0", 10) || 0;
 
         // Sync local progress to server if ahead (silently fails if no claimed building)
         if (localProgress > serverProgress) {
@@ -1119,7 +1122,7 @@ function HomeContent() {
 
         const best = Math.max(serverProgress, localProgress);
         setRabbitProgress(best);
-        localStorage.setItem("gitcity_rabbit_progress", String(best));
+        localStorage.setItem("web4city_rabbit_progress", String(best));
         if (best > 0 && best < 5) {
           setRabbitSighting(best + 1);
         }
@@ -1156,7 +1159,7 @@ function HomeContent() {
         const data = await res.json();
         if (res.ok) {
           setRabbitProgress(data.progress);
-          localStorage.setItem("gitcity_rabbit_progress", String(data.progress));
+          localStorage.setItem("web4city_rabbit_progress", String(data.progress));
 
           if (data.completed) {
             setRabbitCompletion(true);
@@ -1174,7 +1177,7 @@ function HomeContent() {
     // Local tracking (not logged in or API failed)
     const newProgress = sighting;
     setRabbitProgress(newProgress);
-    localStorage.setItem("gitcity_rabbit_progress", String(newProgress));
+    localStorage.setItem("web4city_rabbit_progress", String(newProgress));
 
     if (sighting >= 5) {
       // Final sighting: need login to save achievement
@@ -1221,7 +1224,7 @@ function HomeContent() {
 
     // Apply loadout override from localStorage (saved in shop, TTL 10 min)
     try {
-      const raw = localStorage.getItem("gitcity:loadout_override");
+      const raw = localStorage.getItem("web4city:loadout_override");
       if (raw) {
         const { developerId, loadout, ts } = JSON.parse(raw);
         if (Date.now() - ts < 10 * 60 * 1000) {
@@ -1230,7 +1233,7 @@ function HomeContent() {
             allDevs[idx] = { ...allDevs[idx], loadout };
           }
         } else {
-          localStorage.removeItem("gitcity:loadout_override");
+          localStorage.removeItem("web4city:loadout_override");
         }
       }
     } catch { }
@@ -1265,7 +1268,7 @@ function HomeContent() {
   const handleLoadFadeComplete = useCallback(() => {
     setLoadStage("done");
     const hasDeepLink = searchParams.get("user") || searchParams.get("compare");
-    if (!localStorage.getItem("gitcity_intro_seen") && !hasDeepLink) {
+    if (!localStorage.getItem("web4city_intro_seen") && !hasDeepLink) {
       setIntroMode(true);
     }
   }, [searchParams]);
@@ -1340,6 +1343,17 @@ function HomeContent() {
           }
         } catch { /* snapshot failed */ }
 
+        // FALLBACK: Use seed data (top 50 AI repos) when no Supabase data
+        if (allDevs.length === 0) {
+          setLoadStage("fetching");
+          setLoadProgress(20);
+          allDevs = getSeedDevelopers();
+          cityStats = {
+            total_developers: allDevs.length,
+            total_contributions: allDevs.reduce((sum: number, d: any) => sum + d.contributions, 0),
+          };
+        }
+
         setLoadProgress(30);
 
         if (!allDevs || allDevs.length === 0) {
@@ -1350,7 +1364,7 @@ function HomeContent() {
 
         // Apply loadout override from localStorage (saved in shop, TTL 10 min)
         try {
-          const raw = localStorage.getItem("gitcity:loadout_override");
+          const raw = localStorage.getItem("web4city:loadout_override");
           if (raw) {
             const { developerId, loadout, ts } = JSON.parse(raw);
             if (Date.now() - ts < 10 * 60 * 1000) {
@@ -1359,7 +1373,7 @@ function HomeContent() {
                 allDevs[idx] = { ...allDevs[idx], loadout };
               }
             } else {
-              localStorage.removeItem("gitcity:loadout_override");
+              localStorage.removeItem("web4city:loadout_override");
             }
           }
         } catch { }
@@ -1442,7 +1456,7 @@ function HomeContent() {
   // Phase 0: "Somewhere in the internet..."   0.8s → fade out ~3.8s
   // Phase 1: "Developers became buildings"    4.2s → fade out ~7.2s
   // Phase 2: "And commits became floors"      7.6s → fade out ~10.6s
-  // Phase 3: "Welcome to Git City"            11.0s → confetti + hold until end
+  // Phase 3: "Welcome to Web4City"            11.0s → confetti + hold until end
   const INTRO_TEXT_SCHEDULE = [800, 4200, 7600, 11000];
   const [introConfetti, setIntroConfetti] = useState(false);
 
@@ -1457,7 +1471,7 @@ function HomeContent() {
     for (let i = 0; i < INTRO_TEXT_SCHEDULE.length; i++) {
       timers.push(setTimeout(() => setIntroPhase(i), INTRO_TEXT_SCHEDULE[i]));
     }
-    // Confetti shortly after "Welcome to Git City"
+    // Confetti shortly after "Welcome to Web4City"
     timers.push(setTimeout(() => setIntroConfetti(true), INTRO_TEXT_SCHEDULE[3] + 500));
 
     return () => timers.forEach(clearTimeout);
@@ -1468,9 +1482,9 @@ function HomeContent() {
     setIntroMode(false);
     setIntroPhase(-1);
     setIntroConfetti(false);
-    localStorage.setItem("gitcity_intro_seen", "true");
+    localStorage.setItem("web4city_intro_seen", "true");
     // Show welcome CTA for non-logged-in users who haven't seen it
-    if (!session && !localStorage.getItem("gitcity_welcome_seen")) {
+    if (!session && !localStorage.getItem("web4city_welcome_seen")) {
       setWelcomeCtaVisible(true);
       setTimeout(() => setWelcomeCtaVisible(false), 12000);
     }
@@ -2054,7 +2068,7 @@ function HomeContent() {
     if (loadStage !== "done" || !session || flyMode || introMode) return;
     dailyNudgeTimerRef.current = setTimeout(() => {
       try {
-        const raw = localStorage.getItem("gitcity_fly_history");
+        const raw = localStorage.getItem("web4city_fly_history");
         if (!raw) return; // no history — first-fly hint handles this
         const hist = JSON.parse(raw);
         if (!hist.seeds || Object.keys(hist.seeds).length === 0) return;
@@ -2076,14 +2090,14 @@ function HomeContent() {
   useEffect(() => {
     if (loadStage !== "done" || flyMode || introMode) return;
     try {
-      if (localStorage.getItem("gitcity_fly_history") || localStorage.getItem("gitcity_fly_hint_seen")) return;
+      if (localStorage.getItem("web4city_fly_history") || localStorage.getItem("web4city_fly_hint_seen")) return;
     } catch { return; }
     flyHintTimerRef.current = setTimeout(() => {
       setShowFlyHint(true);
       // Auto-dismiss after 10s
       const autoDismiss = setTimeout(() => {
         setShowFlyHint(false);
-        try { localStorage.setItem("gitcity_fly_hint_seen", "1"); } catch { }
+        try { localStorage.setItem("web4city_fly_hint_seen", "1"); } catch { }
       }, 10000);
       flyHintTimerRef.current = autoDismiss;
     }, 5000);
@@ -2116,13 +2130,13 @@ function HomeContent() {
           const finalScore = flyScore.score + timeBonus;
           // Read current PB fresh from localStorage (React state may be stale)
           let currentPB = flyPersonalBest;
-          try { currentPB = Math.max(currentPB, parseInt(localStorage.getItem("gitcity_fly_pb") || "0", 10) || 0); } catch { }
+          try { currentPB = Math.max(currentPB, parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { }
           // Only show "New PB!" if there WAS a previous best to beat (not on first-ever flight)
           const isNewPB = currentPB > 0 && finalScore > currentPB;
           // Update personal best
           if (isNewPB) {
             setFlyPersonalBest(finalScore);
-            try { localStorage.setItem("gitcity_fly_pb", String(finalScore)); } catch { }
+            try { localStorage.setItem("web4city_fly_pb", String(finalScore)); } catch { }
           }
           // Update fly history (streak, days played, per-seed scores)
           if (finalScore > 0) {
@@ -2131,7 +2145,7 @@ function HomeContent() {
               const start = new Date(now.getFullYear(), 0, 0);
               const dayOfYear = Math.floor((now.getTime() - start.getTime()) / 86400000);
               const currentSeed = `${now.getFullYear()}-${dayOfYear}`;
-              const raw = localStorage.getItem("gitcity_fly_history");
+              const raw = localStorage.getItem("web4city_fly_history");
               const hist = raw ? JSON.parse(raw) : { seeds: {}, currentStreak: 0, longestStreak: 0, lastPlayedSeed: "" };
               const prev = hist.seeds[currentSeed];
               hist.seeds[currentSeed] = {
@@ -2152,7 +2166,7 @@ function HomeContent() {
                 hist.lastPlayedSeed = currentSeed;
               }
               hist.longestStreak = Math.max(hist.longestStreak || 0, hist.currentStreak);
-              localStorage.setItem("gitcity_fly_history", JSON.stringify(hist));
+              localStorage.setItem("web4city_fly_history", JSON.stringify(hist));
             } catch { }
           }
           // Exit fly immediately (don't block on API)
@@ -2405,7 +2419,7 @@ function HomeContent() {
               </p>
             ))}
 
-            {/* Welcome to Git City (phase 3) */}
+            {/* Welcome to Web4City (phase 3) */}
             <div
               className="absolute flex flex-col items-center gap-1"
               style={{
@@ -2419,7 +2433,7 @@ function HomeContent() {
                 style={{ fontSize: "clamp(1.2rem, 5vw, 2.8rem)" }}
               >
                 Welcome to{" "}
-                <span style={{ color: theme.accent }}>Git City</span>
+                <span style={{ color: theme.accent }}>Web4City</span>
               </p>
             </div>
           </div>
@@ -2753,7 +2767,7 @@ function HomeContent() {
             <button
               onClick={() => {
                 setShowFlyControls(false);
-                try { localStorage.setItem("gitcity_fly_controls_seen", "1"); } catch { }
+                try { localStorage.setItem("web4city_fly_controls_seen", "1"); } catch { }
                 // Resume the paused flight by dispatching Space keydown
                 window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true }));
               }}
@@ -2811,7 +2825,7 @@ function HomeContent() {
               <span className="text-cream">{theme.name}</span>
               <span className="text-dim">{themeIndex + 1}/{THEMES.length}</span>
             </button>
-            <div id="gc-radio-slot" />
+            <RadioSlot />
           </div>
 
           {/* Feed toggle (top-right, below GitHub badges on desktop) */}
@@ -3019,7 +3033,7 @@ function HomeContent() {
                               </button>
                             </div>
                             <div className="space-y-2.5 text-xs normal-case text-muted">
-                              <p><span className="text-cream">1.</span> Install <a href="https://marketplace.visualstudio.com/items?itemName=git-city.gitcity" target="_blank" rel="noopener noreferrer" className="text-[#4ade80] hover:underline">Git City: Pulse</a> in VS Code</p>
+                              <p><span className="text-cream">1.</span> Install <a href="https://marketplace.visualstudio.com/items?itemName=git-city.web4city" target="_blank" rel="noopener noreferrer" className="text-[#4ade80] hover:underline">Web4City: Pulse</a> in VS Code</p>
                               <p><span className="text-cream">2.</span> Cmd+Shift+P &rarr; &ldquo;Pulse: Connect&rdquo;</p>
                               <p><span className="text-cream">3.</span> Paste your key and start coding</p>
                             </div>
@@ -3027,7 +3041,7 @@ function HomeContent() {
                               Your building lights up in ~30s
                             </p>
                             <p className="mt-1.5 text-[10px] normal-case text-muted/50">
-                              Only your username and language are shared publicly. Control what&apos;s sent in VS Code Settings &gt; Git City &gt; Privacy.
+                              Only your username and language are shared publicly. Control what&apos;s sent in VS Code Settings &gt; Web4City &gt; Privacy.
                             </p>
                           </div>
                         ) : (
@@ -3040,7 +3054,7 @@ function HomeContent() {
                             </p>
                             <div className="mb-4 space-y-2.5 text-xs normal-case text-muted">
                               <p><span className="text-cream">1.</span> Generate your key below</p>
-                              <p><span className="text-cream">2.</span> Install <a href="https://marketplace.visualstudio.com/items?itemName=git-city.gitcity" target="_blank" rel="noopener noreferrer" className="text-[#4ade80] hover:underline">Git City: Pulse</a> in VS Code</p>
+                              <p><span className="text-cream">2.</span> Install <a href="https://marketplace.visualstudio.com/items?itemName=git-city.web4city" target="_blank" rel="noopener noreferrer" className="text-[#4ade80] hover:underline">Web4City: Pulse</a> in VS Code</p>
                               <p><span className="text-cream">3.</span> Paste key in VS Code, start coding</p>
                             </div>
                             <button
@@ -3066,7 +3080,7 @@ function HomeContent() {
                               {vsCodeKeyLoading ? "Generating..." : vsCodeKeyCopied ? "Key copied to clipboard!" : "Generate API Key"}
                             </button>
                             <p className="mt-3 text-[10px] normal-case text-muted/50">
-                              Only your username and language are shared publicly. You can control this in VS Code Settings &gt; Git City &gt; Privacy.
+                              Only your username and language are shared publicly. You can control this in VS Code Settings &gt; Web4City &gt; Privacy.
                             </p>
                           </div>
                         )}
@@ -3177,7 +3191,7 @@ function HomeContent() {
           ) : (
             <div className="px-5 pt-6 pb-5 border-b border-border">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs text-muted">GIT CITY</span>
+                <span className="text-xs text-muted">Web4City</span>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex h-8 w-8 items-center justify-center border-2 border-border text-muted"
@@ -3300,7 +3314,7 @@ function HomeContent() {
                 {THEMES.map((t, i) => (
                   <button
                     key={t.name}
-                    onClick={() => { setThemeIndex(i); try { localStorage.setItem("gitcity_theme", String(i)); } catch { } }}
+                    onClick={() => { setThemeIndex(i); try { localStorage.setItem("web4city_theme", String(i)); } catch { } }}
                     className="py-2.5 text-[10px] border-2 transition-colors"
                     style={{
                       borderColor: themeIndex === i ? t.accent : "var(--color-border)",
@@ -3344,26 +3358,14 @@ function HomeContent() {
           <div className="pointer-events-auto flex w-full max-w-2xl flex-col items-center gap-2 sm:gap-5">
             <div className="text-center">
               <h1 className="text-2xl text-cream sm:text-3xl md:text-5xl">
-                Git{" "}
-                <span style={{ color: theme.accent }}>City</span>
+                Web4<span style={{ color: theme.accent }}>City</span>
               </h1>
               <p className="mt-2 text-[10px] leading-relaxed text-cream/80 normal-case">
                 {stats.total_developers > 0
                   ? `A city of ${stats.total_developers.toLocaleString()} GitHub developers. Find yourself.`
-                  : "A global city of GitHub developers. Find yourself."}
+                  : "A global city of developers. Find yourself."}
               </p>
-              <p className="pointer-events-auto mt-1 text-[9px] text-cream/50 normal-case hidden sm:block">
-                built by{" "}
-                <a
-                  href="https://x.com/samuelrizzondev"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-cream"
-                  style={{ color: theme.accent }}
-                >
-                  @samuelrizzondev
-                </a>
-              </p>
+
             </div>
 
             {/* Milestone progress banner — hidden on mobile to reduce clutter */}
@@ -3478,7 +3480,7 @@ function HomeContent() {
                 <button
                   onClick={() => {
                     setWelcomeCtaVisible(false);
-                    localStorage.setItem("gitcity_welcome_seen", "true");
+                    localStorage.setItem("web4city_welcome_seen", "true");
                     handleSignIn();
                   }}
                   className="btn-press w-full max-w-60 py-2.5 text-[10px] text-bg"
@@ -3492,7 +3494,7 @@ function HomeContent() {
                 <button
                   onClick={() => {
                     setWelcomeCtaVisible(false);
-                    localStorage.setItem("gitcity_welcome_seen", "true");
+                    localStorage.setItem("web4city_welcome_seen", "true");
                     setTimeout(() => searchInputRef.current?.focus(), 100);
                   }}
                   className="text-[9px] text-dim transition-colors hover:text-muted normal-case"
@@ -3616,9 +3618,9 @@ function HomeContent() {
                         flyPausedAt.current = 0;
                         flyTotalPauseMs.current = 0;
                         setFlyElapsedSec(0);
-                        try { setFlyPersonalBest(parseInt(localStorage.getItem("gitcity_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
+                        try { setFlyPersonalBest(parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
                         // Feature 3: show controls overlay on first flight
-                        if (!localStorage.getItem("gitcity_fly_controls_seen")) {
+                        if (!localStorage.getItem("web4city_fly_controls_seen")) {
                           setShowFlyControls(true);
                         }
                       }}
@@ -3645,7 +3647,7 @@ function HomeContent() {
                             onClick={() => {
                               setShowFlyHint(false);
                               clearTimeout(flyHintTimerRef.current);
-                              try { localStorage.setItem("gitcity_fly_hint_seen", "1"); } catch { }
+                              try { localStorage.setItem("web4city_fly_hint_seen", "1"); } catch { }
                             }}
                             className="mt-2 px-3 py-1 text-[9px] text-bg"
                             style={{ backgroundColor: theme.accent }}
@@ -3678,8 +3680,8 @@ function HomeContent() {
                       flyPausedAt.current = 0;
                       flyTotalPauseMs.current = 0;
                       setFlyElapsedSec(0);
-                      try { setFlyPersonalBest(parseInt(localStorage.getItem("gitcity_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
-                      if (!localStorage.getItem("gitcity_fly_controls_seen")) {
+                      try { setFlyPersonalBest(parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
+                      if (!localStorage.getItem("web4city_fly_controls_seen")) {
                         setShowFlyControls(true);
                       }
                     }}
@@ -4242,7 +4244,7 @@ function HomeContent() {
                           {dropPulling ? "Pulling..." : "Pull"}
                         </button>
                         <a
-                          href={`https://x.com/intent/tweet?text=${encodeURIComponent(`just pulled a ${drop.rarity} drop in Git City 👀 how many are you walking past?`)}&url=${encodeURIComponent("https://thegitcity.com")}`}
+                          href={`https://x.com/intent/tweet?text=${encodeURIComponent(`just pulled a ${drop.rarity} drop in Web4City 👀 how many are you walking past?`)}&url=${encodeURIComponent("https://theweb4city.com")}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="btn-press border-2 px-3 py-1.5 text-[10px] transition-colors hover:border-border-light"
@@ -4758,7 +4760,7 @@ function HomeContent() {
                 <div className="px-4 pt-3 pb-1 flex gap-2">
                   <a
                     href={`https://x.com/intent/tweet?text=${encodeURIComponent(
-                      `I just compared my building with ${comparePair[1].login}'s in Git City. It wasn't even close. What's yours?`
+                      `I just compared my building with ${comparePair[1].login}'s in Web4City. It wasn't even close. What's yours?`
                     )}&url=${encodeURIComponent(
                       `${typeof window !== "undefined" ? window.location.origin : ""}/compare/${comparePair[0].login}/${comparePair[1].login}`
                     )}`}
@@ -4811,7 +4813,7 @@ function HomeContent() {
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement("a");
                       a.href = url;
-                      a.download = `gitcity-${comparePair[0].login}-vs-${comparePair[1].login}.png`;
+                      a.download = `web4city-${comparePair[0].login}-vs-${comparePair[1].login}.png`;
                       document.body.appendChild(a);
                       a.click();
                       a.remove();
@@ -4829,7 +4831,7 @@ function HomeContent() {
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement("a");
                       a.href = url;
-                      a.download = `gitcity-${comparePair[0].login}-vs-${comparePair[1].login}-stories.png`;
+                      a.download = `web4city-${comparePair[0].login}-vs-${comparePair[1].login}-stories.png`;
                       document.body.appendChild(a);
                       a.click();
                       a.remove();
@@ -5089,7 +5091,7 @@ function HomeContent() {
             <span className="text-cream">{theme.name}</span>
             <span className="text-dim">{themeIndex + 1}/{THEMES.length}</span>
           </button>
-          <div id="gc-radio-slot" suppressHydrationWarning />
+          <RadioSlot />
           <button
             onClick={replayIntro}
             className="btn-press flex items-center gap-1 border-[3px] border-border bg-bg/70 px-2 py-1 text-[10px] backdrop-blur-sm transition-colors hover:border-border-light"
@@ -5334,7 +5336,7 @@ function HomeContent() {
                   flyPausedAt.current = 0;
                   flyTotalPauseMs.current = 0;
                   setFlyElapsedSec(0);
-                  try { setFlyPersonalBest(parseInt(localStorage.getItem("gitcity_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
+                  try { setFlyPersonalBest(parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
                 }}
                 className="btn-press px-5 py-2 text-[10px] text-bg"
                 style={{ backgroundColor: theme.accent, boxShadow: `3px 3px 0 0 ${theme.shadow}` }}

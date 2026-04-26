@@ -44,6 +44,8 @@ export function useCodingPresence() {
 
     // Subscribe to realtime broadcast
     const supabase = createBrowserSupabase();
+    if (!supabase) return; // Skip realtime if Supabase not configured
+
     const channel = supabase.channel("coding-presence");
     channelRef.current = channel;
 

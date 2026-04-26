@@ -3,7 +3,7 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import { sendNotificationAsync } from "@/lib/notifications";
 import { buildButton, buildStatsTable } from "@/lib/email-template";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://thegitcity.com";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
 
 /**
  * Cron: Monday 10:00 UTC - Weekly recap email for active developers.
@@ -113,12 +113,12 @@ export async function GET(request: NextRequest) {
           category: "digest",
           developerId: dev.id,
           dedupKey: `weekly_digest:${dev.id}:${weekStartDate}`,
-          title: `Your week in Git City: ${dev.app_streak ?? 0}-day streak, rank #${dev.rank ?? "?"}`,
+          title: `Your week in Web3 District: ${dev.app_streak ?? 0}-day streak, rank #${dev.rank ?? "?"}`,
           body: `Streak: ${dev.app_streak ?? 0} days. Kudos: ${weeklyKudos}. Check your weekly recap.`,
           html: `
-            <p style="color: #c8e64a; font-size: 16px;">Your week in Git City</p>
+            <p style="color: #c8e64a; font-size: 16px;">Your week in Web3 District</p>
             ${buildStatsTable(stats)}
-            ${buildButton("Visit Git City", `${BASE_URL}/?user=${dev.github_login}`)}
+            ${buildButton("Visit Web3 District", `${BASE_URL}/?user=${dev.github_login}`)}
           `,
           actionUrl: `${BASE_URL}/?user=${dev.github_login}`,
           priority: "high", // Digests are their own batch, don't re-batch

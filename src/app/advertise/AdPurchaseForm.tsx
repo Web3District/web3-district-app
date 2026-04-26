@@ -444,7 +444,7 @@ export function AdPurchaseForm() {
           brCode={pixModal.brCode}
           brCodeBase64={pixModal.brCodeBase64}
           adId={pixModal.adId}
-          planLabel={`Git City Ad: ${SKY_AD_PLANS[planId].label} (${period})`}
+          planLabel={`Web3 District Ad: ${SKY_AD_PLANS[planId].label} (${period})`}
           successUrl={pixModal.successUrl}
           onClose={() => setPixModal(null)}
         />

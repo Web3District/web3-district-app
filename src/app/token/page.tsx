@@ -29,19 +29,19 @@ export default function TokenPage() {
           <p className="text-base text-cream sm:text-lg">About $GITC</p>
           <div className="mt-4 flex flex-col gap-4 text-sm leading-relaxed text-muted normal-case sm:text-base">
             <p>
-              I created Git City. The <A>community created</A> the $GITC token.
+              I created Web3 District. The <A>community created</A> the $GITC token.
               I did <A>not create, launch, or request</A> the creation of this
               token.
             </p>
             <p>
               I receive <A>transaction fees</A> from the token, which help
-              support the development of Git City. I&apos;m grateful to the
+              support the development of Web3 District. I&apos;m grateful to the
               community for believing in this project and supporting it.
             </p>
             <p>
               That said, I <A>don&apos;t control</A> the token. Not the supply,
               not the price, not the listings, not any aspect of its market. My
-              focus is <A>building Git City</A>. The community manages the token.
+              focus is <A>building Web3 District</A>. The community manages the token.
             </p>
           </div>
         </div>
@@ -67,7 +67,7 @@ export default function TokenPage() {
               token, you do so entirely <A>at your own risk</A>.
             </p>
             <p>
-              Git City makes no promises, guarantees, or representations about
+              Web3 District makes no promises, guarantees, or representations about
               the token&apos;s value, future performance, or utility.
             </p>
             <p>

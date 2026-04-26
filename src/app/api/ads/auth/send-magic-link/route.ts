@@ -79,9 +79,9 @@ export async function POST(request: NextRequest) {
 
   const resend = getResend();
   await resend.emails.send({
-    from: "Git City <noreply@thegitcity.com>",
+    from: "Web3 District <noreply@thegitcity.com>",
     to: email,
-    subject: "Sign in to Git City Ads",
+    subject: "Sign in to Web3 District Ads",
     html: wrapInBaseTemplate(`
       <h2 style="margin-top: 0; font-family: 'Silkscreen', monospace; color: #111111;">Sign in to your ad dashboard</h2>
       <p style="color: #555555; font-family: Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6;">

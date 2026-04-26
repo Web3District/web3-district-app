@@ -1,5 +1,6 @@
 import { getResend } from "@/lib/resend";
 import { wrapInBaseTemplate, buildButton, escapeHtml } from "@/lib/email-template";
+import { getPublicSiteUrl } from "@/lib/site-url";
 
 interface AdReport {
   advertiserEmail: string;
@@ -46,6 +47,7 @@ function changeColor(current: number, prev: number): string {
 
 export async function sendWeeklyAdReport(report: AdReport) {
   const resend = getResend();
+  const dashboardUrl = `${getPublicSiteUrl()}/ads/dashboard`;
 
   const impChange = pctLabel(report.totals.impressions, report.prevTotals.impressions);
   const engChange = pctLabel(report.totals.engagements, report.prevTotals.engagements);
@@ -128,28 +130,28 @@ export async function sendWeeklyAdReport(report: AdReport) {
       Weekly Ad Report
     </h2>
     <p style="color: #555555; font-family: Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6;">
-      Here's how your Git City ads performed this week${report.advertiserName ? `, ${escapeHtml(report.advertiserName)}` : ""}.
+      Here's how your Web3 District ads performed this week${report.advertiserName ? `, ${escapeHtml(report.advertiserName)}` : ""}.
     </p>
     ${summaryHtml}
     ${adTableHtml}
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 28px auto 0;">
       <tr>
         <td align="center" bgcolor="#c8e64a" style="border-radius: 4px;">
-          <a href="https://thegitcity.com/ads/dashboard" style="display: inline-block; padding: 14px 32px; background-color: #c8e64a; border-radius: 4px; color: #111111; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; letter-spacing: 0.5px;">
+          <a href="${escapeHtml(dashboardUrl)}" style="display: inline-block; padding: 14px 32px; background-color: #c8e64a; border-radius: 4px; color: #111111; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; letter-spacing: 0.5px;">
             View Full Dashboard
           </a>
         </td>
       </tr>
     </table>
     <p style="margin-top: 24px; color: #999999; font-family: Helvetica, Arial, sans-serif; font-size: 12px;">
-      You're receiving this because you have active ads on Git City.
+      You're receiving this because you have active ads on Web3 District.
     </p>
   `;
 
   await resend.emails.send({
-    from: "Git City <noreply@thegitcity.com>",
+    from: "Web3 District <noreply@thegitcity.com>",
     to: report.advertiserEmail,
-    subject: `Your Git City ads: ${fmtNum(report.totals.impressions)} views this week`,
+    subject: `Your Web3 District ads: ${fmtNum(report.totals.impressions)} views this week`,
     html: wrapInBaseTemplate(bodyHtml),
   });
 }

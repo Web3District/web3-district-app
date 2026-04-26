@@ -15,9 +15,9 @@ import { rankFromLevel, tierFromLevel } from "@/lib/xp";
 export const revalidate = 300; // ISR: regenerate every 5 min
 
 export const metadata: Metadata = {
-  title: "Leaderboard - Git City",
+  title: "Leaderboard - Web3 District",
   description:
-    "Top GitHub developers ranked by contributions, stars, repos, achievements, and referrals in Git City.",
+    "Top GitHub developers ranked by contributions, stars, repos, achievements, and referrals in Web3 District.",
 };
 
 interface Developer {
@@ -208,7 +208,7 @@ export default async function LeaderboardPage({
             Leader<span style={{ color: ACCENT }}>board</span>
           </h1>
           <p className="mt-3 text-xs text-muted normal-case">
-            Top developers ranked in Git City
+            Top developers ranked in Web3 District
           </p>
         </div>
 

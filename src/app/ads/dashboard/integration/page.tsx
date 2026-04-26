@@ -87,7 +87,7 @@ export default function IntegrationPage() {
         <div className="mt-3 space-y-3 text-xs text-muted normal-case leading-relaxed">
           <div className="flex items-start">
             <StepNumber n={1} />
-            <span>A user clicks your ad on Git City. We append <code className="text-cream">?gc_click_id=gc_...</code> to your URL.</span>
+            <span>A user clicks your ad on Web3 District. We append <code className="text-cream">?gc_click_id=gc_...</code> to your URL.</span>
           </div>
           <div className="flex items-start">
             <StepNumber n={2} />
@@ -158,7 +158,7 @@ export default function IntegrationPage() {
               <h2 className="text-base text-cream">Store the click ID</h2>
             </div>
             <p className="mt-2 text-xs text-muted normal-case leading-relaxed">
-              When a user arrives from Git City, the URL will have <code className="text-cream">?gc_click_id=gc_...</code>.
+              When a user arrives from Web3 District, the URL will have <code className="text-cream">?gc_click_id=gc_...</code>.
               The pixel reads this automatically — no code needed on the landing page.
               It also persists across pages via sessionStorage, so multi-step funnels work.
             </p>
@@ -279,7 +279,7 @@ export default function IntegrationPage() {
               <h2 className="text-base text-cream">Store the click ID on your side</h2>
             </div>
             <p className="mt-2 text-xs text-muted normal-case leading-relaxed">
-              When a user arrives from Git City, read <code className="text-cream">gc_click_id</code> from the URL query string and store it
+              When a user arrives from Web3 District, read <code className="text-cream">gc_click_id</code> from the URL query string and store it
               (cookie, session, database — whatever works for your stack). You&apos;ll need it when the conversion happens.
             </p>
           </div>

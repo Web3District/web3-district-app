@@ -1,22 +1,33 @@
-<h1 align="center">Git City</h1>
+<h1 align="center">Web3 District</h1>
 
 <p align="center">
-  <strong>Your GitHub profile as a 3D pixel art building in an interactive city.</strong>
+  <strong>Web3 District – your GitHub profile as a 3D building in an interactive city.</strong>
+</p>
+
+## See it in your browser
+
+1. **URL (after the server is running):** **[http://localhost:3001](http://localhost:3001)**
+2. **One command** (starts dev + opens the browser on macOS): `npm run dev:open`
+3. **Double-click** (macOS): `Open Web3 District.command` in this folder (Finder → double-click; first time: right-click → Open if macOS blocks it).
+4. **Finder bookmark** (macOS): double-click `Web3 District (localhost).webloc` to open that URL in your default browser (start the dev server first).
+
+Fill in **`NEXT_PUBLIC_SUPABASE_URL`** and **`NEXT_PUBLIC_SUPABASE_ANON_KEY`** in `.env.local`, or the home page will show a client error (Supabase is required to boot the app).
+
+<p align="center">
+  <a href="http://localhost:3001">Open http://localhost:3001</a> (with <code>npm run dev</code> running)
 </p>
 
 <p align="center">
-  <a href="https://thegitcity.com">thegitcity.com</a>
-</p>
-
-<p align="center">
-  <img src="public/og-image.png" alt="Git City — Where Code Builds Cities" width="800" />
+  <img src="public/og-image.png" alt="Web3 District — Where Code Builds Cities" width="800" />
 </p>
 
 ---
 
-## What is Git City?
+## What is Web3 District?
 
-Git City transforms every GitHub profile into a unique pixel art building. The more you contribute, the taller your building grows. Explore an interactive 3D city, fly between buildings, and discover developers from around the world.
+Web3 District transforms every GitHub profile into a unique pixel art building. The more you contribute, the taller your building grows. Explore an interactive 3D city, fly between buildings, and discover developers from around the world.
+
+This project is a local test clone based on [Git City](https://github.com/srizzon/git-city) (no on-chain features in this phase).
 
 ## Features
 
@@ -50,16 +61,16 @@ Buildings are rendered with instanced meshes and a LOD (Level of Detail) system 
 - **Framework:** [Next.js](https://nextjs.org) 16 (App Router, Turbopack)
 - **3D Engine:** [Three.js](https://threejs.org) via [@react-three/fiber](https://github.com/pmndrs/react-three-fiber) + [drei](https://github.com/pmndrs/drei)
 - **Database & Auth:** [Supabase](https://supabase.com) (PostgreSQL, GitHub OAuth, Row Level Security)
-- **Payments:** [Stripe](https://stripe.com)
+- **Payments:** [Stripe](https://stripe.com) (optional for local testing)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com) v4 with pixel font (Silkscreen)
 - **Hosting:** [Vercel](https://vercel.com)
 
 ## Getting Started
 
 ```bash
-# Clone the repo
-git clone https://github.com/srizzon/git-city.git
-cd git-city
+# Clone upstream (or use this repo)
+git clone https://github.com/srizzon/git-city.git web3-district-app
+cd web3-district-app
 
 # Install dependencies
 npm install
@@ -99,6 +110,8 @@ Open your Supabase project dashboard, then go to `Project Settings -> API`.
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: the public anon key
 - `SUPABASE_SERVICE_ROLE_KEY`: the service role key for server-side admin access
 
+Apply SQL migrations from `supabase/migrations` to your Supabase project.
+
 For local GitHub login to work, you also need to configure the GitHub OAuth provider in Supabase and add your local callback URL if required by your setup.
 
 ### Where to find the GitHub token
@@ -110,12 +123,20 @@ Open GitHub and go to `Settings -> Developer settings -> Personal access tokens`
 
 Create a token, copy it once, and place it in `GITHUB_TOKEN` inside `.env.local`.
 
+### Optional: mock GitHub API
+
+Set `MOCK_GITHUB=1` in `.env.local` to use dummy GitHub stats for testing without hitting the API.
+
+### Production build
+
+`npm run build` expects valid `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (and other server keys where routes need them). Empty placeholders can fail during static generation. Configure Supabase first, apply `supabase/migrations`, then build.
+
 ## License
 
-[AGPL-3.0](LICENSE) — You can use and modify Git City, but any public deployment must share the source code.
+[AGPL-3.0](LICENSE) — Upstream Git City is AGPL; any public deployment must share the source code.
 
 ---
 
 <p align="center">
-  Built by <a href="https://x.com/samuelrizzondev">@samuelrizzondev</a>
+  Upstream by <a href="https://x.com/samuelrizzondev">@samuelrizzondev</a>
 </p>

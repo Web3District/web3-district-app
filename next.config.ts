@@ -1,5 +1,15 @@
 import type { NextConfig } from "next";
 
+function supabaseImageHostname(): string | null {
+  const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!raw) return null;
+  try {
+    return new URL(raw).hostname;
+  } catch {
+    return null;
+  }
+}
+
 const securityHeaders = [
   // Prevent clickjacking – block all framing
   { key: "X-Frame-Options", value: "DENY" },
@@ -21,6 +31,8 @@ const securityHeaders = [
   },
 ];
 
+const supabaseHost = supabaseImageHostname();
+
 const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
@@ -29,11 +41,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
       },
-      {
-        protocol: "https",
-        hostname: "kxuhnbmureteruqbiubi.supabase.co",
-        pathname: "/storage/v1/object/public/**",
-      },
+      ...(supabaseHost
+        ? [
+            {
+              protocol: "https" as const,
+              hostname: supabaseHost,
+              pathname: "/storage/v1/object/public/**",
+            },
+          ]
+        : []),
     ],
   },
   async headers() {

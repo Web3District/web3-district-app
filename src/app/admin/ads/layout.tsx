@@ -6,11 +6,11 @@ export default async function AdminAdsLayout({ children }: { children: React.Rea
   const supabase = await createServerSupabase();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) redirect("/");
+  if (!user) redirect("/admin/login");
 
   const login = getGithubLoginFromUser(user);
 
-  if (!isAdminGithubLogin(login)) redirect("/");
+  if (!isAdminGithubLogin(login)) redirect("/admin/login");
 
   return <>{children}</>;
 }

@@ -1,6 +1,6 @@
 // ─── E.Arcade Terminal ───────────────────────────────────────
 // In-game terminal with easter eggs and lore fragments.
-// The terminal belongs to the E.Arcade building inside Git City.
+// The terminal belongs to the E.Arcade building inside Web3 District.
 // Tone: corporate system on the surface, but someone left personal
 // fragments hidden between the files. Players piece together the story.
 // Runs client-side only — no server interaction needed.

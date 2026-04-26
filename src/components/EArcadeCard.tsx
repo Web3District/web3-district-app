@@ -142,7 +142,7 @@ export default function EArcadeCard({ onClose, onEnter, session, onSignIn }: EAr
           {step === 0 && alreadyAnswered !== null && (
             <div className="px-4 py-3 space-y-3">
               <p className="text-[10px] text-muted leading-relaxed">
-                The only building in Git City you can walk into. Chat with other devs, sit at a terminal, discover what E. left behind.
+                The only building in Web3 District you can walk into. Chat with other devs, sit at a terminal, discover what E. left behind.
               </p>
               <div className="flex items-center gap-1.5">
                 <div

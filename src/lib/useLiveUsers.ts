@@ -9,9 +9,9 @@ export function useLiveUsers() {
   const sessionId = useRef("");
 
   useEffect(() => {
-    // Generate a stable session ID per tab
+    // Generate a stable session ID per tab (fallback for mobile Safari)
     if (!sessionId.current) {
-      sessionId.current = crypto.randomUUID();
+      sessionId.current = (crypto as any).randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     }
 
     let cancelled = false;

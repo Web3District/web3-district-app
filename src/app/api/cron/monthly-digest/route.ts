@@ -3,7 +3,7 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import { sendNotificationAsync } from "@/lib/notifications";
 import { buildButton, buildStatsTable } from "@/lib/email-template";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://thegitcity.com";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -105,12 +105,12 @@ export async function GET(request: NextRequest) {
           category: "digest",
           developerId: dev.id,
           dedupKey: `monthly_digest:${dev.id}:${yearMonth}`,
-          title: `Your ${monthName} in Git City`,
+          title: `Your ${monthName} in Web3 District`,
           body: `${monthName} recap: ${dev.contributions.toLocaleString()} total contributions, rank #${dev.rank ?? "?"}.`,
           html: `
-            <p style="color: #c8e64a; font-size: 16px;">Your ${monthName} in Git City</p>
+            <p style="color: #c8e64a; font-size: 16px;">Your ${monthName} in Web3 District</p>
             ${buildStatsTable(stats)}
-            ${buildButton("Visit Git City", `${BASE_URL}/?user=${dev.github_login}`)}
+            ${buildButton("Visit Web3 District", `${BASE_URL}/?user=${dev.github_login}`)}
           `,
           actionUrl: `${BASE_URL}/?user=${dev.github_login}`,
           priority: "high",

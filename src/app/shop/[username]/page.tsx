@@ -40,12 +40,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const dev = await getDeveloper(username);
 
   if (!dev) {
-    return { title: "Developer Not Found - Git City" };
+    return { title: "Developer Not Found - Web3 District" };
   }
 
   return {
-    title: `Shop - @${dev.github_login} - Git City`,
-    description: `Customize @${dev.github_login}'s building in Git City`,
+    title: `Shop - @${dev.github_login} - Web3 District`,
+    description: `Customize @${dev.github_login}'s building in Web3 District`,
   };
 }
 

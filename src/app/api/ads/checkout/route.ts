@@ -157,8 +157,8 @@ export async function POST(request: NextRequest) {
             price_data: {
               currency,
               product_data: {
-                name: `Git City Ad: ${plan.label} (${period})`,
-                description: `${plan.label} ad on Git City for ${period}`,
+                name: `Web3 District Ad: ${plan.label} (${period})`,
+                description: `${plan.label} ad on Web3 District for ${period}`,
               },
               unit_amount: priceCents,
             },
@@ -179,8 +179,8 @@ export async function POST(request: NextRequest) {
             price_data: {
               currency,
               product_data: {
-                name: `Git City Ad: ${plan.label}`,
-                description: `${plan.label} ad subscription on Git City`,
+                name: `Web3 District Ad: ${plan.label}`,
+                description: `${plan.label} ad subscription on Web3 District`,
               },
               unit_amount: priceCents,
               recurring: { interval: "month", interval_count: 1 },

@@ -183,7 +183,7 @@ export function AdsDashboard() {
         {reportMode ? (
           <div className="mb-8 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-xs text-lime tracking-widest">GIT CITY</span>
+              <span className="text-xs text-lime tracking-widest">Web4City</span>
               <span className="text-xs text-dim">/</span>
               {filteredAndSorted.length > 0 && (
                 <>

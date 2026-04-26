@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
   try {
     const { brCode, brCodeBase64, pixId } = await createPixQrCodeRaw({
       amountCents: priceCents,
-      description: `Git City Ad: ${plan.label} (${period})`,
+      description: `Web3 District Ad: ${plan.label} (${period})`,
       externalId: adId,
       extraMetadata: { period },
     });

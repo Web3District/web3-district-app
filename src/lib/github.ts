@@ -674,6 +674,14 @@ export function generateCityLayout(devs: DeveloperRecord[]): {
   // Sponsored landmarks (dynamic)
   for (const s of SPONSORS) occupiedCells.add(`${s.gridX},${s.gridZ}`);
 
+  // ── Reserve Zone 0: Central Plaza for QuantumCore + DistrictTowers ──
+  // Reserve a 5x5 grid area around center for the open plaza
+  for (let gx = -2; gx <= 2; gx++) {
+    for (let gz = -2; gz <= 2; gz++) {
+      occupiedCells.add(`${gx},${gz}`);
+    }
+  }
+
   // ── A) Downtown: spiral at grid (0, 0) ──
   placeSpiralCluster(downtownDevs, 0, 0, true);
 

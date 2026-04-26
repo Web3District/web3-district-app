@@ -2,7 +2,7 @@ import { sendNotificationAsync } from "../notifications";
 import { buildButton } from "../email-template";
 import { getSupabaseAdmin } from "../supabase";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://thegitcity.com";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
 
 /**
  * Send community milestone notification to all opted-in users.
@@ -61,14 +61,14 @@ function sendNotificationForMilestone(
     category: "transactional",
     developerId: devId,
     dedupKey: `community_milestone:${milestone}:${devId}`,
-    title: `Git City hit ${formatted} developers!`,
+    title: `Web3 District hit ${formatted} developers!`,
     body: `The community just reached ${formatted} developers. You're one of them!`,
     html: `
       <p style="margin:0 0 4px; font-size:12px; font-weight:bold; color:#5a8a00; letter-spacing:1px; text-transform:uppercase;">Community milestone</p>
       <h1 style="margin:0 0 8px; font-size:40px; font-weight:bold; color:#111111; font-family:Helvetica,Arial,sans-serif;">${formatted}</h1>
-      <p style="margin:0 0 28px; font-size:15px; color:#555555; line-height:1.6;">developers in Git City &mdash; and you're one of them, @${login}!</p>
+      <p style="margin:0 0 28px; font-size:15px; color:#555555; line-height:1.6;">developers in Web3 District &mdash; and you're one of them, @${login}!</p>
       <hr style="border:none; border-top:1px solid #eeeeee; margin:0 0 28px;" />
-      ${buildButton("Visit Git City", BASE_URL)}
+      ${buildButton("Visit Web3 District", BASE_URL)}
     `,
     actionUrl: BASE_URL,
     priority: "low",

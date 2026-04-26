@@ -30,7 +30,7 @@ export function DashboardNav({ advertiser }: Props) {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-6">
           <Link href="/ads/dashboard" className="text-base text-cream">
-            Git City <span style={{ color: ACCENT }}>Ads</span>
+            Web3 District <span style={{ color: ACCENT }}>Ads</span>
           </Link>
           <div className="hidden items-center gap-5 sm:flex">
             {NAV_ITEMS.map((item) => {

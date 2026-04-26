@@ -10,11 +10,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_BASE_URL ??
       (process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000")
+        : "http://localhost:3001")
   ),
-  title: "Git City - Your GitHub as a 3D City",
+  title: "Web4City - Your GitHub as a 3D City",
   description:
-    "Explore GitHub users as buildings in a 3D pixel art city. Fly through the city and discover developers.",
+    "Web4City – your GitHub profile as a 3D building. Explore developers as buildings in a living 3D city.",
   keywords: [
     "github",
     "3d city",
@@ -23,12 +23,13 @@ export const metadata: Metadata = {
     "pixel art",
     "open source",
     "git visualization",
+    "web4city",
   ],
   openGraph: {
-    title: "Git City - Your GitHub as a 3D City",
+    title: "Web4City - Your GitHub as a 3D City",
     description:
-      "Explore GitHub users as buildings in a 3D pixel art city. Fly through the city and discover developers.",
-    siteName: "Git City",
+      "Web4City – your GitHub profile as a 3D building. Explore developers as buildings in a living 3D city.",
+    siteName: "Web3 District",
     type: "website",
     locale: "en_US",
   },
@@ -48,14 +49,14 @@ const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ??
   (process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000");
+    : "http://localhost:3001");
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "Git City",
+  name: "Web3 District",
   description:
-    "Your GitHub profile as a 3D pixel art building in an interactive city",
+    "Web3 District – your GitHub profile as a 3D building in an interactive city",
   url: BASE_URL,
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Web",

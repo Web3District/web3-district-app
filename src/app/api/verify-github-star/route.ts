@@ -9,7 +9,7 @@ const REPO_NAME = "git-city";
 function ghHeaders(): HeadersInit {
   const h: HeadersInit = {
     Accept: "application/vnd.github.v3+json",
-    "User-Agent": "git-city-app",
+    "User-Agent": "web3-district-app",
   };
   if (process.env.GITHUB_TOKEN) {
     h.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;

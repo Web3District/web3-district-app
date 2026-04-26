@@ -9,7 +9,7 @@ export const FETCH_TIMEOUT_MS = 15_000;
 export function ghHeaders(): HeadersInit {
   const h: HeadersInit = {
     Accept: "application/vnd.github.v3+json",
-    "User-Agent": "git-city-app",
+    "User-Agent": "web3-district-app",
   };
   if (process.env.GITHUB_TOKEN) {
     h.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
@@ -244,6 +244,45 @@ export async function fetchGitHubDeveloperData(
   login: string,
   options?: { allowEmpty?: boolean },
 ): Promise<GitHubDeveloperData> {
+  if (process.env.MOCK_GITHUB === "1") {
+    const resolved = login.toLowerCase();
+    return {
+      github_login: resolved,
+      github_id: 1,
+      name: "Mock Developer",
+      avatar_url: "https://avatars.githubusercontent.com/u/583231?v=4",
+      bio: null,
+      contributions: 500,
+      public_repos: 10,
+      total_stars: 100,
+      primary_language: "TypeScript",
+      top_repos: [
+        {
+          name: "demo-repo",
+          stars: 42,
+          language: "TypeScript",
+          url: `https://github.com/${resolved}/demo-repo`,
+        },
+      ],
+      github_etag: null,
+      contributions_total: 500,
+      contribution_years: [new Date().getFullYear()],
+      total_prs: 10,
+      total_reviews: 5,
+      total_issues: 3,
+      repos_contributed_to: 10,
+      followers: 50,
+      following: 25,
+      organizations_count: 1,
+      account_created_at: "2020-01-01T00:00:00Z",
+      current_streak: 5,
+      longest_streak: 30,
+      active_days_last_year: 200,
+      language_diversity: 4,
+      current_week_contributions: 20,
+    };
+  }
+
   const headers = ghHeaders();
 
   const userRes = await fetch(

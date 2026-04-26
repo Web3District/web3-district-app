@@ -432,9 +432,9 @@ function RabbitContent() {
             <a
               href={`https://x.com/intent/tweet?text=${encodeURIComponent(
                 myPosition
-                  ? `I followed the white rabbit in Git City.\nCitizen #${myPosition} to find the other side.`
-                  : `I followed the white rabbit in Git City.`
-              )}&url=${encodeURIComponent("https://thegitcity.com/rabbit")}`}
+                  ? `I followed the white rabbit in Web3 District.\nCitizen #${myPosition} to find the other side.`
+                  : `I followed the white rabbit in Web3 District.`
+              )}&url=${encodeURIComponent(`${process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3001"}/rabbit`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="font-pixel text-[10px] sm:text-[11px] tracking-widest px-5 py-2 border cursor-pointer transition-all hover:border-[#00ff41] hover:text-[#00ff41]"

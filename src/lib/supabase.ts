@@ -7,6 +7,14 @@ let browserClient: ReturnType<typeof createBrowserClient> | null = null;
 export function createBrowserSupabase() {
   if (browserClient) return browserClient;
 
+  // Check for dummy/missing keys to prevent crash in local dev
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('domain.supabase')) {
+    console.warn('[Supabase] Skipping init: keys missing or using dummy URL');
+    return null;
+  }
+
   browserClient = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!

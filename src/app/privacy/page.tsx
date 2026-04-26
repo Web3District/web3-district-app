@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - Git City",
-  description: "Privacy Policy for Git City.",
+  title: "Privacy Policy - Web3 District",
+  description: "Privacy Policy for Web3 District.",
 };
 
 const ACCENT = "#c8e64a";
@@ -87,7 +87,7 @@ export default function PrivacyPage() {
 
           <Section n={5} title="Sponsored Content & Advertising">
             <p>
-              Git City features sponsored landmark buildings and sky advertisements
+              Web3 District features sponsored landmark buildings and sky advertisements
               from third-party brands. We track aggregate impressions (when the
               sponsored content is visible on screen) and clicks (when you interact
               with it) to provide performance reports to sponsors. We do not share
@@ -127,7 +127,7 @@ export default function PrivacyPage() {
 
           <Section n={9} title="Children">
             <p>
-              Git City is not intended for children under 13. We do not knowingly
+              Web3 District is not intended for children under 13. We do not knowingly
               collect data from children under 13. If you believe a child has
               provided us with data, contact us for removal.
             </p>
@@ -135,7 +135,7 @@ export default function PrivacyPage() {
 
           <Section n={10} title="Changes">
             <p>
-              We may update this policy at any time. Continued use of Git City
+              We may update this policy at any time. Continued use of Web3 District
               after changes constitutes acceptance.
             </p>
           </Section>

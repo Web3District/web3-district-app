@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Git City",
-    short_name: "Git City",
+    name: "Web3 District",
+    short_name: "Web3 District",
     description:
-      "Explore GitHub users as buildings in a 3D pixel art city. Fly through the city and discover developers.",
+      "Web3 District – your GitHub profile as a 3D building. Explore developers as buildings in a pixel art city.",
     start_url: "/",
     display: "standalone",
     background_color: "#0d1117",

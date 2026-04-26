@@ -25,6 +25,9 @@ import CelebrationEffect from "./CelebrationEffect";
 import ComparePath from "./ComparePath";
 import WallpaperParallax from "./WallpaperParallax";
 import ThemeSkyFX from "./ThemeSkyFX";
+import QuantumCore from "./QuantumCore";
+import DistrictTowers from "./DistrictTowers";
+import PlazaAvatar from "./PlazaAvatar";
 
 // ─── Theme Definitions ───────────────────────────────────────
 
@@ -114,7 +117,7 @@ const THEMES: CityTheme[] = [
     },
     waterColor: "#1a2040", waterEmissive: "#102060", dockColor: "#4a3020",
   },
-  // 2 – Neon
+  // 2 – Neon (AI District: pink/rose window palette)
   {
     sky: [
       [0, "#06001a"], [0.15, "#100028"], [0.30, "#200440"], [0.42, "#380650"],
@@ -130,9 +133,10 @@ const THEMES: CityTheme[] = [
     roadMarkingColor: "#c060e0",
     sidewalkColor: "#484058",
     building: {
-      windowLit: ["#ff40c0", "#c040ff", "#00e0ff", "#40ff80", "#ff8040"],
-      windowOff: "#0a0814", face: "#180830", roof: "#3c1858",
-      accent: "#e040c0",
+      // AI District window palette: pink/rose tones (matches AI tower)
+      windowLit: ["#f43f5e", "#fb7185", "#e11d48", "#fda4af", "#f472b6"],
+      windowOff: "#0a0814", face: "#0a0a0a", roof: "#1a1a1a",
+      accent: "#f43f5e", // AI District pink
     },
     waterColor: "#0c0830", waterEmissive: "#1008a0", dockColor: "#2a1838",
   },
@@ -2218,24 +2222,12 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
 
       <Ground key={`ground-${themeIndex}`} color={t.groundColor} grid1={t.grid1} grid2={t.grid2} />
 
-      <EArcadeLandmark
-        onClick={onEArcadeClick ?? (() => { })}
-        themeAccent={t.building.accent}
-        themeWindowLit={t.building.windowLit}
-        themeFace={t.building.face}
-      />
-      {SPONSORS.map((s) => (
-        <SponsoredLandmark
-          key={s.slug}
-          config={s}
-          onClick={() => onSponsorClick?.(s.slug)}
-          themeAccent={t.building.accent}
-          themeWindowLit={t.building.windowLit}
-          themeFace={t.building.face}
-          dimmed={!!activeSponsorSlug && activeSponsorSlug !== s.slug}
-        />
-      ))}
-      <FounderSpire onClick={onLandmarkClick ?? (() => { })} />
+      {/* ─── Web4City Zone 0: Central Plaza ─── */}
+      <QuantumCore />
+      <DistrictTowers />
+
+      {/* ─── Plaza Avatars (from Agentshire Kenney collection) ─── */}
+      <PlazaAvatar position={[30, 0, 30]} />
 
       {!wallpaperMode && celebrationActive && <CelebrationEffect cityRadius={cityRadius} />}
 

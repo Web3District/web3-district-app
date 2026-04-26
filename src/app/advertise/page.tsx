@@ -6,14 +6,14 @@ import { AdPurchaseForm } from "./AdPurchaseForm";
 const ACCENT = "#c8e64a";
 
 export const metadata: Metadata = {
-  title: "Advertise on Git City",
+  title: "Advertise on Web3 District",
   description:
     "Reach 60,000+ GitHub developers. Planes, blimps, and billboards in a 3D city. 1%+ CTR (2x industry avg). From $29/mo.",
   openGraph: {
-    title: "Advertise on Git City",
+    title: "Advertise on Web3 District",
     description:
       "Reach 60,000+ GitHub developers. Planes, blimps, and billboards in a 3D city. 1%+ CTR (2x industry avg). From $29/mo.",
-    siteName: "Git City",
+    siteName: "Web3 District",
     type: "website",
     locale: "en_US",
   },

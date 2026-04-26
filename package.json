@@ -1,9 +1,9 @@
 {
-  "name": "git-city",
+  "name": "web3-district",
   "version": "0.1.0",
   "private": true,
-  "description": "Your GitHub profile as a 3D pixel art building in an interactive city",
-  "homepage": "https://thegitcity.com",
+  "description": "Web3 District – your GitHub profile as a 3D building",
+  "homepage": "http://localhost:3002",
   "repository": {
     "type": "git",
     "url": "https://github.com/srizzon/git-city"
@@ -20,7 +20,8 @@
     "nextjs"
   ],
   "scripts": {
-    "dev": "next dev -p 3001",
+    "dev": "next dev -p 3002",
+    "dev:open": "bash scripts/launch-dev.sh",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -42,6 +43,7 @@
     "next": "16.1.6",
     "partykit": "^0.0.115",
     "partysocket": "^1.1.16",
+    "playwright": "^1.59.1",
     "postprocessing": "^6.38.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",

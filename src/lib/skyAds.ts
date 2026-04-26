@@ -117,15 +117,17 @@ export function trackAdEvents(adId: string, eventTypes: ("impression" | "click" 
   }
 }
 
+const site = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3001";
+
 export const DEFAULT_SKY_ADS: SkyAd[] = [
   {
     id: "gitcity",
-    text: "THEGITCITY.COM ★ YOUR CODE, YOUR CITY ★ THEGITCITY.COM",
-    brand: "Git City",
+    text: "WEB3 DISTRICT ★ YOUR CODE, YOUR CITY ★ WEB3 DISTRICT",
+    brand: "Web3 District",
     description: "A city built from GitHub contributions. Search your username and find your building among thousands of developers.",
     color: "#f8d880",
     bgColor: "#1a1018",
-    link: "https://thegitcity.com",
+    link: site,
     vehicle: "plane",
     priority: 100,
   },
@@ -133,10 +135,10 @@ export const DEFAULT_SKY_ADS: SkyAd[] = [
     id: "advertise",
     text: "ADD YOUR AD HERE",
     brand: "Sky Ads",
-    description: "Want your brand flying over Git City? Planes, blimps, your colors. Get in touch!",
+    description: "Want your brand flying over Web3 District? Planes, blimps, your colors. Get in touch!",
     color: "#f8d880",
     bgColor: "#1a1018",
-    link: "https://thegitcity.com/advertise",
+    link: `${site}/advertise`,
     vehicle: "plane",
     priority: 10,
   },
