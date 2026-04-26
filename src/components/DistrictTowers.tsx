@@ -314,7 +314,7 @@ function BuildingQuantum({ name, position, height, accentColor, windowColors }: 
   });
 
   const pillarHeight = height * 0.7;
-  const windows: JSX.Element[] = [];
+  const windows: React.JSX.Element[] = [];
   const floors = Math.floor(pillarHeight / 30);
   const cols = 8;
   for (let row = 0; row < floors; row++) {
@@ -332,7 +332,7 @@ function BuildingQuantum({ name, position, height, accentColor, windowColors }: 
     }
   }
 
-  const squareWindows: JSX.Element[] = [];
+  const squareWindows: React.JSX.Element[] = [];
   const sqFloors = Math.floor(pillarHeight / 35);
   const sqCols = 4;
   const sqSize = 5;
@@ -450,7 +450,7 @@ function BuildingVC({ name, position, height, accentColor, windowColors }: any) 
   const makeWindows = (px: number, py: number, pz: number, w: number, h: number, isX: boolean, face: string) => {
     const floors = Math.floor(h / 30);
     const cols = Math.floor(w / 10);
-    const result: JSX.Element[] = [];
+    const result: React.JSX.Element[] = [];
     for (let row = 0; row < floors; row++) {
       for (let col = 0; col < cols; col++) {
         const local = (col - (cols - 1) / 2) * 9;
