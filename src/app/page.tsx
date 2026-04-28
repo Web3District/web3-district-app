@@ -2040,15 +2040,8 @@ function HomeContent() {
   const { count: liveUsers } = useLiveUsers();
   const { liveCount: codingCount, liveByLogin } = useCodingPresence();
 
-  // City energy: devs coding -> city lights up. 0 devs = nearly dark, 5+ = full brightness
-  const cityEnergy = useMemo(() => {
-    if (codingCount === 0) return 0.05;
-    if (codingCount === 1) return 0.35;
-    if (codingCount === 2) return 0.55;
-    if (codingCount <= 5) return 0.55 + (codingCount - 2) * 0.15; // 3->0.7, 5->1.0
-    if (codingCount <= 15) return 1.0 + (Math.min(codingCount, 15) - 5) * 0.02; // 10->1.1, 15->1.2
-    return Math.min(1.4, 1.2 + (codingCount - 15) * 0.02); // 25+->1.4 cap
-  }, [codingCount]);
+  // City energy: always full brightness — live users shown on the button
+  const cityEnergy = useMemo(() => 1.0, []);
 
   // ─── Milestone celebration system ──────────────────────────
   const forceCelebrate = searchParams.has("celebrate");
@@ -2931,23 +2924,23 @@ function HomeContent() {
             </button>
           )}
           {(() => {
-            const energyLabel = codingCount === 0 ? "City sleeping" : codingCount <= 2 ? "City waking up" : codingCount <= 9 ? "City alive" : "City buzzing";
-            const energyDotColor = codingCount === 0 ? "bg-muted/50" : codingCount <= 2 ? "bg-[#fbbf24]" : "bg-[#4ade80]";
-            const energyDotAnim = codingCount === 0 ? "" : "live-dot";
             return (
               <div className="relative hidden sm:block">
                 <button
                   onClick={() => setCodingPanelOpen((v) => !v)}
                   className="flex items-center gap-1.5 border-[3px] border-border bg-bg/70 px-2.5 py-1 text-[10px] backdrop-blur-sm transition-colors hover:border-border-light"
                 >
-                  <span className={`${energyDotAnim} h-1.5 w-1.5 flex-shrink-0 rounded-full ${energyDotColor}`} />
                   {codingCount > 0 ? (
                     <>
+                      <span className="live-dot h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#4ade80]" />
                       <span className="text-cream">{codingCount}</span>
-                      <span className="text-muted">coding now</span>
+                      <span className="text-muted">online</span>
                     </>
                   ) : (
-                    <span className="text-muted">{energyLabel}</span>
+                    <>
+                      <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#60a5fa]" />
+                      <span className="text-muted">0 online</span>
+                    </>
                   )}
                 </button>
                 {codingPanelOpen && (() => {

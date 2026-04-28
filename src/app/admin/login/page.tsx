@@ -17,7 +17,7 @@ export default function AdminLoginPage() {
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-bg p-4">
       <div className="text-center">
         <h1 className="mb-2 text-4xl font-bold text-warm">Web4City Admin</h1>
-        <p className="text-dim">Sign in to manage ads and drops</p>
+        <p className="text-dim">Sign in to manage ads, drops & city analytics</p>
       </div>
 
       <div className="rounded-lg border-4 border-border bg-bg/50 p-8 shadow-lg">

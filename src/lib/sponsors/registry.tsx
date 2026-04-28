@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import AceleraDevBuilding from "./buildings/AceleraDevBuilding";
 import AbacatePayBuilding from "./buildings/AbacatePayBuilding";
 import ViralDayBuilding from "./buildings/ViralDayBuilding";
+import { PortugalPrideBuilding } from "./buildings/PortugalPrideBuilding";
 
 // ─── Grid constants (must match github.ts) ──────────────────
 const BLOCK_FOOTPRINT_X = 161; // 4*38 + 3*3
@@ -111,6 +112,32 @@ export const SPONSORS: SponsorConfig[] = [
         <circle cx="21" cy="10" r="1" fill="currentColor" opacity="0.7" />
         <circle cx="20" cy="13.5" r="0.8" fill="currentColor" opacity="0.5" />
         <circle cx="19" cy="16.5" r="0.6" fill="currentColor" opacity="0.35" />
+      </svg>
+    ),
+  },
+  {
+    slug: "portugal-pride",
+    name: "Portugal Pride",
+    tagline: "🇵🇹🏳️‍🌈 Celebrating Diversity & Pride",
+    description:
+      "A celebratory landmark building honoring Portugal Pride with rainbow colors, colorful windows, and the pride flag flying high. A symbol of diversity, inclusion, and love in the Web4City community.",
+    url: "#",
+    accent: "#FF0000",
+    gridX: 0,
+    gridZ: 0,
+    features: ["Rainbow flag", "Colorful windows", "PORTUGAL PRIDE sign", "Rainbow base rings"],
+    Building: PortugalPrideBuilding,
+    hitboxRadius: 80,
+    hitboxHeight: 550,
+    logoSvg: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        {/* Rainbow stripes */}
+        <rect x="2" y="3" width="20" height="3" fill="#FF0000" />
+        <rect x="2" y="6" width="20" height="3" fill="#FF7F00" />
+        <rect x="2" y="9" width="20" height="3" fill="#FFFF00" />
+        <rect x="2" y="12" width="20" height="3" fill="#00FF00" />
+        <rect x="2" y="15" width="20" height="3" fill="#0000FF" />
+        <rect x="2" y="18" width="20" height="3" fill="#8B00FF" />
       </svg>
     ),
   },

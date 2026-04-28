@@ -1,193 +1,224 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import { StatsCard } from "./_components/stats-card";
-import { PeriodSelector, type Period } from "./_components/period-selector";
-import { DailyChart } from "./_components/daily-chart";
-import { AdCard } from "./_components/ad-card";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-const ACCENT = "#e040c0";
-
-interface AdData {
+interface AdCampaign {
   id: string;
-  text: string;
+  package_id: string;
+  status: string;
   brand: string | null;
-  vehicle: string;
-  active: boolean;
-  starts_at: string | null;
-  ends_at: string | null;
-  impressions: number;
-  clicks: number;
-  cta_clicks: number;
-  conversions: number;
-  revenue_cents: number;
-  ctr: string;
+  text: string | null;
+  total_impressions: number;
+  total_clicks: number;
+  start_date: string | null;
+  created_at: string;
 }
 
-interface DashboardData {
-  ads: AdData[];
-  totals: {
-    impressions: number;
-    clicks: number;
-    cta_clicks: number;
-    conversions: number;
-    revenue_cents: number;
-    ctr: string;
-    conv_rate: string;
-    changes: {
-      impressions: number;
-      clicks: number;
-      cta_clicks: number;
-      conversions: number;
-    };
-  };
-  daily: { day: string; impressions: number; clicks: number; conversions: number }[];
-}
-
-const VALID_PERIODS = new Set(["7d", "30d", "90d", "all"]);
-
-function parsePeriod(raw: string | null): Period {
-  return raw && VALID_PERIODS.has(raw) ? (raw as Period) : "30d";
-}
-
-function DashboardContent() {
-  const router = useRouter();
+export default function AdsDashboard() {
   const searchParams = useSearchParams();
-
-  const [period, setPeriodState] = useState<Period>(() => parsePeriod(searchParams.get("period")));
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [campaigns, setCampaigns] = useState<AdCampaign[]>([]);
   const [loading, setLoading] = useState(true);
-
-  function setPeriod(p: Period) {
-    setPeriodState(p);
-    router.replace(`/ads/dashboard?period=${p}`);
-  }
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    fetch(`/api/ads/stats?period=${period}&_t=${Date.now()}`, { cache: "no-store" })
-      .then((r) => r.json())
-      .then((d) => {
-        if (!cancelled) {
-          setData(d);
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => { cancelled = true; };
-  }, [period]);
+    // Check if user just completed checkout
+    const sessionId = searchParams.get("session_id");
+    if (sessionId) {
+      setSuccess(true);
+      // Clear the URL parameter
+      window.history.replaceState({}, document.title, "/ads/dashboard");
+    }
 
-  if (loading && !data) {
+    fetchCampaigns();
+  }, []);
+
+  async function fetchCampaigns() {
+    try {
+      const supabase = createClientComponentClient();
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("ad_campaigns")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setCampaigns(data || []);
+    } catch (error) {
+      console.error("Error fetching campaigns:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function getStatusColor(status: string) {
+    switch (status) {
+      case "active":
+        return "text-green-400";
+      case "pending":
+        return "text-yellow-400";
+      case "paused":
+        return "text-orange-400";
+      case "cancelled":
+      case "expired":
+        return "text-red-400";
+      default:
+        return "text-cream";
+    }
+  }
+
+  function getPackageLabel(packageId: string) {
+    return packageId === "foundation" ? "Foundation" : "Skyline";
+  }
+
+  if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-sm text-muted">Loading...</p>
+      <div className="min-h-screen bg-bg p-4 sm:p-6 lg:p-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="h-8 w-48 animate-pulse rounded bg-border" />
+          <div className="mt-2 h-4 w-64 animate-pulse rounded bg-border" />
+        </div>
       </div>
     );
   }
-
-  if (!data || data.ads.length === 0) {
-    return (
-      <div className="mt-12 text-center">
-        <h1 className="text-2xl text-cream">No ads yet</h1>
-        <p className="mt-2 text-sm text-muted normal-case">
-          Purchase your first ad to see analytics here.
-        </p>
-        <Link
-          href="/advertise"
-          className="btn-press mt-6 inline-block px-7 py-3 text-sm text-bg"
-          style={{ backgroundColor: ACCENT, boxShadow: "4px 4px 0 0 #a02080" }}
-        >
-          Buy an ad
-        </Link>
-      </div>
-    );
-  }
-
-  const { totals, daily, ads } = data;
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl text-cream">Overview</h1>
-        <div className="flex items-center gap-3">
-          <PeriodSelector value={period} onChange={setPeriod} />
-          <Link
-            href="/ads/dashboard/new"
-            className="btn-press px-4 py-2 text-xs text-bg"
-            style={{ backgroundColor: ACCENT, boxShadow: "3px 3px 0 0 #a02080" }}
-          >
-            + New Ad
-          </Link>
+    <div className="min-h-screen bg-bg p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl">
+        {/* Success Message */}
+        {success && (
+          <div className="mb-8 border-2 border-green-400 bg-green-400/10 p-4">
+            <p className="text-green-400">
+              🎉 Payment successful! Your ad campaign is being activated.
+            </p>
+          </div>
+        )}
+
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="font-pixel text-2xl text-cream">Ad Dashboard</h1>
+          <p className="mt-1 text-sm text-cream/50">
+            Manage your ad campaigns and track performance
+          </p>
         </div>
-      </div>
 
-      {/* Conversion tracking nudge */}
-      {totals.cta_clicks > 0 && totals.conversions === 0 && (
-        <div className="mt-4 border-[3px] px-4 py-3 text-sm normal-case" style={{ borderColor: "#ff9800", color: "#ff9800", backgroundColor: "#ff980010" }}>
-          You have {totals.cta_clicks.toLocaleString()} CTA clicks but no conversions tracked.{" "}
-          <Link href="/ads/dashboard/integration" className="underline">Set up conversion tracking</Link> to measure ROI.
+        {/* Stats */}
+        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <StatCard
+            label="Active Campaigns"
+            value={campaigns.filter((c) => c.status === "active").length}
+          />
+          <StatCard
+            label="Total Impressions"
+            value={campaigns.reduce((sum, c) => sum + c.total_impressions, 0)}
+          />
+          <StatCard
+            label="Total Clicks"
+            value={campaigns.reduce((sum, c) => sum + c.total_clicks, 0)}
+          />
+          <StatCard
+            label="Total Campaigns"
+            value={campaigns.length}
+          />
         </div>
-      )}
 
-      {/* Stats cards */}
-      <div className={`mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 transition-opacity ${loading ? "opacity-50" : ""}`}>
-        <StatsCard
-          label="Impressions"
-          value={totals.impressions}
-          change={period !== "all" ? totals.changes.impressions : undefined}
-        />
-        <StatsCard
-          label="Clicks"
-          value={totals.clicks}
-          change={period !== "all" ? totals.changes.clicks : undefined}
-        />
-        <StatsCard
-          label="CTA Clicks"
-          value={totals.cta_clicks}
-          change={period !== "all" ? totals.changes.cta_clicks : undefined}
-        />
-        <StatsCard label="CTR" value={totals.ctr} />
-        <StatsCard
-          label="Conversions"
-          value={totals.conversions}
-          change={period !== "all" ? totals.changes.conversions : undefined}
-        />
-        <StatsCard label="Conv. Rate" value={totals.conv_rate} />
-      </div>
-
-      {/* Chart */}
-      <div className={`mt-5 transition-opacity ${loading ? "opacity-50" : ""}`}>
-        <DailyChart key={`chart-${period}-${totals.impressions}`} data={daily} />
-      </div>
-
-      {/* Ad list */}
-      <div className="mt-6">
-        <h2 className="mb-3 text-base text-cream">Your Ads</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {ads.map((ad) => (
-            <AdCard key={ad.id} ad={ad} />
-          ))}
+        {/* Campaigns List */}
+        <div>
+          <h2 className="mb-4 font-pixel text-lg text-cream">Your Campaigns</h2>
+          
+          {campaigns.length === 0 ? (
+            <div className="border border-border bg-bg-raised p-8 text-center">
+              <p className="text-cream/50">No campaigns yet</p>
+              <a
+                href="/advertise"
+                className="mt-4 inline-block border-2 border-lime px-6 py-2 text-xs text-lime transition-colors hover:bg-lime/10"
+              >
+                Create Your First Ad
+              </a>
+            </div>
+          ) : (
+            <div className="overflow-x-auto border border-border">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-bg-raised">
+                    <th className="px-4 py-3 text-xs uppercase tracking-wider text-cream/50">
+                      Package
+                    </th>
+                    <th className="px-4 py-3 text-xs uppercase tracking-wider text-cream/50">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-xs uppercase tracking-wider text-cream/50">
+                      Brand
+                    </th>
+                    <th className="px-4 py-3 text-xs uppercase tracking-wider text-cream/50">
+                      Impressions
+                    </th>
+                    <th className="px-4 py-3 text-xs uppercase tracking-wider text-cream/50">
+                      Clicks
+                    </th>
+                    <th className="px-4 py-3 text-xs uppercase tracking-wider text-cream/50">
+                      Started
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {campaigns.map((campaign) => (
+                    <tr
+                      key={campaign.id}
+                      className="border-b border-border/50 hover:bg-bg-raised/50"
+                    >
+                      <td className="px-4 py-3 text-cream">
+                        {getPackageLabel(campaign.package_id)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={getStatusColor(campaign.status)}>
+                          {campaign.status.toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-cream/70">
+                        {campaign.brand || "—"}
+                      </td>
+                      <td className="px-4 py-3 text-cream/70">
+                        {campaign.total_impressions.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3 text-cream/70">
+                        {campaign.total_clicks.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3 text-cream/50">
+                        {campaign.start_date
+                          ? new Date(campaign.start_date).toLocaleDateString()
+                          : "Pending"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default function DashboardPage() {
+function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <Suspense
-      fallback={
-        <div className="flex h-64 items-center justify-center">
-          <p className="text-sm text-muted">Loading...</p>
-        </div>
-      }
-    >
-      <DashboardContent />
-    </Suspense>
+    <div className="border border-border bg-bg-raised p-4">
+      <p className="text-xs uppercase tracking-wider text-cream/50">
+        {label}
+      </p>
+      <p className="mt-1 text-2xl font-bold text-cream">
+        {value.toLocaleString()}
+      </p>
+    </div>
   );
 }

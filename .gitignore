@@ -68,4 +68,5 @@ scripts/recolor-*.mjs
 # vscode extension build artifacts
 packages/vscode-extension/dist/
 packages/vscode-extension/package-lock.json
-packages/vscode-extension/*.vsix
+packages/vscode-extension/*.vsix*.env.local
+STRIPE-*.md
