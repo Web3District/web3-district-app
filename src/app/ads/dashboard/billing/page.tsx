@@ -106,7 +106,6 @@ export default function BillingPage() {
             </button>
             <p className="mt-4 text-sm text-muted normal-case">
               Need help?{" "}
-              </a>
             </p>
           </div>
 
