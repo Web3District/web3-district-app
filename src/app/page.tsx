@@ -2951,6 +2951,8 @@ function HomeContent() {
                 {codingPanelOpen && (() => {
                   // Creator always first, then up to 4 others
                   const allDevs = Array.from(liveByLogin.values());
+                  const creator = allDevs.find((d) => d.githubLogin.toLowerCase() === "eduardomarques") ?? null;
+                  const isCreator = !!creator;
                   const others = allDevs.filter((d) => d.githubLogin.toLowerCase() !== "eduardomarques");
                   const displayDevs = [
                     ...(creator ? [creator] : []),

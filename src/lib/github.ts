@@ -90,6 +90,7 @@ export interface CityBuilding {
   xp_total: number;
   xp_level: number;
   district?: string;
+  home_district?: string;
   district_chosen?: boolean;
   position: [number, number, number];
   width: number;

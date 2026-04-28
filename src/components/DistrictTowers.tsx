@@ -37,14 +37,14 @@ function WalkingAvatar() {
 
     if (idleClip) {
       const action = mixer.clipAction(idleClip);
-      action.setLoop(THREE.LoopRepeat);
+      action.setLoop(THREE.LoopRepeat, Infinity);
       action.clampWhenFinished = false;
       idleActionRef.current = action;
     }
 
     if (walkClip) {
       const action = mixer.clipAction(walkClip);
-      action.setLoop(THREE.LoopRepeat);
+      action.setLoop(THREE.LoopRepeat, Infinity);
       action.clampWhenFinished = false;
       walkActionRef.current = action;
     }
@@ -388,7 +388,6 @@ function BuildingWeb3({ name, position, height, accentColor, windowColors, onCli
 function BuildingQuantum({ name, position, height, accentColor, windowColors, onClick }: any) {
   const groupRef = useRef<THREE.Group>(null);
   const orbRef = useRef<THREE.Mesh>(null);
-  useBuildingClick(groupRef, onClick);
   
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
@@ -400,7 +399,7 @@ function BuildingQuantum({ name, position, height, accentColor, windowColors, on
   });
 
   const pillarHeight = height * 0.7;
-  const windows: JSX.Element[] = [];
+  const windows: React.JSX.Element[] = [];
   const floors = Math.floor(pillarHeight / 30);
   const cols = 8;
   for (let row = 0; row < floors; row++) {
@@ -418,7 +417,7 @@ function BuildingQuantum({ name, position, height, accentColor, windowColors, on
     }
   }
 
-  const squareWindows: JSX.Element[] = [];
+  const squareWindows: React.JSX.Element[] = [];
   const sqFloors = Math.floor(pillarHeight / 35);
   const sqCols = 4;
   const sqSize = 5;
@@ -538,7 +537,7 @@ function BuildingVC({ name, position, height, accentColor, windowColors, onClick
   const makeWindows = (px: number, py: number, pz: number, w: number, h: number, isX: boolean, face: string) => {
     const floors = Math.floor(h / 30);
     const cols = Math.floor(w / 10);
-    const result: JSX.Element[] = [];
+    const result: React.JSX.Element[] = [];
     for (let row = 0; row < floors; row++) {
       for (let col = 0; col < cols; col++) {
         const local = (col - (cols - 1) / 2) * 9;
