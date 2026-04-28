@@ -21,6 +21,7 @@ export interface DeveloperRecord {
   fetch_priority: number;
   claimed_at: string | null;
   district?: string | null;
+  home_district?: string | null;
   owned_items?: string[];
   custom_color?: string | null;
   billboard_images?: string[];
