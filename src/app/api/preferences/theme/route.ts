@@ -30,10 +30,10 @@ export async function GET() {
     .single();
 
   if (!dev) {
-    return NextResponse.json({ city_theme: 0 });
+    return NextResponse.json({ city_theme: 2 }); // 2 = Neon
   }
 
-  return NextResponse.json({ city_theme: dev.city_theme ?? 0 });
+  return NextResponse.json({ city_theme: dev.city_theme ?? 2 }); // 2 = Neon
 }
 
 /**
