@@ -2340,6 +2340,8 @@ function HomeContent() {
         onLandmarkClick={() => { setPillModalOpen(true); setSelectedBuilding(null); }}
         onEArcadeClick={() => { trackEArcadeClicked(); setEArcadeOpen(true); setSelectedBuilding(null); }}
         onDistrictLobbyClick={(slug: string) => { setActiveDistrictLobby(slug); setSelectedBuilding(null); }}
+        onDistrictSignIn={handleSignInWithRef}
+        session={session}
         onSponsorClick={(slug) => {
           trackLandmarkClicked(slug);
           const adId = getLandmarkAdId(slug);

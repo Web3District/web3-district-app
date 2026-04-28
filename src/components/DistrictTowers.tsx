@@ -587,16 +587,26 @@ function BuildingVC({ name, position, height, accentColor, windowColors, onClick
 // ─── Export ───
 interface DistrictTowersProps {
   onDistrictClick?: (slug: string) => void;
+  session?: unknown;
+  onSignIn?: () => void;
 }
 
-export default function DistrictTowers({ onDistrictClick }: DistrictTowersProps) {
+export default function DistrictTowers({ onDistrictClick, session, onSignIn }: DistrictTowersProps) {
+  const handleClick = (slug: string) => {
+    if (!session && onSignIn) {
+      onSignIn();
+      return;
+    }
+    onDistrictClick?.(slug);
+  };
+
   return (
     <>
-      <BuildingAI name="AI" position={[0, 0, -160]} height={380} accentColor="#f43f5e" windowColors={["#f43f5e", "#fb7185", "#e11d48", "#fda4af", "#f472b6"]} onClick={() => onDistrictClick?.("ai-lobby")} />
-      <BuildingWeb3 name="Web3" position={[152, 0, -50]} height={350} accentColor="#a855f7" windowColors={["#a855f7", "#c084fc", "#7c3aed", "#d8b4fe", "#9333ea"]} onClick={() => onDistrictClick?.("web3-lobby")} />
-      <BuildingQuantum name="Quantum" position={[94, 0, 130]} height={420} accentColor="#06b6d4" windowColors={["#06b6d4", "#22d3ee", "#0891b2", "#67e8f9", "#0e7490"]} onClick={() => onDistrictClick?.("quantum-lobby")} />
-      <BuildingGrowth name="Growth" position={[-94, 0, 130]} height={340} accentColor="#22c55e" windowColors={["#22c55e", "#4ade80", "#16a34a", "#86efac", "#15803d"]} onClick={() => onDistrictClick?.("growth-lobby")} />
-      <BuildingVC name="VC" position={[-152, 0, -50]} height={360} accentColor="#eab308" windowColors={["#eab308", "#facc15", "#ca8a04", "#fde047", "#a16207"]} onClick={() => onDistrictClick?.("vc-lobby")} />
+      <BuildingAI name="AI" position={[0, 0, -160]} height={380} accentColor="#f43f5e" windowColors={["#f43f5e", "#fb7185", "#e11d48", "#fda4af", "#f472b6"]} onClick={() => handleClick("ai-lobby")} />
+      <BuildingWeb3 name="Web3" position={[152, 0, -50]} height={350} accentColor="#a855f7" windowColors={["#a855f7", "#c084fc", "#7c3aed", "#d8b4fe", "#9333ea"]} onClick={() => handleClick("web3-lobby")} />
+      <BuildingQuantum name="Quantum" position={[94, 0, 130]} height={420} accentColor="#06b6d4" windowColors={["#06b6d4", "#22d3ee", "#0891b2", "#67e8f9", "#0e7490"]} onClick={() => handleClick("quantum-lobby")} />
+      <BuildingGrowth name="Growth" position={[-94, 0, 130]} height={340} accentColor="#22c55e" windowColors={["#22c55e", "#4ade80", "#16a34a", "#86efac", "#15803d"]} onClick={() => handleClick("growth-lobby")} />
+      <BuildingVC name="VC" position={[-152, 0, -50]} height={360} accentColor="#eab308" windowColors={["#eab308", "#facc15", "#ca8a04", "#fde047", "#a16207"]} onClick={() => handleClick("vc-lobby")} />
       <WalkingAvatar />
     </>
   );

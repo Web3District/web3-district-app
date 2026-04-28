@@ -2108,6 +2108,8 @@ interface Props {
   onLandmarkClick?: () => void;
   onEArcadeClick?: () => void;
   onDistrictLobbyClick?: (slug: string) => void;
+  onDistrictSignIn?: () => void;
+  session?: unknown;
   onSponsorClick?: (slug: string) => void;
   sponsorFocusPos?: [number, number, number] | null;
   activeSponsorSlug?: string | null;
@@ -2145,7 +2147,7 @@ function CityExposure({ cityEnergy }: { cityEnergy: number }) {
 // Plaza indices for rabbit sightings (progressively further from center)
 const RABBIT_PLAZA_INDICES = [1, 2, 4, 7, 10]; // plazas[1]=slot3, [2]=slot7, [4]=slot18, [7]=slot42, [10]=slot75
 
-export default function CityCanvas({ buildings, plazas, decorations, river, bridges, flyMode, flyVehicle, onExitFly, onCollect, themeIndex, onHud, onPause, focusedBuilding, focusedBuildingB, accentColor, onClearFocus, onBuildingClick, onFocusInfo, flyPauseSignal, flyHasOverlay, flyStartPaused, isMobile, onJoystickState, flyBoostActive, flyBrakeActive, skyAds, onAdClick, onAdViewed, introMode, onIntroEnd, raidPhase, raidData, raidAttacker, raidDefender, onRaidPhaseComplete, onLandmarkClick, onEArcadeClick, onDistrictLobbyClick, onSponsorClick, sponsorFocusPos, activeSponsorSlug, rabbitSighting, onRabbitCaught, rabbitCinematic, onRabbitCinematicEnd, rabbitCinematicTarget, ghostPreviewLogin, holdRise, celebrationActive, wallpaperMode, wallpaperSpeed, liveByLogin, cityEnergy }: Props) {
+export default function CityCanvas({ buildings, plazas, decorations, river, bridges, flyMode, flyVehicle, onExitFly, onCollect, themeIndex, onHud, onPause, focusedBuilding, focusedBuildingB, accentColor, onClearFocus, onBuildingClick, onFocusInfo, flyPauseSignal, flyHasOverlay, flyStartPaused, isMobile, onJoystickState, flyBoostActive, flyBrakeActive, skyAds, onAdClick, onAdViewed, introMode, onIntroEnd, raidPhase, raidData, raidAttacker, raidDefender, onRaidPhaseComplete, onLandmarkClick, onEArcadeClick, onDistrictLobbyClick, onDistrictSignIn, session, onSponsorClick, sponsorFocusPos, activeSponsorSlug, rabbitSighting, onRabbitCaught, rabbitCinematic, onRabbitCinematicEnd, rabbitCinematicTarget, ghostPreviewLogin, holdRise, celebrationActive, wallpaperMode, wallpaperSpeed, liveByLogin, cityEnergy }: Props) {
   const t = THEMES[themeIndex] ?? THEMES[0];
   const showPerf = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("perf");
   const [dpr, setDpr] = useState(1);
@@ -2225,7 +2227,7 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
 
       {/* ─── Web4City Zone 0: Central Plaza ─── */}
       <QuantumCore />
-      <DistrictTowers onDistrictClick={onDistrictLobbyClick} />
+      <DistrictTowers onDistrictClick={onDistrictLobbyClick} session={session} onSignIn={onDistrictSignIn} />
 
       {/* ─── Plaza Avatars (from Agentshire Kenney collection) ─── */}
       <PlazaAvatar position={[30, 0, 30]} />
