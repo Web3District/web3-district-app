@@ -20,7 +20,7 @@ export function SortButton({
     <button
       onClick={() => onSort(sortKey)}
       className={`cursor-pointer text-left text-[11px] transition-colors ${
-        isActive ? "text-lime" : "text-muted hover:text-cream"
+        isActive ? "text-[#e040c0]" : "text-muted hover:text-cream"
       }`}
     >
       {label}

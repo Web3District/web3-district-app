@@ -18,9 +18,9 @@ export function BatchToolbar({
   if (count === 0) return null;
 
   return (
-    <div className="mb-4 flex items-center gap-3 border-2 border-lime/30 bg-lime/5 px-4 py-3">
-      <span className="text-xs text-lime">{count} selected</span>
-      <div className="h-4 w-px bg-lime/30" />
+    <div className="mb-4 flex items-center gap-3 border-2 border-[#e040c0]/30 bg-[#e040c0]/5 px-4 py-3">
+      <span className="text-xs text-[#e040c0]">{count} selected</span>
+      <div className="h-4 w-px bg-[#e040c0]/30" />
       <button
         onClick={onPause}
         className="cursor-pointer border border-border px-3 py-1 text-[11px] text-muted transition-colors hover:text-cream"

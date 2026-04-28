@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 function CopyButton({ text, label, copied, onCopy }: { text: string; label: string; copied: string | null; onCopy: (text: string, label: string) => void }) {
   return (
@@ -110,7 +110,7 @@ export default function IntegrationPage() {
         <div className="mt-3 grid grid-cols-2 gap-3">
           <button
             onClick={() => setMethod("pixel")}
-            className="group cursor-pointer border-[3px] p-4 text-left transition-all hover:border-[#c8e64a66]"
+            className="group cursor-pointer border-[3px] p-4 text-left transition-all hover:border-[#e040c066]"
             style={{
               borderColor: method === "pixel" ? ACCENT : "var(--color-border)",
               backgroundColor: method === "pixel" ? ACCENT + "08" : undefined,
@@ -129,7 +129,7 @@ export default function IntegrationPage() {
           </button>
           <button
             onClick={() => setMethod("s2s")}
-            className="group cursor-pointer border-[3px] p-4 text-left transition-all hover:border-[#c8e64a66]"
+            className="group cursor-pointer border-[3px] p-4 text-left transition-all hover:border-[#e040c066]"
             style={{
               borderColor: method === "s2s" ? ACCENT : "var(--color-border)",
               backgroundColor: method === "s2s" ? ACCENT + "08" : undefined,
@@ -265,7 +265,7 @@ export default function IntegrationPage() {
                 onClick={handleGenerate}
                 disabled={generating}
                 className="btn-press mt-3 px-5 py-2 text-xs text-bg"
-                style={{ backgroundColor: ACCENT, boxShadow: "3px 3px 0 0 #5a7a00" }}
+                style={{ backgroundColor: ACCENT, boxShadow: "3px 3px 0 0 #a02080" }}
               >
                 {generating ? "Generating..." : hasSecret ? "Regenerate Secret" : "Generate Secret"}
               </button>

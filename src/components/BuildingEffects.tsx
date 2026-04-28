@@ -15,7 +15,7 @@ export const NeonOutline = memo(function NeonOutline({
   width,
   height,
   depth,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   width: number;
   height: number;
@@ -60,7 +60,7 @@ export const ParticleAura = memo(function ParticleAura({
   width,
   height,
   depth,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   width: number;
   height: number;
@@ -132,7 +132,7 @@ export const SpotlightEffect = memo(function SpotlightEffect({
   height,
   width,
   depth,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   height: number;
   width: number;
@@ -651,7 +651,7 @@ function BillboardSingle({
   billH,
   position,
   rotation,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   imageUrl?: string | null;
   billW: number;
@@ -699,7 +699,7 @@ export const Billboards = memo(function Billboards({
   width,
   depth,
   images,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   height: number;
   width: number;
@@ -811,7 +811,7 @@ export const Flag = memo(function Flag({
   height,
   width,
   depth,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   height: number;
   width: number;
@@ -864,7 +864,7 @@ export const NeonTrim = memo(function NeonTrim({
   width,
   height,
   depth,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   width: number;
   height: number;
@@ -973,7 +973,7 @@ export const SatelliteDish = memo(function SatelliteDish({
   height,
   width,
   depth,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   height: number;
   width: number;
@@ -1148,7 +1148,7 @@ export const HologramRing = memo(function HologramRing({
   width,
   height,
   depth,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   width: number;
   height: number;
@@ -1254,7 +1254,7 @@ export const LightningAura = memo(function LightningAura({
   width,
   height,
   depth,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   width: number;
   height: number;
@@ -1452,7 +1452,7 @@ export const LEDBanner = memo(function LEDBanner({
   height,
   width,
   depth,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   height: number;
   width: number;
@@ -1530,7 +1530,7 @@ export const StreakFlame = memo(function StreakFlame({
   width,
   depth,
   streakDays,
-  color = "#c8e64a",
+  color = "#e040c0",
 }: {
   height: number;
   width: number;

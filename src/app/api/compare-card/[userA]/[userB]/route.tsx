@@ -86,7 +86,7 @@ function getTrashTalk(aWins: number, bWins: number, lang: Lang): string {
 }
 
 // ─── Colors ───────────────────────────────────────────────────
-const accent = "#c8e64a";
+const accent = "#e040c0";
 const bg = "#0d0d0f";
 const cream = "#e8dcc8";
 const border = "#2a2a30";

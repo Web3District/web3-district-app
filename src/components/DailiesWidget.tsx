@@ -187,7 +187,6 @@ export default function DailiesWidget({ data, accent, shadow, isMobile, onClaim,
                 if (starOpened) {
                   verifyStarOnReturn();
                 } else {
-                  window.open("https://github.com/srizzon/git-city", "_blank");
                   setStarOpened(true);
                 }
               }}

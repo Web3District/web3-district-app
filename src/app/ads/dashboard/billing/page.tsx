@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 interface AdSummary {
   id: string;
@@ -100,14 +100,12 @@ export default function BillingPage() {
               onClick={openStripePortal}
               disabled={portalLoading}
               className="btn-press mt-4 px-6 py-2.5 text-sm text-bg transition-opacity disabled:opacity-50"
-              style={{ backgroundColor: ACCENT, boxShadow: "3px 3px 0 0 #5a7a00" }}
+              style={{ backgroundColor: ACCENT, boxShadow: "3px 3px 0 0 #a02080" }}
             >
               {portalLoading ? "Opening..." : "Open Stripe Portal"}
             </button>
             <p className="mt-4 text-sm text-muted normal-case">
               Need help?{" "}
-              <a href="mailto:samuelrizzondev@gmail.com" className="transition-colors hover:text-cream" style={{ color: ACCENT }}>
-                samuelrizzondev@gmail.com
               </a>
             </p>
           </div>

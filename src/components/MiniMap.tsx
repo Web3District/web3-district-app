@@ -17,17 +17,11 @@ const DISPLAY = 128;
 const PAD = 3;
 
 const DISTRICT_RGB: Record<string, [number, number, number]> = {
-  downtown: [200, 153, 29],
-  frontend: [47, 104, 197],
-  backend: [191, 54, 54],
-  fullstack: [134, 68, 197],
-  mobile: [27, 157, 75],
-  data_ai: [5, 146, 170],
-  devops: [199, 92, 18],
-  security: [176, 30, 30],
-  gamedev: [189, 58, 122],
-  vibe_coder: [111, 74, 197],
-  creator: [187, 143, 6],
+  ai: [236, 72, 153],
+  web3: [139, 92, 246],
+  quantum: [6, 182, 212],
+  growth: [16, 185, 129],
+  vc: [249, 115, 22],
 };
 
 export default function MiniMap({ buildings, playerX, playerZ, visible, currentDistrict }: MiniMapProps) {
@@ -77,7 +71,7 @@ export default function MiniMap({ buildings, playerX, playerZ, visible, currentD
     return buildings.map(b => ({
       px: Math.round(ox + (b.position[0] - wb.x0) * s),
       py: Math.round(oy + (b.position[2] - wb.z0) * s),
-      d: b.district ?? "fullstack",
+      d: b.home_district ?? b.district ?? "fullstack",
     }));
   }, [buildings, wb]);
 

@@ -135,7 +135,7 @@ export default function AdminDropsPage() {
           <div className="fixed right-4 top-4 z-100">
             <div className={`flex items-center gap-3 border px-4 py-3 text-xs ${
               success
-                ? "border-lime/30 bg-lime/10 text-lime"
+                ? "border-[#e040c0]/30 bg-[#e040c0]/10 text-[#e040c0]"
                 : "border-red-800/30 bg-red-900/20 text-red-400"
             }`}>
               {success ?? error}
@@ -154,7 +154,7 @@ export default function AdminDropsPage() {
                 type="text"
                 value={buildingLogin}
                 onChange={(e) => setBuildingLogin(e.target.value)}
-                className="w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-lime"
+                className="w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-[#e040c0]"
                 placeholder="github username"
                 required
               />
@@ -166,7 +166,7 @@ export default function AdminDropsPage() {
                 <select
                   value={rarity}
                   onChange={(e) => setRarity(e.target.value)}
-                  className="w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-lime"
+                  className="w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-[#e040c0]"
                 >
                   <option value="common">Common (10 pts)</option>
                   <option value="rare">Rare (50 pts)</option>
@@ -180,7 +180,7 @@ export default function AdminDropsPage() {
                 <select
                   value={durationHours}
                   onChange={(e) => setDurationHours(Number(e.target.value))}
-                  className="w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-lime"
+                  className="w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-[#e040c0]"
                 >
                   <option value={24}>24 hours</option>
                   <option value={48}>48 hours</option>
@@ -195,7 +195,7 @@ export default function AdminDropsPage() {
                 type="number"
                 value={maxPulls}
                 onChange={(e) => setMaxPulls(Number(e.target.value))}
-                className="w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-lime"
+                className="w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-[#e040c0]"
                 min={1}
                 max={500}
               />
@@ -207,7 +207,7 @@ export default function AdminDropsPage() {
                 <select
                   value={itemReward}
                   onChange={(e) => setItemReward(e.target.value)}
-                  className="w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-lime"
+                  className="w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-[#e040c0]"
                   required
                 >
                   <option value="">Select an item...</option>
@@ -223,7 +223,7 @@ export default function AdminDropsPage() {
             <button
               type="submit"
               disabled={creating}
-              className="border-2 border-lime bg-lime/10 px-4 py-2.5 text-xs text-lime transition-colors hover:bg-lime/20 disabled:opacity-50"
+              className="border-2 border-[#e040c0] bg-[#e040c0]/10 px-4 py-2.5 text-xs text-[#e040c0] transition-colors hover:bg-[#e040c0]/20 disabled:opacity-50"
             >
               {creating ? "Creating..." : "Plant Drop"}
             </button>

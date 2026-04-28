@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import type { PitchStats } from "@/lib/pitch-stats";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 const CREAM = "#e8dcc8";
 const MUTED = "#8c8c9c";
 const TOTAL_SLIDES = 13;
@@ -608,18 +608,14 @@ function SlideContact() {
       </p>
       <div className="flex flex-col gap-5">
         <a
-          href="https://x.com/srizzon"
           target="_blank"
           rel="noopener noreferrer"
           className="border-[3px] border-border bg-bg-raised px-8 py-4 text-base text-cream transition-colors hover:border-border-light sm:text-lg"
         >
-          @srizzon on X
         </a>
         <a
-          href="mailto:samuelrizzondev@gmail.com"
           className="border-[3px] border-border bg-bg-raised px-8 py-4 text-base text-cream transition-colors hover:border-border-light sm:text-lg"
         >
-          samuelrizzondev@gmail.com
         </a>
       </div>
       <p className="mt-4 text-sm text-muted normal-case sm:text-base">

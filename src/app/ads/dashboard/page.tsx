@@ -8,7 +8,7 @@ import { PeriodSelector, type Period } from "./_components/period-selector";
 import { DailyChart } from "./_components/daily-chart";
 import { AdCard } from "./_components/ad-card";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 interface AdData {
   id: string;
@@ -100,7 +100,7 @@ function DashboardContent() {
         <Link
           href="/advertise"
           className="btn-press mt-6 inline-block px-7 py-3 text-sm text-bg"
-          style={{ backgroundColor: ACCENT, boxShadow: "4px 4px 0 0 #5a7a00" }}
+          style={{ backgroundColor: ACCENT, boxShadow: "4px 4px 0 0 #a02080" }}
         >
           Buy an ad
         </Link>
@@ -119,7 +119,7 @@ function DashboardContent() {
           <Link
             href="/ads/dashboard/new"
             className="btn-press px-4 py-2 text-xs text-bg"
-            style={{ backgroundColor: ACCENT, boxShadow: "3px 3px 0 0 #5a7a00" }}
+            style={{ backgroundColor: ACCENT, boxShadow: "3px 3px 0 0 #a02080" }}
           >
             + New Ad
           </Link>

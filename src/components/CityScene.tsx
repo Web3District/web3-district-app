@@ -194,7 +194,7 @@ export default function CityScene({
         buildings={buildings}
         grid={grid}
         colors={colors}
-        accentColor={accentColor ?? colors.accent ?? "#c8e64a"}
+        accentColor={accentColor ?? colors.accent ?? "#e040c0"}
         focusedBuilding={focusedBuilding}
         focusedBuildingB={focusedBuildingB}
         hideEffectsFor={hideEffectsFor}
@@ -210,7 +210,7 @@ export default function CityScene({
             height={focusedBuildingData.height}
             width={focusedBuildingData.width}
             depth={focusedBuildingData.depth}
-            accentColor={accentColor ?? "#c8e64a"}
+            accentColor={accentColor ?? "#e040c0"}
           />
         </group>
       )}
@@ -221,7 +221,7 @@ export default function CityScene({
             height={focusedBuildingBData.height}
             width={focusedBuildingBData.width}
             depth={focusedBuildingBData.depth}
-            accentColor={accentColor ?? "#c8e64a"}
+            accentColor={accentColor ?? "#e040c0"}
           />
         </group>
       )}

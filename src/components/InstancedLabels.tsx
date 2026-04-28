@@ -314,7 +314,20 @@ export default memo(function InstancedLabels({
 
     // Fast exit when already converged during intro/fly
     const hidden = !!(introMode || flyMode);
-    if (hidden && allConverged.current) return;
+    if (hidden) {
+      // Force all labels to zero alpha during fly/intro
+      if (!allConverged.current || targets.some(a => a > 0)) {
+        targets.fill(0);
+        // Force immediate update - no lerp
+        for (let i = 0; i < count; i++) {
+          arr[i] = 0;
+        }
+        alphaAttr.needsUpdate = true;
+        allConverged.current = true;
+      }
+      return;
+    }
+    if (allConverged.current) return;
 
     // Recalculate targets at ~8Hz (every 120ms)
     const now = clock.elapsedTime;

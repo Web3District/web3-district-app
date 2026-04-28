@@ -2,29 +2,31 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const from = Math.max(0, parseInt(searchParams.get("from") ?? "0", 10));
-  const to = Math.min(
-    from + 1000,
-    parseInt(searchParams.get("to") ?? "500", 10)
-  );
-
   const sb = getSupabaseAdmin();
 
-  // Round 1: devs + stats in parallel
-  const [devsResult, statsResult] = await Promise.all([
-    sb
+  // Fetch all developers in batches (Supabase max is 1000 per request)
+  const allDevs: any[] = [];
+  let offset = 0;
+  const batchSize = 1000;
+  
+  while (true) {
+    const { data, error } = await sb
       .from("developers")
       .select(
-        "id, github_login, name, avatar_url, contributions, total_stars, public_repos, primary_language, rank, claimed, kudos_count, visit_count, contributions_total, contribution_years, total_prs, total_reviews, repos_contributed_to, followers, following, organizations_count, account_created_at, current_streak, active_days_last_year, language_diversity, app_streak, rabbit_completed, district, district_chosen, xp_total, xp_level"
+        "id, github_login, name, avatar_url, contributions, total_stars, public_repos, primary_language, rank, claimed, kudos_count, visit_count, contributions_total, contribution_years, total_prs, total_reviews, repos_contributed_to, followers, following, organizations_count, account_created_at, current_streak, active_days_last_year, language_diversity, app_streak, rabbit_completed, district, home_district, district_chosen, xp_total, xp_level"
       )
       .order("rank", { ascending: true })
-      .range(from, to - 1),
-    sb.from("city_stats").select("*").eq("id", 1).single(),
-  ]);
+      .range(offset, offset + batchSize - 1);
+    
+    if (error || !data || data.length === 0) break;
+    allDevs.push(...data);
+    if (data.length < batchSize) break;
+    offset += batchSize;
+  }
+  
+  const statsResult = await sb.from("city_stats").select("*").eq("id", 1).single();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const devs = (devsResult.data ?? []) as Record<string, any>[];
+  const devs = allDevs as Record<string, any>[];
   const devIds = devs.map((d: Record<string, any>) => d.id);
 
   if (devIds.length === 0) {

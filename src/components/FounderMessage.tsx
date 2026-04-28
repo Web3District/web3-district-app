@@ -355,7 +355,6 @@ export default function FounderMessage({ onClose, session, hasClaimed, onSignIn 
               </a>
             ) : (
               <a
-                href="https://github.com/srizzon/git-city"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block font-pixel text-[10px] sm:text-[11px] px-4 py-2 uppercase tracking-wider transition-all duration-300"

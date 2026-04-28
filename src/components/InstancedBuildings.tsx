@@ -5,6 +5,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import type { CityBuilding } from "@/lib/github";
 import type { BuildingColors } from "./CityCanvas";
+import { DISTRICT_COLORS } from "@/lib/github";
 import { wasAdPointerConsumed } from "./SkyAds";
 
 // ─── Atlas Constants (must match Building3D.tsx) ───────────────
@@ -289,8 +290,15 @@ export default memo(function InstancedBuildings({
       // Rise starts at 0 (will animate to 1)
       rise[i] = 0;
 
-      // Custom color tint (rgb = color, a = flag)
-      if (b.custom_color) {
+      // District color tint based on home_district (rgb = color, a = flag)
+      const districtColor = b.home_district ? DISTRICT_COLORS[b.home_district] : null;
+      if (districtColor) {
+        _c.set(districtColor);
+        tint[i * 4 + 0] = _c.r;
+        tint[i * 4 + 1] = _c.g;
+        tint[i * 4 + 2] = _c.b;
+        tint[i * 4 + 3] = 1.0;
+      } else if (b.custom_color) {
         _c.set(b.custom_color);
         tint[i * 4 + 0] = _c.r;
         tint[i * 4 + 1] = _c.g;
@@ -427,7 +435,7 @@ export default memo(function InstancedBuildings({
     for (let i = 0; i < count; i++) {
       const login = buildings[i].login.toLowerCase();
       // Creator gets an overdriven glow (1.5 overshoots the mix, extra bright)
-      arr[i] = liveByLogin?.has(login) ? (login === "srizzon" ? 1.5 : 1.0) : 0.0;
+      arr[i] = liveByLogin?.has(login) ? (login === "eduardomarques" ? 1.5 : 1.0) : 0.0;
     }
     liveAttr.needsUpdate = true;
   }, [liveByLogin, buildings, count]);

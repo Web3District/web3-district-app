@@ -56,7 +56,7 @@ const GAME_TABS: { id: GameTabId; label: string }[] = [
   { id: "drops", label: "Drops" },
 ];
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 function rankColor(rank: number): string {
   if (rank === 1) return "#ffd700";
@@ -407,7 +407,7 @@ export default async function LeaderboardPage({
             className="btn-press inline-block px-7 py-3.5 text-sm text-bg"
             style={{
               backgroundColor: ACCENT,
-              boxShadow: "4px 4px 0 0 #5a7a00",
+              boxShadow: "4px 4px 0 0 #a02080",
             }}
           >
             Enter the City
@@ -416,13 +416,11 @@ export default async function LeaderboardPage({
           <p className="mt-6 text-[9px] text-muted normal-case">
             built by{" "}
             <a
-              href="https://x.com/samuelrizzondev"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-cream"
               style={{ color: ACCENT }}
             >
-              @samuelrizzondev
             </a>
           </p>
         </div>

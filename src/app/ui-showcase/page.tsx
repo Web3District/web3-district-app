@@ -12,9 +12,9 @@ const BORDER = "#2a2a30";
 const DIM = "#5c5c6c";
 const MUTED = "#8c8c9c";
 const WARM = "#d4cfc4";
-const LIME = "#c8e64a";
-const LIME_DARK = "#8aaa1a";
-const LIME_SHADOW = "#5a7a00";
+const LIME = "#e040c0";
+const LIME_DARK = "#a02080";
+const LIME_SHADOW = "#a02080";
 
 const PX: React.CSSProperties = { fontFamily: '"Silkscreen", monospace' };
 const SEC = { marginBottom: 48, maxWidth: 640, margin: "0 auto 48px", padding: "0 16px" };

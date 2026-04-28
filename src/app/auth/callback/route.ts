@@ -7,6 +7,7 @@ import { sendWelcomeNotification } from "@/lib/notification-senders/welcome";
 import { sendReferralJoinedNotification } from "@/lib/notification-senders/referral";
 import { fetchGitHubDeveloperData } from "@/lib/github-api";
 import { calculateGithubXp } from "@/lib/xp";
+import { inferDistrict } from "@/lib/github";
 
 // Extend timeout for GitHub API calls during login
 export const maxDuration = 60;
@@ -46,6 +47,7 @@ export async function GET(request: Request) {
       // ─── New dev: create building from GitHub data on login ───
       try {
         const ghData = await fetchGitHubDeveloperData(githubLogin, { allowEmpty: true });
+        const homeDistrict = inferDistrict(ghData.primary_language);
 
         const { data: created, error: createErr } = await admin
           .from("developers")
@@ -56,6 +58,8 @@ export async function GET(request: Request) {
             claimed_by: data.user.id,
             claimed_at: new Date().toISOString(),
             fetch_priority: 1,
+            district: 'downtown',
+            home_district: homeDistrict,
           }, { onConflict: "github_login" })
           .select("id")
           .single();
@@ -97,6 +101,14 @@ export async function GET(request: Request) {
       }
     } else if (!existingDev.claimed) {
       // ─── Legacy dev: claim existing unclaimed building ───
+      const { data: devData } = await admin
+        .from("developers")
+        .select("primary_language")
+        .eq("id", existingDev.id)
+        .single();
+      
+      const homeDistrict = inferDistrict(devData?.primary_language);
+      
       await admin
         .from("developers")
         .update({
@@ -104,6 +116,8 @@ export async function GET(request: Request) {
           claimed_by: data.user.id,
           claimed_at: new Date().toISOString(),
           fetch_priority: 1,
+          district: 'downtown',
+          home_district: homeDistrict,
         })
         .eq("id", existingDev.id)
         .eq("claimed", false);

@@ -7,7 +7,7 @@ import { MAX_TEXT_LENGTH } from "@/lib/skyAds";
 
 const AdPreview = dynamic(() => import("@/components/AdPreview"), { ssr: false });
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 const VEHICLE_ICONS: Record<string, string> = {
   plane: "\u2708",
@@ -88,7 +88,7 @@ function ClickPreview({
           className="btn-press block w-full py-2.5 text-center text-[10px] text-bg"
           style={{
             backgroundColor: ACCENT,
-            boxShadow: "4px 4px 0 0 #5a7a00",
+            boxShadow: "4px 4px 0 0 #a02080",
           }}
         >
           {link
@@ -233,7 +233,7 @@ export function SetupContent({
               onChange={(e) => setText(e.target.value)}
               maxLength={MAX_TEXT_LENGTH + 10}
               placeholder="YOUR BRAND"
-              className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-sm text-cream outline-none transition-colors focus:border-lime"
+              className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-sm text-cream outline-none transition-colors focus:border-[#e040c0]"
             />
             <p
               className="mt-1 text-[11px] normal-case"
@@ -259,7 +259,7 @@ export function SetupContent({
               onChange={(e) => setBrand(e.target.value)}
               maxLength={60}
               placeholder="Your Company"
-              className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-sm text-cream outline-none transition-colors focus:border-lime"
+              className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-sm text-cream outline-none transition-colors focus:border-[#e040c0]"
             />
             <p className="mt-1 text-[11px] text-muted normal-case">
               {brand.length}/60
@@ -277,7 +277,7 @@ export function SetupContent({
               maxLength={200}
               rows={4}
               placeholder="Tell visitors about your product or service. This shows when someone clicks your ad."
-              className="mt-1 w-full resize-y border-[3px] border-border bg-transparent px-3 py-2.5 text-sm text-cream normal-case outline-none transition-colors focus:border-lime"
+              className="mt-1 w-full resize-y border-[3px] border-border bg-transparent px-3 py-2.5 text-sm text-cream normal-case outline-none transition-colors focus:border-[#e040c0]"
               style={{ fontFamily: "inherit", lineHeight: "1.6" }}
             />
             <p className="mt-1 text-[11px] text-muted normal-case">
@@ -295,7 +295,7 @@ export function SetupContent({
               value={link}
               onChange={(e) => setLink(e.target.value)}
               placeholder="https://yoursite.com"
-              className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-sm text-cream outline-none transition-colors focus:border-lime"
+              className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-sm text-cream outline-none transition-colors focus:border-[#e040c0]"
             />
             {link && !linkValid && (
               <p
@@ -321,7 +321,7 @@ export function SetupContent({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
-              className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-sm text-cream outline-none transition-colors focus:border-lime"
+              className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-sm text-cream outline-none transition-colors focus:border-[#e040c0]"
             />
             {email && !emailValid && (
               <p className="mt-1 text-[11px] normal-case" style={{ color: "#ff6b6b" }}>
@@ -365,7 +365,7 @@ export function SetupContent({
                 className="btn-press w-full py-3.5 text-center text-sm text-bg"
                 style={{
                   backgroundColor: ACCENT,
-                  boxShadow: "4px 4px 0 0 #5a7a00",
+                  boxShadow: "4px 4px 0 0 #a02080",
                 }}
               >
                 View ad stats
@@ -381,7 +381,7 @@ export function SetupContent({
                 className="btn-press w-full py-3.5 text-sm text-bg transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
                 style={{
                   backgroundColor: ACCENT,
-                  boxShadow: "4px 4px 0 0 #5a7a00",
+                  boxShadow: "4px 4px 0 0 #a02080",
                 }}
               >
                 {saving ? "Saving..." : "Save & Go to Dashboard"}

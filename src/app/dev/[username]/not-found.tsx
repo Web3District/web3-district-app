@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export default function DevNotFound() {
-  const accent = "#c8e64a";
+  const accent = "#e040c0";
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-bg font-pixel uppercase text-warm">
@@ -15,7 +15,7 @@ export default function DevNotFound() {
           className="btn-press mt-8 inline-block px-7 py-3.5 text-sm text-bg"
           style={{
             backgroundColor: accent,
-            boxShadow: "4px 4px 0 0 #5a7a00",
+            boxShadow: "4px 4px 0 0 #a02080",
           }}
         >
           Search in City

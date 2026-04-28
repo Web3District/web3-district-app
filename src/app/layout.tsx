@@ -29,16 +29,13 @@ export const metadata: Metadata = {
     title: "Web4City - Your GitHub as a 3D City",
     description:
       "Web4City – your GitHub profile as a 3D building. Explore developers as buildings in a living 3D city.",
-    siteName: "Web3 District",
+    siteName: "Web4 City",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    creator: "@samuelrizzondev",
-    site: "@samuelrizzondev",
   },
-  authors: [{ name: "Samuel Rizzon", url: "https://x.com/samuelrizzondev" }],
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-icon.png",
@@ -54,16 +51,15 @@ const BASE_URL =
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "Web3 District",
+  name: "Web4 City",
   description:
-    "Web3 District – your GitHub profile as a 3D building in an interactive city",
+    "Web4 City – your GitHub profile as a 3D building in an interactive city",
   url: BASE_URL,
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Web",
   author: {
     "@type": "Person",
-    name: "Samuel Rizzon",
-    url: "https://x.com/samuelrizzondev",
+    name: "Web4 City",
   },
   offers: {
     "@type": "Offer",

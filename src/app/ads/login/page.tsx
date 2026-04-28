@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 export default function AdsLoginPage() {
   return (
@@ -109,14 +109,14 @@ function AdsLoginInner() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
               required
-              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#c8e64a] normal-case"
+              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#e040c0] normal-case"
             />
 
             <button
               type="submit"
               disabled={!email.trim() || loading}
               className="btn-press mt-4 w-full py-3 text-sm text-bg transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
-              style={{ backgroundColor: ACCENT, boxShadow: "4px 4px 0 0 #5a7a00" }}
+              style={{ backgroundColor: ACCENT, boxShadow: "4px 4px 0 0 #a02080" }}
             >
               {loading ? "Sending..." : "Send sign-in link"}
             </button>

@@ -39,7 +39,7 @@ export default function LeaderboardYouBadge({ login }: { login: string }) {
   if (!authLogin || authLogin !== login.toLowerCase()) return null;
 
   return (
-    <span className="ml-2 text-[10px]" style={{ color: "#c8e64a" }}>
+    <span className="ml-2 text-[10px]" style={{ color: "#e040c0" }}>
       YOU
     </span>
   );

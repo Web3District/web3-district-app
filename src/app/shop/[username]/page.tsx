@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 export default async function ShopPage({ params, searchParams }: Props) {
   const { username } = await params;
@@ -92,7 +92,7 @@ export default async function ShopPage({ params, searchParams }: Props) {
               className="btn-press mt-5 inline-block px-6 py-3 text-xs text-bg"
               style={{
                 backgroundColor: ACCENT,
-                boxShadow: "3px 3px 0 0 #5a7a00",
+                boxShadow: "3px 3px 0 0 #a02080",
               }}
             >
               View Profile
@@ -279,13 +279,11 @@ export default async function ShopPage({ params, searchParams }: Props) {
           <p className="text-[9px] text-muted normal-case">
             built by{" "}
             <a
-              href="https://x.com/samuelrizzondev"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-cream"
               style={{ color: ACCENT }}
             >
-              @samuelrizzondev
             </a>
           </p>
         </div>

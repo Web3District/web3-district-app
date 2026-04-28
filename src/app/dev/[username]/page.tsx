@@ -55,8 +55,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      creator: "@samuelrizzondev",
-      site: "@samuelrizzondev",
     },
   };
 }
@@ -73,8 +71,8 @@ export default async function DevPage({ params }: Props) {
 
   if (!dev) notFound();
 
-  const accent = "#c8e64a";
-  const shadow = "#5a7a00";
+  const accent = "#e040c0";
+  const shadow = "#a02080";
   const ownedItems = await getOwnedItems(dev.id);
 
   // Fetch achievements with name+tier from DB (no hardcoded maps)
@@ -448,13 +446,11 @@ export default async function DevPage({ params }: Props) {
           <p className="text-[9px] text-muted normal-case">
             built by{" "}
             <a
-              href="https://x.com/samuelrizzondev"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-cream"
               style={{ color: accent }}
             >
-              @samuelrizzondev
             </a>
           </p>
         </div>

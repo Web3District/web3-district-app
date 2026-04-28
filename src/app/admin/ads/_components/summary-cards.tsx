@@ -46,7 +46,7 @@ export function SummaryCards({ totals, periodDays }: SummaryCardsProps) {
       </div>
       <div className="border border-border bg-bg-raised p-4">
         <p className="text-xs text-muted">CLICK RATE</p>
-        <p className="mt-1 text-3xl text-lime">{totals.ctr}</p>
+        <p className="mt-1 text-3xl text-[#e040c0]">{totals.ctr}</p>
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 // ─── Constants ───────────────────────────────────────────────
-const ACCENT_FALLBACK = "#c8e64a";
+const ACCENT_FALLBACK = "#e040c0";
 // E.Arcade reserved at grid(1, -1)
 const DEFAULT_POS: [number, number, number] = [173, 0, -149];
 

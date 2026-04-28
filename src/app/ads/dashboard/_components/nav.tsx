@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 const NAV_ITEMS = [
   { href: "/ads/dashboard", label: "Overview" },

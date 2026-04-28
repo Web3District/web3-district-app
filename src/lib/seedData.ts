@@ -29,7 +29,7 @@ export function getSeedDevelopers(): DeveloperRecord[] {
     claimed: false,
     fetch_priority: 0,
     claimed_at: null,
-    district: "data_ai", // All seed repos go to AI district
+    district: "ai", // All seed repos go to AI district
     // No custom_color — uses theme window palette directly for bright emissive windows
     custom_color: null,
     owned_items: [],

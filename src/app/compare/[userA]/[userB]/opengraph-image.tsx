@@ -23,7 +23,7 @@ export default async function Image({
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const accent = "#c8e64a";
+  const accent = "#e040c0";
   const bg = "#0d0d0f";
   const cream = "#e8dcc8";
   const border = "#2a2a30";
@@ -407,7 +407,6 @@ export default async function Image({
         >
           <span style={{ fontSize: 34, color: cream }}>GIT</span>
           <span style={{ fontSize: 34, color: accent }}>CITY</span>
-          <span style={{ fontSize: 16, color: muted, marginLeft: 8 }}>by @samuelrizzondev</span>
         </div>
       </div>
     ),

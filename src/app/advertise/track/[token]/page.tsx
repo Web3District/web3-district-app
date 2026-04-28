@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 // Historical baselines from Himetrica (tracking was lost in Supabase due to www origin bug).
 // Same map as in /api/sky-ads/analytics — keep in sync.
@@ -206,7 +206,7 @@ export default async function TrackingPage({ params }: Props) {
             className="btn-press inline-block px-7 py-3.5 text-sm text-bg"
             style={{
               backgroundColor: ACCENT,
-              boxShadow: "4px 4px 0 0 #5a7a00",
+              boxShadow: "4px 4px 0 0 #a02080",
             }}
           >
             Enter the City

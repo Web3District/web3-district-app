@@ -2,7 +2,7 @@
 
 import { useLeaderboardAuth } from "./LeaderboardYouBadge";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 interface MetricEntry {
   login: string;

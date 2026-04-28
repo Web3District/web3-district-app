@@ -29,7 +29,7 @@ function ButtonGroup<T extends string>({
           onClick={() => onChange(opt.value)}
           className={`cursor-pointer border px-3 py-1.5 text-[11px] transition-colors ${
             value === opt.value
-              ? "relative z-10 border-lime bg-lime/10 text-lime"
+              ? "relative z-10 border-[#e040c0] bg-[#e040c0]/10 text-[#e040c0]"
               : "border-border text-muted hover:text-cream"
           } ${i > 0 ? "-ml-px" : ""}`}
         >
@@ -89,7 +89,7 @@ export function AdFilters({
             setSearchLocal(e.target.value);
             setFilter("q", e.target.value);
           }}
-          className="ml-auto min-w-50 border border-border bg-bg px-3 py-1.5 text-[11px] text-cream outline-none placeholder:text-dim focus:border-lime"
+          className="ml-auto min-w-50 border border-border bg-bg px-3 py-1.5 text-[11px] text-cream outline-none placeholder:text-dim focus:border-[#e040c0]"
         />
 
         <button
@@ -105,7 +105,7 @@ export function AdFilters({
         <select
           value={filters.vehicle}
           onChange={(e) => setFilter("vehicle", e.target.value as VehicleFilter)}
-          className="cursor-pointer border border-border bg-bg px-3 py-1.5 text-[11px] text-cream outline-none focus:border-lime"
+          className="cursor-pointer border border-border bg-bg px-3 py-1.5 text-[11px] text-cream outline-none focus:border-[#e040c0]"
         >
           <option value="all">All vehicles</option>
           {Object.entries(VEHICLE_LABELS).map(([val, label]) => (
@@ -118,7 +118,7 @@ export function AdFilters({
         <select
           value={filters.source}
           onChange={(e) => setFilter("source", e.target.value as SourceFilter)}
-          className="cursor-pointer border border-border bg-bg px-3 py-1.5 text-[11px] text-cream outline-none focus:border-lime"
+          className="cursor-pointer border border-border bg-bg px-3 py-1.5 text-[11px] text-cream outline-none focus:border-[#e040c0]"
         >
           <option value="all">All sources</option>
           <option value="paid">Paid</option>

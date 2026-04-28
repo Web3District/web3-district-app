@@ -7,7 +7,7 @@ import { ROADMAP_PHASES, VOTABLE_ITEM_IDS } from "@/lib/roadmap-data";
 import type { RoadmapPhase, RoadmapItem, ItemStatus } from "@/lib/roadmap-data";
 import { toggleVote } from "./actions";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 const CREAM = "#e8dcc8";
 const MUTED = "#8c8c9c";
 
@@ -157,13 +157,11 @@ export default function RoadmapClient({
           <p className="mt-6 text-[9px] text-muted normal-case">
             built by{" "}
             <a
-              href="https://x.com/samuelrizzondev"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-cream"
               style={{ color: ACCENT }}
             >
-              @samuelrizzondev
             </a>
           </p>
         </div>

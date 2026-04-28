@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Customize your building in Web3 District with effects, structures and more",
 };
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 export default async function ShopLanding() {
   // If user is logged in and has a claimed building, redirect to their shop
@@ -105,13 +105,11 @@ export default async function ShopLanding() {
           <p className="text-[9px] text-muted normal-case">
             built by{" "}
             <a
-              href="https://x.com/samuelrizzondev"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-cream"
               style={{ color: ACCENT }}
             >
-              @samuelrizzondev
             </a>
           </p>
         </div>

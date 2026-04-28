@@ -335,11 +335,12 @@ export const DISTRICT_NAMES: Record<string, string> = {
 };
 
 export const DISTRICT_COLORS: Record<string, string> = {
-  downtown: '#fbbf24',
-  frontend: '#3b82f6', backend: '#ef4444', fullstack: '#a855f7',
-  mobile: '#22c55e', data_ai: '#06b6d4', devops: '#f97316',
-  security: '#dc2626', gamedev: '#ec4899', vibe_coder: '#8b5cf6',
-  creator: '#eab308',
+  downtown: '#ffffff',
+  ai: '#ec4899',
+  web3: '#8b5cf6',
+  quantum: '#06b6d4',
+  growth: '#10b981',
+  vc: '#f97316',
 };
 
 export const DISTRICT_DESCRIPTIONS: Record<string, string> = {
@@ -400,6 +401,7 @@ export function generateCityLayout(devs: DeveloperRecord[]): {
   const composites = precomputeComposites(devs, maxContrib, maxStars, maxContribV2);
 
   const DISTRICT_ORDER = [
+    'ai', 'web3', 'quantum', 'growth', 'vc',
     'backend', 'frontend', 'fullstack', 'data_ai', 'devops',
     'mobile', 'gamedev', 'vibe_coder', 'creator', 'security',
   ];
@@ -512,9 +514,12 @@ export function generateCityLayout(devs: DeveloperRecord[]): {
       const floors = Math.max(3, Math.floor(height / floorH));
       const windowsPerFloor = Math.max(3, Math.floor(w / 5));
       const sideWindowsPerFloor = Math.max(3, Math.floor(d / 5));
-      const did = downtownOverride.has(dev.github_login)
-        ? 'downtown'
+      const did = dev.district === 'downtown' 
+        ? 'downtown' 
         : (dev.district ?? inferDistrict(dev.primary_language));
+      
+      // Use home_district for color (downtown buildings show their home district color)
+      const colorDistrict = dev.home_district || did;
 
       buildings.push({
         login: dev.github_login,
@@ -544,6 +549,7 @@ export function generateCityLayout(devs: DeveloperRecord[]): {
         xp_total: (dev as unknown as Record<string, unknown>).xp_total as number ?? 0,
         xp_level: (dev as unknown as Record<string, unknown>).xp_level as number ?? 1,
         district: did,
+        home_district: dev.home_district || did,
         district_chosen: (dev as unknown as Record<string, unknown>).district_chosen as boolean ?? false,
         position: [posX, 0, posZ],
         width: w,

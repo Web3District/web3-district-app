@@ -4,8 +4,8 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { RoomInfo } from "@/lib/arcade/types";
 
-const ACCENT = "#c8e64a";
-const SHADOW = "#5a7a00";
+const ACCENT = "#e040c0";
+const SHADOW = "#a02080";
 const CATEGORIES = ["social", "work", "games", "events", "chill", "dev", "art", "music"] as const;
 
 interface RoomRow {
@@ -197,7 +197,7 @@ export default function ArcadeBrowserPage() {
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search rooms..."
-            className="w-full px-3 py-2 bg-bg border-2 border-border text-[10px] text-cream placeholder:text-dim outline-none transition-colors focus:border-lime normal-case"
+            className="w-full px-3 py-2 bg-bg border-2 border-border text-[10px] text-cream placeholder:text-dim outline-none transition-colors focus:border-[#e040c0] normal-case"
           />
 
           {/* Categories */}

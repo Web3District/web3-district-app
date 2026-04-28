@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 const VEHICLE_ICONS: Record<string, string> = {
   plane: "\u2708",
@@ -42,7 +42,7 @@ export function AdCard({ ad }: Props) {
   return (
     <Link
       href={`/ads/dashboard/${ad.id}`}
-      className="block border-[3px] border-border p-4 transition-colors hover:border-[#c8e64a33]"
+      className="block border-[3px] border-border p-4 transition-colors hover:border-[#e040c033]"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

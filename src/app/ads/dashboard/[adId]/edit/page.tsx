@@ -8,7 +8,7 @@ import { MAX_TEXT_LENGTH } from "@/lib/skyAds";
 
 const AdPreview = dynamic(() => import("@/components/AdPreview"), { ssr: false });
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 interface AdData {
   id: string;
@@ -136,7 +136,7 @@ export default function EditAdPage({ params }: { params: Promise<{ adId: string 
               onChange={(e) => setBrand(e.target.value)}
               maxLength={40}
               placeholder="Your Brand"
-              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#c8e64a]"
+              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#e040c0]"
             />
           </div>
 
@@ -154,7 +154,7 @@ export default function EditAdPage({ params }: { params: Promise<{ adId: string 
               maxLength={MAX_TEXT_LENGTH + 10}
               rows={2}
               placeholder="YOUR BRAND MESSAGE HERE"
-              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream uppercase outline-none transition-colors focus:border-[#c8e64a]"
+              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream uppercase outline-none transition-colors focus:border-[#e040c0]"
             />
           </div>
 
@@ -170,7 +170,7 @@ export default function EditAdPage({ params }: { params: Promise<{ adId: string 
               maxLength={200}
               rows={2}
               placeholder="Short description shown on CTA popup"
-              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#c8e64a] normal-case"
+              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#e040c0] normal-case"
             />
           </div>
 
@@ -182,7 +182,7 @@ export default function EditAdPage({ params }: { params: Promise<{ adId: string 
               value={link}
               onChange={(e) => setLink(e.target.value)}
               placeholder="https://yoursite.com"
-              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#c8e64a]"
+              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#e040c0]"
             />
           </div>
 
@@ -192,14 +192,14 @@ export default function EditAdPage({ params }: { params: Promise<{ adId: string 
               <label className="text-[10px] text-muted normal-case">Text color</label>
               <div className="mt-1 flex items-center gap-2">
                 <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-8 w-8 cursor-pointer border-[2px] border-border bg-transparent" />
-                <input type="text" value={color} onChange={(e) => setColor(e.target.value)} maxLength={7} className="w-full border-[2px] border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#c8e64a]" />
+                <input type="text" value={color} onChange={(e) => setColor(e.target.value)} maxLength={7} className="w-full border-[2px] border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#e040c0]" />
               </div>
             </div>
             <div>
               <label className="text-[10px] text-muted normal-case">Background</label>
               <div className="mt-1 flex items-center gap-2">
                 <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} className="h-8 w-8 cursor-pointer border-[2px] border-border bg-transparent" />
-                <input type="text" value={bgColor} onChange={(e) => setBgColor(e.target.value)} maxLength={7} className="w-full border-[2px] border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#c8e64a]" />
+                <input type="text" value={bgColor} onChange={(e) => setBgColor(e.target.value)} maxLength={7} className="w-full border-[2px] border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#e040c0]" />
               </div>
             </div>
           </div>
@@ -216,7 +216,7 @@ export default function EditAdPage({ params }: { params: Promise<{ adId: string 
               onClick={handleSave}
               disabled={!canSave}
               className="btn-press w-full py-3 text-sm text-bg transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
-              style={{ backgroundColor: ACCENT, boxShadow: "4px 4px 0 0 #5a7a00" }}
+              style={{ backgroundColor: ACCENT, boxShadow: "4px 4px 0 0 #a02080" }}
             >
               {saving ? "Saving..." : "Save changes"}
             </button>

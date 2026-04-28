@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 const ETH_ADDRESS = "0x8C24A2b54128bC0717F533E6DA7338be30b9f732";
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 function SupportContent() {
   const searchParams = useSearchParams();
@@ -129,12 +129,10 @@ function SupportContent() {
               A star helps more developers discover Web3 District. Takes one click.
             </p>
             <a
-              href="https://github.com/srizzon/git-city"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-press mt-4 inline-block border-2 border-border px-5 py-2 text-xs text-muted transition-colors hover:border-border-light hover:text-cream"
             >
-              github.com/srizzon/git-city
             </a>
           </div>
 
@@ -194,12 +192,10 @@ function SupportContent() {
               <span style={{ color: ACCENT }}>05.</span> GitHub Sponsors
             </p>
             <a
-              href="https://github.com/sponsors/srizzon"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-press mt-4 inline-block border-2 border-border px-5 py-2 text-xs text-muted transition-colors hover:border-border-light hover:text-cream"
             >
-              github.com/sponsors/srizzon
             </a>
           </div>
 

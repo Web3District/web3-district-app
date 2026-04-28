@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AdvertisePageTracker } from "./tracking";
 import { AdPurchaseForm } from "./AdPurchaseForm";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 export const metadata: Metadata = {
   title: "Advertise on Web3 District",
@@ -19,8 +19,6 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    creator: "@samuelrizzondev",
-    site: "@samuelrizzondev",
   },
 };
 
@@ -83,7 +81,7 @@ export default function AdvertisePage() {
                 key={item.q}
                 className="group border-2 border-border"
               >
-                <summary className="flex cursor-pointer items-center justify-between p-4 text-sm text-cream transition-colors hover:text-lime [&::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer items-center justify-between p-4 text-sm text-cream transition-colors hover:text-[#e040c0] [&::-webkit-details-marker]:hidden">
                   {item.q}
                   <span className="ml-3 text-xs text-muted transition-transform group-open:rotate-45">+</span>
                 </summary>
@@ -100,23 +98,19 @@ export default function AdvertisePage() {
           <p className="text-xs text-muted normal-case">
             Questions?{" "}
             <a
-              href="mailto:samuelrizzondev@gmail.com"
               className="transition-colors hover:text-cream"
               style={{ color: ACCENT }}
             >
-              samuelrizzondev@gmail.com
             </a>
           </p>
           <p className="mt-4 text-xs text-muted normal-case">
             built by{" "}
             <a
-              href="https://x.com/samuelrizzondev"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-cream"
               style={{ color: ACCENT }}
             >
-              @samuelrizzondev
             </a>
           </p>
         </div>

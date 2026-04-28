@@ -70,6 +70,8 @@ const RaidOverlay = dynamic(() => import("@/components/RaidOverlay"), { ssr: fal
 const PillModal = dynamic(() => import("@/components/PillModal"), { ssr: false });
 const FounderMessage = dynamic(() => import("@/components/FounderMessage"), { ssr: false });
 const EArcadeCard = dynamic(() => import("@/components/EArcadeCard"), { ssr: false });
+const DistrictLobbyCard = dynamic(() => import("@/components/DistrictLobbyCard"), { ssr: false });
+const DistrictLobbies = dynamic(() => import("@/components/DistrictLobbies"), { ssr: false });
 const SponsoredCard = dynamic(() => import("@/lib/sponsors/SponsoredCard"), { ssr: false });
 const RabbitCompletion = dynamic(() => import("@/components/RabbitCompletion"), { ssr: false });
 const DistrictChooser = dynamic(() => import("@/components/DistrictChooser"), { ssr: false });
@@ -81,7 +83,7 @@ const MILESTONE_MODE: "stars" | "devs" = "devs"; // "stars" = GitHub stars road 
 
 const THEMES = [
   { name: "Midnight", accent: "#6090e0", shadow: "#203870" },
-  { name: "Sunset", accent: "#c8e64a", shadow: "#5a7a00" },
+  { name: "Sunset", accent: "#e040c0", shadow: "#a02080" },
   { name: "Neon", accent: "#e040c0", shadow: "#600860" },
   { name: "Emerald", accent: "#f0c060", shadow: "#806020" },
 ];
@@ -513,6 +515,7 @@ function HomeContent() {
   const [pillModalOpen, setPillModalOpen] = useState(false);
   const [founderMessageOpen, setFounderMessageOpen] = useState(false);
   const [eArcadeOpen, setEArcadeOpen] = useState(false);
+  const [activeDistrictLobby, setActiveDistrictLobby] = useState<string | null>(null);
   const [arcadeOnline, setArcadeOnline] = useState<number>(0);
   const [activeSponsor, setActiveSponsor] = useState<string | null>(null);
   const [districtChooserOpen, setDistrictChooserOpen] = useState(false);
@@ -563,7 +566,7 @@ function HomeContent() {
 
   // Fetch GitHub star count + Discord member count + Arcade player count
   useEffect(() => {
-    fetch("https://api.github.com/repos/srizzon/git-city")
+    fetch("https://api.github.com/repos/eduardomarques/web4city")
       .then((r) => r.ok ? r.json() : null)
       .then((d) => { if (d?.stargazers_count != null) setStarCount(d.stargazers_count); })
       .catch(() => { });
@@ -1355,7 +1358,25 @@ function HomeContent() {
           }
         } catch { /* snapshot failed */ }
 
-        // FALLBACK: Use seed data (top 50 AI repos) when no Supabase data
+        // FALLBACK 1: Fetch from /api/city (has all developers from database)
+        if (allDevs.length === 0) {
+          setLoadStage("fetching");
+          setLoadProgress(20);
+          try {
+            const cityRes = await fetch("/api/city?from=0&to=0");
+            if (cityRes.ok) {
+              const cityData = await cityRes.json();
+              allDevs = cityData.developers || [];
+              cityStats = cityData.stats || { total_developers: allDevs.length, total_contributions: 0 };
+              dropsPayload = cityData._d ?? [];
+              console.log(`🏙️ Loaded ${allDevs.length} developers from /api/city`);
+            }
+          } catch (err) {
+            console.warn("Failed to fetch from /api/city, using seed data:", err);
+          }
+        }
+
+        // FALLBACK 2: Use seed data (top 50 AI repos) when all else fails
         if (allDevs.length === 0) {
           setLoadStage("fetching");
           setLoadProgress(20);
@@ -2318,6 +2339,7 @@ function HomeContent() {
         onRaidPhaseComplete={raidActions.onPhaseComplete}
         onLandmarkClick={() => { setPillModalOpen(true); setSelectedBuilding(null); }}
         onEArcadeClick={() => { trackEArcadeClicked(); setEArcadeOpen(true); setSelectedBuilding(null); }}
+        onDistrictLobbyClick={(slug: string) => { setActiveDistrictLobby(slug); setSelectedBuilding(null); }}
         onSponsorClick={(slug) => {
           trackLandmarkClicked(slug);
           const adId = getLandmarkAdId(slug);
@@ -2865,10 +2887,10 @@ function HomeContent() {
       {/* ─── GitHub Badge (mobile: top-center, desktop: top-right) ─── */}
       {!flyMode && !introMode && !rabbitCinematic && (
         <div className={`pointer-events-auto fixed top-3 left-3 z-30 items-center gap-1.5 sm:gap-2 sm:left-auto sm:right-4 sm:top-4 ${exploreMode ? "hidden lg:flex" : "flex"}`}>
-          {/* GitHub stars — only when loaded */}
-          {starCount != null && (
+          {/* GitHub stars — HIDDEN */}
+          {/* starCount != null && (
             <a
-              href="https://github.com/srizzon/git-city"
+              href="https://github.com/eduardomarques/web4city"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 border-[3px] border-border bg-bg/70 px-2.5 py-1 text-[10px] backdrop-blur-sm transition-colors hover:border-border-light"
@@ -2877,9 +2899,9 @@ function HomeContent() {
               <span style={{ color: theme.accent }}>&#9733;</span>
               <span className="text-cream">{starCount.toLocaleString()}</span>
             </a>
-          )}
-          {/* Discord — desktop only, goes in mobile menu */}
-          <a
+          ) */}
+          {/* Discord — HIDDEN */}
+          {/* <a
             href="https://discord.gg/2bTjFAkny7"
             target="_blank"
             rel="noopener noreferrer"
@@ -2888,7 +2910,7 @@ function HomeContent() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-[#5865F2]"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.947 2.418-2.157 2.418z" /></svg>
             <span className="hidden sm:inline text-cream">Discord</span>
             {discordMembers != null && <span className="text-cream">{discordMembers.toLocaleString()}</span>}
-          </a>
+          </a> */}
           {/* Live users — desktop only */}
           <div className="hidden sm:flex items-center gap-1.5 border-[3px] border-border bg-bg/70 px-2.5 py-1 text-[10px] backdrop-blur-sm">
             <span className="live-dot h-1.5 w-1.5 shrink-0 rounded-full bg-[#4ade80]" />
@@ -2929,8 +2951,7 @@ function HomeContent() {
                 {codingPanelOpen && (() => {
                   // Creator always first, then up to 4 others
                   const allDevs = Array.from(liveByLogin.values());
-                  const creator = allDevs.find((d) => d.githubLogin.toLowerCase() === "srizzon");
-                  const others = allDevs.filter((d) => d.githubLogin.toLowerCase() !== "srizzon");
+                  const others = allDevs.filter((d) => d.githubLogin.toLowerCase() !== "eduardomarques");
                   const displayDevs = [
                     ...(creator ? [creator] : []),
                     ...others.slice(0, creator ? 4 : 5),
@@ -2944,7 +2965,6 @@ function HomeContent() {
                       </div>
                       <div>
                         {displayDevs.map((dev) => {
-                          const isCreator = dev.githubLogin.toLowerCase() === "srizzon";
                           return (
                             <button
                               key={dev.githubLogin}
@@ -3248,6 +3268,18 @@ function HomeContent() {
                 </span>
                 <span className="text-xs" style={{ color: theme.accent }}>&#8594;</span>
               </button>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setActiveDistrictLobby(null);
+                }}
+                className="flex w-full items-center justify-between px-5 py-4 active:bg-white/5"
+              >
+                <span className="flex items-center gap-2 text-sm text-cream">
+                  🏙️ District Lobbies
+                </span>
+                <span className="text-xs" style={{ color: theme.accent }}>&#8594;</span>
+              </button>
               <Link
                 href="/live"
                 onClick={() => setMobileMenuOpen(false)}
@@ -3296,7 +3328,7 @@ function HomeContent() {
                 <span className="text-xs" style={{ color: theme.accent }}>&#8594;</span>
               </a>
               <a
-                href="https://github.com/srizzon/git-city"
+                href="https://github.com/eduardomarques/web4city"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setMobileMenuOpen(false)}
@@ -3369,7 +3401,7 @@ function HomeContent() {
                   const label = target >= 1000 ? `${target / 1000}K` : target.toLocaleString();
                   return (
                     <a
-                      href="https://github.com/srizzon/git-city"
+                      href="https://github.com/eduardomarques/web4city"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block w-full max-w-sm group"
@@ -3591,6 +3623,19 @@ function HomeContent() {
                   Lobby
                   <span className="block text-[8px] opacity-60 normal-case">
                     {arcadeOnline > 0 ? `${arcadeOnline} online` : "Meet other devs"}
+                  </span>
+                </button>
+                <button
+                  onClick={() => setActiveDistrictLobby(null)}
+                  className="btn-press px-7 py-3 text-xs sm:py-3.5 sm:text-sm text-bg"
+                  style={{
+                    backgroundColor: theme.accent,
+                    boxShadow: `4px 4px 0 0 ${theme.shadow}`,
+                  }}
+                >
+                  🏙️ Districts
+                  <span className="block text-[8px] opacity-60 normal-cap">
+                    District Lobbies
                   </span>
                 </button>
                 {(
@@ -4120,13 +4165,13 @@ function HomeContent() {
               })()}
 
               {/* District badge */}
-              {selectedBuilding.district && (
+              {selectedBuilding.home_district && (
                 <div className="px-4 pb-2">
                   <span
                     className="inline-block px-2 py-0.5 text-[8px] text-bg"
-                    style={{ backgroundColor: DISTRICT_COLORS[selectedBuilding.district] ?? '#888' }}
+                    style={{ backgroundColor: DISTRICT_COLORS[selectedBuilding.home_district] ?? '#888' }}
                   >
-                    {DISTRICT_NAMES[selectedBuilding.district] ?? selectedBuilding.district}
+                    {DISTRICT_NAMES[selectedBuilding.home_district] ?? selectedBuilding.home_district}
                   </span>
                 </div>
               )}
@@ -4476,7 +4521,7 @@ function HomeContent() {
                         </select>
                       )}
                       {dropPlantResult && (
-                        <p className={`text-[9px] ${dropPlantResult === "Planted!" ? "text-lime" : "text-red-400"}`}>{dropPlantResult}</p>
+                        <p className={`text-[9px] ${dropPlantResult === "Planted!" ? "text-[#e040c0]" : "text-red-400"}`}>{dropPlantResult}</p>
                       )}
                       <div className="flex gap-2">
                         <button
@@ -5518,6 +5563,16 @@ function HomeContent() {
           onEnter={() => {
             window.location.href = "/arcade";
           }}
+          session={session}
+          onSignIn={handleSignInWithRef}
+        />
+      )}
+
+      {/* District Lobby Card */}
+      {activeDistrictLobby && (
+        <DistrictLobbyCard
+          slug={activeDistrictLobby}
+          onClose={() => setActiveDistrictLobby(null)}
           session={session}
           onSignIn={handleSignInWithRef}
         />

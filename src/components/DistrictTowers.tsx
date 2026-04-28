@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -37,14 +37,14 @@ function WalkingAvatar() {
 
     if (idleClip) {
       const action = mixer.clipAction(idleClip);
-      action.setLoop(THREE.LoopRepeat, Infinity);
+      action.setLoop(THREE.LoopRepeat);
       action.clampWhenFinished = false;
       idleActionRef.current = action;
     }
 
     if (walkClip) {
       const action = mixer.clipAction(walkClip);
-      action.setLoop(THREE.LoopRepeat, Infinity);
+      action.setLoop(THREE.LoopRepeat);
       action.clampWhenFinished = false;
       walkActionRef.current = action;
     }
@@ -131,6 +131,89 @@ function WalkingAvatar() {
 
 useGLTF.preload("/models/characters/character-b.glb");
 
+// ─── Click hook (same pattern as EArcadeLandmark) ───
+function useBuildingClick(
+  groupRef: React.RefObject<THREE.Group | null>,
+  onClick: () => void,
+) {
+  const { gl, camera, scene } = useThree();
+  const raycaster = useRef(new THREE.Raycaster());
+  const ndc = useRef(new THREE.Vector2());
+  const onClickRef = useRef(onClick);
+
+  useEffect(() => { onClickRef.current = onClick; }, [onClick]);
+
+  useEffect(() => {
+    const canvas = gl.domElement;
+    const hitsTarget = (e: PointerEvent): boolean => {
+      const group = groupRef.current;
+      if (!group) return false;
+      const rect = canvas.getBoundingClientRect();
+      ndc.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      ndc.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.current.setFromCamera(ndc.current, camera);
+      const targetHits = raycaster.current.intersectObject(group, true);
+      if (targetHits.length === 0) return false;
+      const targetDistance = targetHits[0].distance;
+      const sceneHits = raycaster.current.intersectObjects(scene.children, true);
+      for (const hit of sceneHits) {
+        if (hit.distance >= targetDistance) break;
+        if ((hit.object as any).isInstancedMesh) return false;
+        let obj: THREE.Object3D | null = hit.object;
+        while (obj) {
+          if (obj === group) break;
+          if (obj.userData?.isLandmark) return false;
+          obj = obj.parent;
+        }
+      }
+      return true;
+    };
+
+    let tap: { time: number; x: number; y: number } | null = null;
+
+    const onDown = (e: PointerEvent) => {
+      if (hitsTarget(e)) {
+        tap = { time: performance.now(), x: e.clientX, y: e.clientY };
+      }
+    };
+
+    const onUp = (e: PointerEvent) => {
+      if (!tap) return;
+      const elapsed = performance.now() - tap.time;
+      const dx = e.clientX - tap.x;
+      const dy = e.clientY - tap.y;
+      tap = null;
+      if (elapsed > 400 || dx * dx + dy * dy > 625) return;
+      onClickRef.current();
+    };
+
+    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    let lastMove = 0;
+    const onMove = isTouch
+      ? null
+      : (e: PointerEvent) => {
+          const now = performance.now();
+          if (now - lastMove < 66) return;
+          lastMove = now;
+          if (hitsTarget(e)) {
+            document.body.style.cursor = "pointer";
+          } else if (document.body.style.cursor === "pointer") {
+            document.body.style.cursor = "";
+          }
+        };
+
+    canvas.addEventListener("pointerdown", onDown, true);
+    window.addEventListener("pointerup", onUp, true);
+    if (onMove) window.addEventListener("pointermove", onMove, true);
+    return () => {
+      canvas.removeEventListener("pointerdown", onDown, true);
+      window.removeEventListener("pointerup", onUp, true);
+      if (onMove) window.removeEventListener("pointermove", onMove, true);
+      document.body.style.cursor = "";
+    };
+  }, [gl.domElement, camera, scene, groupRef]);
+}
+
 // ─── Label Helper (crisp text, no glow, no cuts) ───
 function makeLabel(text: string, color: string): THREE.CanvasTexture {
   const canvas = typeof document !== 'undefined' ? document.createElement("canvas") : { width: 0, height: 0 } as HTMLCanvasElement;
@@ -157,9 +240,10 @@ function makeLabel(text: string, color: string): THREE.CanvasTexture {
 }
 
 // ─── 1. AI District — Empire State Style ───
-function BuildingAI({ name, position, height, accentColor, windowColors }: any) {
+function BuildingAI({ name, position, height, accentColor, windowColors, onClick }: any) {
   const groupRef = useRef<THREE.Group>(null);
   const beaconRef = useRef<THREE.Mesh>(null);
+  useBuildingClick(groupRef, onClick);
   
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
@@ -171,7 +255,7 @@ function BuildingAI({ name, position, height, accentColor, windowColors }: any) 
   const makeWindows = (px: number, py: number, pz: number, w: number, h: number, isX: boolean, face: string) => {
     const floors = Math.floor(h / 30);
     const cols = Math.floor(w / 8);
-    const result: React.JSX.Element[] = [];
+    const result: JSX.Element[] = [];
     for (let row = 0; row < floors; row++) {
       for (let col = 0; col < cols; col++) {
         const local = (col - (cols - 1) / 2) * 7;
@@ -241,8 +325,9 @@ function BuildingAI({ name, position, height, accentColor, windowColors }: any) 
 }
 
 // ─── 2. Web3 District — Twisted Helix Tower ───
-function BuildingWeb3({ name, position, height, accentColor, windowColors }: any) {
+function BuildingWeb3({ name, position, height, accentColor, windowColors, onClick }: any) {
   const groupRef = useRef<THREE.Group>(null);
+  useBuildingClick(groupRef, onClick);
   
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
@@ -300,9 +385,10 @@ function BuildingWeb3({ name, position, height, accentColor, windowColors }: any
 }
 
 // ─── 3. Quantum District — Floating Orb Tower + Antenna + Square Windows ───
-function BuildingQuantum({ name, position, height, accentColor, windowColors }: any) {
+function BuildingQuantum({ name, position, height, accentColor, windowColors, onClick }: any) {
   const groupRef = useRef<THREE.Group>(null);
   const orbRef = useRef<THREE.Mesh>(null);
+  useBuildingClick(groupRef, onClick);
   
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
@@ -314,7 +400,7 @@ function BuildingQuantum({ name, position, height, accentColor, windowColors }: 
   });
 
   const pillarHeight = height * 0.7;
-  const windows: React.JSX.Element[] = [];
+  const windows: JSX.Element[] = [];
   const floors = Math.floor(pillarHeight / 30);
   const cols = 8;
   for (let row = 0; row < floors; row++) {
@@ -332,7 +418,7 @@ function BuildingQuantum({ name, position, height, accentColor, windowColors }: 
     }
   }
 
-  const squareWindows: React.JSX.Element[] = [];
+  const squareWindows: JSX.Element[] = [];
   const sqFloors = Math.floor(pillarHeight / 35);
   const sqCols = 4;
   const sqSize = 5;
@@ -392,8 +478,9 @@ function BuildingQuantum({ name, position, height, accentColor, windowColors }: 
 }
 
 // ─── 4. Growth District — Zigzag / Sawtooth Tower ───
-function BuildingGrowth({ name, position, height, accentColor, windowColors }: any) {
+function BuildingGrowth({ name, position, height, accentColor, windowColors, onClick }: any) {
   const groupRef = useRef<THREE.Group>(null);
+  useBuildingClick(groupRef, onClick);
   const floors = 14;
   const segH = height / floors;
   const baseW = 36;
@@ -444,13 +531,14 @@ function BuildingGrowth({ name, position, height, accentColor, windowColors }: a
 }
 
 // ─── 5. VC District — Vault / Safe Style ───
-function BuildingVC({ name, position, height, accentColor, windowColors }: any) {
+function BuildingVC({ name, position, height, accentColor, windowColors, onClick }: any) {
   const groupRef = useRef<THREE.Group>(null);
+  useBuildingClick(groupRef, onClick);
   
   const makeWindows = (px: number, py: number, pz: number, w: number, h: number, isX: boolean, face: string) => {
     const floors = Math.floor(h / 30);
     const cols = Math.floor(w / 10);
-    const result: React.JSX.Element[] = [];
+    const result: JSX.Element[] = [];
     for (let row = 0; row < floors; row++) {
       for (let col = 0; col < cols; col++) {
         const local = (col - (cols - 1) / 2) * 9;
@@ -498,14 +586,18 @@ function BuildingVC({ name, position, height, accentColor, windowColors }: any) 
 }
 
 // ─── Export ───
-export default function DistrictTowers() {
+interface DistrictTowersProps {
+  onDistrictClick?: (slug: string) => void;
+}
+
+export default function DistrictTowers({ onDistrictClick }: DistrictTowersProps) {
   return (
     <>
-      <BuildingAI name="AI" position={[0, 0, -160]} height={380} accentColor="#f43f5e" windowColors={["#f43f5e", "#fb7185", "#e11d48", "#fda4af", "#f472b6"]} />
-      <BuildingWeb3 name="Web3" position={[152, 0, -50]} height={350} accentColor="#a855f7" windowColors={["#a855f7", "#c084fc", "#7c3aed", "#d8b4fe", "#9333ea"]} />
-      <BuildingQuantum name="Quantum" position={[94, 0, 130]} height={420} accentColor="#06b6d4" windowColors={["#06b6d4", "#22d3ee", "#0891b2", "#67e8f9", "#0e7490"]} />
-      <BuildingGrowth name="Growth" position={[-94, 0, 130]} height={340} accentColor="#22c55e" windowColors={["#22c55e", "#4ade80", "#16a34a", "#86efac", "#15803d"]} />
-      <BuildingVC name="VC" position={[-152, 0, -50]} height={360} accentColor="#eab308" windowColors={["#eab308", "#facc15", "#ca8a04", "#fde047", "#a16207"]} />
+      <BuildingAI name="AI" position={[0, 0, -160]} height={380} accentColor="#f43f5e" windowColors={["#f43f5e", "#fb7185", "#e11d48", "#fda4af", "#f472b6"]} onClick={() => onDistrictClick?.("ai-lobby")} />
+      <BuildingWeb3 name="Web3" position={[152, 0, -50]} height={350} accentColor="#a855f7" windowColors={["#a855f7", "#c084fc", "#7c3aed", "#d8b4fe", "#9333ea"]} onClick={() => onDistrictClick?.("web3-lobby")} />
+      <BuildingQuantum name="Quantum" position={[94, 0, 130]} height={420} accentColor="#06b6d4" windowColors={["#06b6d4", "#22d3ee", "#0891b2", "#67e8f9", "#0e7490"]} onClick={() => onDistrictClick?.("quantum-lobby")} />
+      <BuildingGrowth name="Growth" position={[-94, 0, 130]} height={340} accentColor="#22c55e" windowColors={["#22c55e", "#4ade80", "#16a34a", "#86efac", "#15803d"]} onClick={() => onDistrictClick?.("growth-lobby")} />
+      <BuildingVC name="VC" position={[-152, 0, -50]} height={360} accentColor="#eab308" windowColors={["#eab308", "#facc15", "#ca8a04", "#fde047", "#a16207"]} onClick={() => onDistrictClick?.("vc-lobby")} />
       <WalkingAvatar />
     </>
   );

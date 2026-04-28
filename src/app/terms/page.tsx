@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Terms of Service for Web3 District.",
 };
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 export default function TermsPage() {
   return (
@@ -122,13 +122,11 @@ export default function TermsPage() {
             <p>
               Questions? Reach out at{" "}
               <a
-                href="https://x.com/samuelrizzondev"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-colors hover:text-cream"
                 style={{ color: ACCENT }}
               >
-                @samuelrizzondev
               </a>{" "}
               on X.
             </p>
@@ -151,7 +149,7 @@ function Section({
   return (
     <div className="border-[3px] border-border bg-bg-raised p-5 sm:p-6">
       <p className="text-sm text-cream">
-        <span style={{ color: "#c8e64a" }}>{String(n).padStart(2, "0")}.</span>{" "}
+        <span style={{ color: "#e040c0" }}>{String(n).padStart(2, "0")}.</span>{" "}
         {title}
       </p>
       <div className="mt-3 flex flex-col gap-2 text-xs leading-relaxed text-muted normal-case">
@@ -164,7 +162,7 @@ function Section({
 function Li({ children }: { children: React.ReactNode }) {
   return (
     <li className="flex items-start gap-2">
-      <span style={{ color: "#c8e64a" }}>+</span>
+      <span style={{ color: "#e040c0" }}>+</span>
       <span>{children}</span>
     </li>
   );

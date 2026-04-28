@@ -19,7 +19,7 @@ export default function SignInButton({ accent }: { accent: string }) {
       className="btn-press flex items-center gap-2 px-8 py-3.5 text-sm text-bg"
       style={{
         backgroundColor: accent,
-        boxShadow: "4px 4px 0 0 #5a7a00",
+        boxShadow: "4px 4px 0 0 #a02080",
       }}
     >
       Sign in with GitHub

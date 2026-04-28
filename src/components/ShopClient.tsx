@@ -102,7 +102,7 @@ interface PixModalData {
   githubLogin: string;
 }
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 const SHADOW = "#5a7a00";
 const PENDING_BILLBOARD_KEY = "pending_billboard";
 
@@ -1269,7 +1269,6 @@ export default function ShopClient({
                       } else if (isGitHubStar && !isOwned) {
                         // Step 1: open repo, Step 2: verify
                         if (starVerifyStep === "idle") {
-                          window.open("https://github.com/srizzon/git-city", "_blank");
                           setStarVerifyStep("opened");
                         } else if (starVerifyStep === "opened") {
                           verifyGitHubStar();

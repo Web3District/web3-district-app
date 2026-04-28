@@ -136,8 +136,8 @@ export async function sendWeeklyAdReport(report: AdReport) {
     ${adTableHtml}
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 28px auto 0;">
       <tr>
-        <td align="center" bgcolor="#c8e64a" style="border-radius: 4px;">
-          <a href="${escapeHtml(dashboardUrl)}" style="display: inline-block; padding: 14px 32px; background-color: #c8e64a; border-radius: 4px; color: #111111; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; letter-spacing: 0.5px;">
+        <td align="center" bgcolor="#e040c0" style="border-radius: 4px;">
+          <a href="${escapeHtml(dashboardUrl)}" style="display: inline-block; padding: 14px 32px; background-color: #e040c0; border-radius: 4px; color: #111111; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; letter-spacing: 0.5px;">
             View Full Dashboard
           </a>
         </td>

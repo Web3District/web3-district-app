@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { formatEvent } from "./ActivityTicker";
 import type { FeedEvent } from "./ActivityTicker";
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#e040c0";
 
 function relativeTime(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();

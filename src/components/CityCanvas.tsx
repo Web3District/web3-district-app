@@ -113,7 +113,7 @@ const THEMES: CityTheme[] = [
     building: {
       windowLit: ["#f8d880", "#f0b860", "#e89840", "#d07830", "#f0c060"],
       windowOff: "#1a1018", face: "#281828", roof: "#604050",
-      accent: "#c8e64a",
+      accent: "#e040c0",
     },
     waterColor: "#1a2040", waterEmissive: "#102060", dockColor: "#4a3020",
   },
@@ -156,7 +156,7 @@ const THEMES: CityTheme[] = [
     roadMarkingColor: "#60c080",
     sidewalkColor: "#404848",
     building: {
-      windowLit: ["#0e4429", "#006d32", "#26a641", "#39d353", "#c8e64a"],
+      windowLit: ["#0e4429", "#006d32", "#26a641", "#39d353", "#e040c0"],
       windowOff: "#060e08", face: "#0c1810", roof: "#1e4028",
       accent: "#f0c060",
     },
@@ -2107,6 +2107,7 @@ interface Props {
   onRaidPhaseComplete?: (phase: RaidPhase) => void;
   onLandmarkClick?: () => void;
   onEArcadeClick?: () => void;
+  onDistrictLobbyClick?: (slug: string) => void;
   onSponsorClick?: (slug: string) => void;
   sponsorFocusPos?: [number, number, number] | null;
   activeSponsorSlug?: string | null;
@@ -2144,7 +2145,7 @@ function CityExposure({ cityEnergy }: { cityEnergy: number }) {
 // Plaza indices for rabbit sightings (progressively further from center)
 const RABBIT_PLAZA_INDICES = [1, 2, 4, 7, 10]; // plazas[1]=slot3, [2]=slot7, [4]=slot18, [7]=slot42, [10]=slot75
 
-export default function CityCanvas({ buildings, plazas, decorations, river, bridges, flyMode, flyVehicle, onExitFly, onCollect, themeIndex, onHud, onPause, focusedBuilding, focusedBuildingB, accentColor, onClearFocus, onBuildingClick, onFocusInfo, flyPauseSignal, flyHasOverlay, flyStartPaused, isMobile, onJoystickState, flyBoostActive, flyBrakeActive, skyAds, onAdClick, onAdViewed, introMode, onIntroEnd, raidPhase, raidData, raidAttacker, raidDefender, onRaidPhaseComplete, onLandmarkClick, onEArcadeClick, onSponsorClick, sponsorFocusPos, activeSponsorSlug, rabbitSighting, onRabbitCaught, rabbitCinematic, onRabbitCinematicEnd, rabbitCinematicTarget, ghostPreviewLogin, holdRise, celebrationActive, wallpaperMode, wallpaperSpeed, liveByLogin, cityEnergy }: Props) {
+export default function CityCanvas({ buildings, plazas, decorations, river, bridges, flyMode, flyVehicle, onExitFly, onCollect, themeIndex, onHud, onPause, focusedBuilding, focusedBuildingB, accentColor, onClearFocus, onBuildingClick, onFocusInfo, flyPauseSignal, flyHasOverlay, flyStartPaused, isMobile, onJoystickState, flyBoostActive, flyBrakeActive, skyAds, onAdClick, onAdViewed, introMode, onIntroEnd, raidPhase, raidData, raidAttacker, raidDefender, onRaidPhaseComplete, onLandmarkClick, onEArcadeClick, onDistrictLobbyClick, onSponsorClick, sponsorFocusPos, activeSponsorSlug, rabbitSighting, onRabbitCaught, rabbitCinematic, onRabbitCinematicEnd, rabbitCinematicTarget, ghostPreviewLogin, holdRise, celebrationActive, wallpaperMode, wallpaperSpeed, liveByLogin, cityEnergy }: Props) {
   const t = THEMES[themeIndex] ?? THEMES[0];
   const showPerf = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("perf");
   const [dpr, setDpr] = useState(1);
@@ -2224,7 +2225,7 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
 
       {/* ─── Web4City Zone 0: Central Plaza ─── */}
       <QuantumCore />
-      <DistrictTowers />
+      <DistrictTowers onDistrictClick={onDistrictLobbyClick} />
 
       {/* ─── Plaza Avatars (from Agentshire Kenney collection) ─── */}
       <PlazaAvatar position={[30, 0, 30]} />
@@ -2245,17 +2246,19 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
         );
       })()}
 
-      {river && (
+      {/* River removed */}
+      {/* river && (
         <>
           <River river={river} waterColor={t.waterColor} waterEmissive={t.waterEmissive} />
           <RiverText river={river} />
           <Waterfront river={river} dockColor={t.dockColor} />
         </>
-      )}
+      ) */}
 
-      {bridges?.map((b, i) => (
+      {/* Bridges removed */}
+      {/* bridges?.map((b, i) => (
         <Bridge key={`bridge-${i}`} bridge={b} />
-      ))}
+      )) */}
 
       <CityScene
         buildings={buildings}

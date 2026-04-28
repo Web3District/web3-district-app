@@ -4,8 +4,7 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimit } from "@/lib/rate-limit";
 
 const VALID_DISTRICTS = [
-  "frontend", "backend", "fullstack", "mobile", "data_ai",
-  "devops", "security", "gamedev", "vibe_coder", "creator",
+  "ai", "web3", "quantum", "growth", "vc",
 ];
 
 export async function POST(request: Request) {
@@ -44,7 +43,7 @@ export async function POST(request: Request) {
   const admin = getSupabaseAdmin();
   const { data: dev, error: devError } = await admin
     .from("developers")
-    .select("id, claimed, district, district_chosen, district_changes_count, district_changed_at")
+    .select("id, claimed, district, home_district, district_chosen, district_changes_count, district_changed_at")
     .eq("github_login", login)
     .single();
 
@@ -56,7 +55,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "You must claim your building first" }, { status: 403 });
   }
 
-  const oldDistrict = dev.district;
+  const oldDistrict = dev.home_district;
   const isFirstChoice = !dev.district_chosen;
   const isActualChange = oldDistrict !== null && oldDistrict !== district_id;
 
@@ -66,7 +65,7 @@ export async function POST(request: Request) {
       .from("developers")
       .update({ district_chosen: true })
       .eq("id", dev.id);
-    return NextResponse.json({ ok: true, district: district_id });
+    return NextResponse.json({ ok: true, district: 'downtown', home_district: district_id });
   }
 
   // Business rules only apply to real changes (not first choice)
@@ -92,13 +91,12 @@ export async function POST(request: Request) {
     }
   }
 
-  // Update developer
+  // Update developer: home_district changes, district stays 'downtown'
   const { error: updateError } = await admin
     .from("developers")
     .update({
-      district: district_id,
+      home_district: district_id,
       district_chosen: true,
-      // Only count actual changes, not first choice
       district_changes_count: isActualChange
         ? (dev.district_changes_count ?? 0) + 1
         : (dev.district_changes_count ?? 0),
@@ -120,7 +118,7 @@ export async function POST(request: Request) {
     reason: "user_choice",
   });
 
-  // Update district population counts
+  // Update district population counts (for home_district)
   if (oldDistrict) {
     const { data: oldDist } = await admin
       .from("districts")
@@ -147,5 +145,5 @@ export async function POST(request: Request) {
       .eq("id", district_id);
   }
 
-  return NextResponse.json({ ok: true, district: district_id });
+  return NextResponse.json({ ok: true, district: 'downtown', home_district: district_id });
 }
