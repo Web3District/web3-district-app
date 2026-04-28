@@ -33,7 +33,8 @@ export async function GET() {
     return NextResponse.json({ city_theme: 2 }); // 2 = Neon
   }
 
-  return NextResponse.json({ city_theme: dev.city_theme ?? 2 }); // 2 = Neon
+  // city_theme defaults to 0 in DB column, but Neon (2) is the intended default
+  return NextResponse.json({ city_theme: dev.city_theme === 0 ? 2 : dev.city_theme });
 }
 
 /**
