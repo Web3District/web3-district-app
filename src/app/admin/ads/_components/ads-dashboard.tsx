@@ -18,7 +18,7 @@ export function AdsDashboard() {
   const searchParams = useSearchParams();
   const { filters, setFilter, handleSort } = useAdsUrlState();
   const { toasts, addToast, dismissToast } = useToast();
-  const [reportMode, setReportMode] = useState(searchParams.get("report") === "true");
+  const [reportMode, setReportMode] = useState(searchParams?.get("report") === "true");
 
   const {
     ads,
