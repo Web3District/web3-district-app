@@ -1,9 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe('sk_test_51TRtyJE1Hih6JiExoU87MKZG5GScq94UpJLj8U38dVvwQ8mFqppuSzhOzEsnFYV9L1p5pXUWnMqME7g0UYg27qJa00sklog300', {
   apiVersion: '2024-12-18.acacia',
 });
+
+const PRICE_IDS = {
+  foundation: 'price_1TRuMRE1Hih6JiExGNqekfxJ',
+  skyline: 'price_1TRuMSE1Hih6JiExC8bfPJMn',
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,37 +19,25 @@ export default async function handler(
   }
 
   try {
-    const { package_id, brand, text, color, bgColor, currency, link } = req.body;
+    const { package_id, brand, text, color, bgColor, link } = req.body;
 
-    // Validate required fields
     if (!package_id) {
       return res.status(400).json({ error: 'Package ID is required' });
     }
 
-    // Get package details
-    const priceId = package_id === 'foundation' 
-      ? process.env.FOUNDATION_AD_PACKAGE_PRICE_ID 
-      : process.env.SKYLINE_AD_PACKAGE_PRICE_ID;
-
+    const priceId = PRICE_IDS[package_id as keyof typeof PRICE_IDS];
     if (!priceId) {
       return res.status(400).json({ error: 'Invalid package ID' });
     }
 
-    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
+      line_items: [{ price: priceId, quantity: 1 }],
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/ads/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/advertise`,
+      success_url: `https://web4city.xyz/ads/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://web4city.xyz/advertise`,
       metadata: {
         package_id,
-        package_type: 'ad_package',
         brand: brand || '',
         text: text || '',
         color: color || '',
@@ -53,13 +46,9 @@ export default async function handler(
       },
     });
 
-    // Return checkout session URL
-    return res.status(200).json({
-      url: session.url,
-      session_id: session.id,
-    });
-  } catch (error) {
-    console.error('Error creating checkout session:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(200).json({ url: session.url, session_id: session.id });
+  } catch (error: any) {
+    console.error('Stripe error:', error.message);
+    return res.status(500).json({ error: error.message || 'Checkout failed' });
   }
 }
