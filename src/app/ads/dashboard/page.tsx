@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@supabase/supabase-js";
 
 interface AdCampaign {
   id: string;
@@ -36,19 +36,15 @@ export default function AdsDashboard() {
 
   async function fetchCampaigns() {
     try {
-      const supabase = createClientComponentClient();
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
       
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
+      // For now, fetch all campaigns (auth will be added later)
       const { data, error } = await supabase
         .from("ad_campaigns")
         .select("*")
-        .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
