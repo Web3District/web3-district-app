@@ -142,9 +142,9 @@ function createPrideWindowTexture(
 
 // ─── Main Component ──────────────────────────────────────
 export function PortugalPrideBuilding({
-  position,
-  rotation = 0,
-  scale = 1,
+  themeAccent,
+  themeWindowLit,
+  themeFace,
 }: SponsorBuildingProps) {
   const groupRef = useRef<THREE.Group>(null);
   const flagRef = useRef<THREE.Mesh>(null);
@@ -173,7 +173,7 @@ export function PortugalPrideBuilding({
   });
 
   return (
-    <group ref={groupRef} position={position} rotation={[0, rotation, 0]} scale={scale}>
+    <group ref={groupRef} rotation={[0, 0, 0]} scale={[1, 1, 1]}>
       {/* Main building tower */}
       <mesh position={[0, BUILDING_HEIGHT / 2, 0]} castShadow receiveShadow>
         <boxGeometry args={[BUILDING_WIDTH, BUILDING_HEIGHT, BUILDING_DEPTH]} />
