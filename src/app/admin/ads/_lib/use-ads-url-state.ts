@@ -65,7 +65,7 @@ export function useAdsUrlState() {
 
   // Build current filters from URL (or localStorage fallback on first load)
   const filters: AdsFilters = useMemo(() => {
-    const fromUrl = parseParams(searchParams);
+    const fromUrl = searchParams ? parseParams(searchParams) : {};
     const hasUrlParams = Object.keys(fromUrl).length > 0;
 
     if (hasUrlParams || initializedRef.current) {
