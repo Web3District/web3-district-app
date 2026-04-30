@@ -86,7 +86,7 @@ export function useAdsUrlState() {
 
   // Sync localStorage fallback to URL on first load
   useEffect(() => {
-    const fromUrl = parseParams(searchParams);
+    const fromUrl = searchParams ? parseParams(searchParams) : {};
     const hasUrlParams = Object.keys(fromUrl).length > 0;
     if (!hasUrlParams) {
       const saved = loadLocalStorage();
