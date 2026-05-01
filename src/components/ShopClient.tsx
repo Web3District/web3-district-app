@@ -661,6 +661,15 @@ export default function ShopClient({
     return "building";
   });
 
+  // Reset buyingItem state on mount and when purchasedItem changes (after redirect from checkout)
+  useEffect(() => {
+    if (buyingItem) {
+      setBuyingItem(null);
+      setBuyingProvider(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [purchasedItem, giftedItem]);
+
   const [isBrazil, setIsBrazil] = useState(false);
   useEffect(() => {
     try {

@@ -5,6 +5,7 @@ import { autoEquipIfSolo } from "@/lib/items";
 import { SKY_AD_PLANS, isValidPlanId } from "@/lib/skyAdPlans";
 import { sendPurchaseNotification, sendGiftSentNotification } from "@/lib/notification-senders/purchase";
 import { sendGiftReceivedNotification } from "@/lib/notification-senders/gift";
+import { sendOrderConfirmationEmail } from "@/lib/unsend";
 import type Stripe from "stripe";
 
 // Disable body parsing — Stripe needs raw body for signature verification
@@ -121,6 +122,21 @@ export async function POST(request: Request) {
             })
             .eq("id", ad.id);
 
+          // Send order confirmation email for ad package purchase
+          if (purchaserEmail) {
+            const plan = SKY_AD_PLANS[planId];
+            sendOrderConfirmationEmail(purchaserEmail, {
+              orderId: ad.id.toString(),
+              items: [{
+                name: plan?.name || `Sky Ad Package (${planId})`,
+                quantity: 1,
+                price: session.amount_total ? session.amount_total / 100 : 0,
+              }],
+              total: session.amount_total ? session.amount_total / 100 : 0,
+              date: now.toLocaleDateString(),
+            }).catch(err => console.error("Failed to send ad package confirmation:", err));
+          }
+
           // Link to advertiser account if exists
           if (purchaserEmail) {
             const { data: advertiser } = await sb
@@ -158,6 +174,8 @@ export async function POST(request: Request) {
           typeof session.payment_intent === "string"
             ? session.payment_intent
             : session.payment_intent?.id;
+
+        const customerEmail = session.customer_details?.email ?? null;
 
         if (!developerId || !itemId) {
           console.error("Missing metadata in Stripe session:", session.id);
@@ -214,6 +232,28 @@ export async function POST(request: Request) {
           const giftedTo = session.metadata?.gifted_to;
           const ownerId = giftedTo ? Number(giftedTo) : Number(developerId);
           await autoEquipIfSolo(ownerId, itemId);
+
+          // Send order confirmation email
+          if (customerEmail && !giftedTo) {
+            const itemData = await sb
+              .from("items")
+              .select("name, price_usd_cents")
+              .eq("id", itemId)
+              .single();
+            
+            if (itemData) {
+              sendOrderConfirmationEmail(customerEmail, {
+                orderId: pending.id.toString(),
+                items: [{
+                  name: itemData.name,
+                  quantity: 1,
+                  price: itemData.price_usd_cents / 100,
+                }],
+                total: itemData.price_usd_cents / 100,
+                date: new Date().toLocaleDateString(),
+              }).catch(err => console.error("Failed to send order confirmation:", err));
+            }
+          }
 
           // Insert feed event + send notifications
           const githubLogin = session.metadata?.github_login;
