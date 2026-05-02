@@ -1,9 +1,9 @@
-const UNSEND_API_KEY = process.env.UNSEND_API_KEY;
-const UNSEND_FROM_EMAIL = process.env.UNSEND_FROM_EMAIL || "hello@web4city.xyz";
-const UNSEND_FROM_NAME = process.env.UNSEND_FROM_NAME || "Web4City";
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const RESEND_FROM_EMAIL = process.env.UNSEND_FROM_EMAIL || "hello@web4city.xyz";
+const RESEND_FROM_NAME = process.env.UNSEND_FROM_NAME || "Web4City";
 
-// Unosend API endpoint
-const UNSEND_API_URL = process.env.UNSEND_API_URL || "https://api.unosend.co/v1";
+// Resend API endpoint
+const RESEND_API_URL = "https://api.resend.com";
 
 export interface SendEmailOptions {
   to: string;
@@ -20,52 +20,52 @@ export interface SendEmailResult {
 }
 
 /**
- * Send email via Unosend API
- * Docs: https://docs.unosend.co
+ * Send email via Resend API
+ * Docs: https://resend.com/docs
  */
 export async function sendEmail(options: SendEmailOptions): Promise<SendEmailResult> {
-  if (!UNSEND_API_KEY) {
-    console.error("[Unosend] API key not configured");
+  if (!RESEND_API_KEY) {
+    console.error("[Resend] API key not configured");
     return {
       success: false,
-      error: "UNSEND_API_KEY is not configured",
+      error: "RESEND_API_KEY is not configured",
     };
   }
 
   try {
-    const response = await fetch(`${UNSEND_API_URL}/emails`, {
+    const response = await fetch(`${RESEND_API_URL}/emails`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${UNSEND_API_KEY}`,
+        Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: `${UNSEND_FROM_NAME} <${UNSEND_FROM_EMAIL}>`,
+        from: `${RESEND_FROM_NAME} <${RESEND_FROM_EMAIL}>`,
         to: [options.to],
         subject: options.subject,
         html: options.html,
         text: options.text,
-        replyTo: options.replyTo,
+        reply_to: options.replyTo,
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error("[Unosend] API error:", response.status, errorData);
+      console.error("[Resend] API error:", response.status, errorData);
       return {
         success: false,
-        error: `Unosend API error: ${response.status} - ${JSON.stringify(errorData)}`,
+        error: `Resend API error: ${response.status} - ${JSON.stringify(errorData)}`,
       };
     }
 
     const result = await response.json();
-    console.log("[Unosend] Email sent successfully:", result);
+    console.log("[Resend] Email sent successfully:", result);
     return {
       success: true,
       messageId: result.id || result.messageId,
     };
   } catch (error) {
-    console.error("[Unosend] Send failed:", error);
+    console.error("[Resend] Send failed:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -132,7 +132,7 @@ export async function sendOrderConfirmationEmail(
     ${buildButton("View Order Details", `${getPublicSiteUrl()}/orders/${orderDetails.orderId}`)}
 
     <p style="margin: 24px 0 0; font-size: 14px; line-height: 1.6; color: #666666; font-family: Helvetica, Arial, sans-serif;">
-      Questions? Reply to this email or contact us at ${UNSEND_FROM_EMAIL}
+      Questions? Reply to this email or contact us at ${RESEND_FROM_EMAIL}
     </p>
   `;
 
@@ -207,7 +207,7 @@ export async function sendWelcomeEmail(
     ${buildButton("Start Exploring", getPublicSiteUrl())}
 
     <p style="margin: 24px 0 0; font-size: 14px; line-height: 1.6; color: #666666; font-family: Helvetica, Arial, sans-serif;">
-      Need help? Check out our docs or reach out at ${UNSEND_FROM_EMAIL}
+      Need help? Check out our docs or reach out at ${RESEND_FROM_EMAIL}
     </p>
   `;
 

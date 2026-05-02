@@ -55,7 +55,8 @@ export async function GET(request: Request) {
   }));
 
   // Lite mode: skip heavy joins, return immediately
-  if (lite || devs.length > 500) {
+  // Note: We still load purchases even for large cities - they're essential for owned_items
+  if (lite) {
     return NextResponse.json(
       {
         developers: basicDevs,
@@ -78,22 +79,37 @@ export async function GET(request: Request) {
     );
   }
 
-  // Full mode (only for smaller datasets): enrich with purchases, customizations, etc.
-  const [purchasesResult, giftPurchasesResult, customizationsResult, achievementsResult, raidTagsResult, activeDropsResult] = await Promise.all([
-    sb.from("purchases").select("developer_id, item_id").in("developer_id", devIds).is("gifted_to", null).eq("status", "completed"),
-    sb.from("purchases").select("gifted_to, item_id").in("gifted_to", devIds).eq("status", "completed"),
-    sb.from("developer_customizations").select("developer_id, item_id, config").in("developer_id", devIds).in("item_id", ["custom_color", "billboard", "loadout"]),
-    sb.from("developer_achievements").select("developer_id, achievement_id").in("developer_id", devIds),
-    sb.from("raid_tags").select("building_id, attacker_login, tag_style, expires_at").in("building_id", devIds).eq("active", true),
-    sb.from("building_drops").select("id, building_id, rarity, points, max_pulls, pull_count, expires_at").gt("expires_at", new Date().toISOString()),
+  // Helper: batch IN queries (Supabase limit ~1000 values per IN clause)
+  async function batchedQuery<T>(
+    query: (ids: number[]) => PromiseLike<{ data: T[] | null; error: unknown }>,
+    ids: number[],
+    batchSize = 900
+  ): Promise<T[]> {
+    const results: T[] = [];
+    for (let i = 0; i < ids.length; i += batchSize) {
+      const batch = ids.slice(i, i + batchSize);
+      const { data, error } = await query(batch);
+      if (!error && data) results.push(...data);
+    }
+    return results;
+  }
+
+  // Full mode: enrich with purchases, customizations, etc.
+  const [purchasesData, giftPurchasesData, customizationsData, achievementsData, raidTagsData, activeDropsData] = await Promise.all([
+    batchedQuery((ids) => sb.from("purchases").select("developer_id, item_id").in("developer_id", ids).is("gifted_to", null).eq("status", "completed"), devIds),
+    batchedQuery((ids) => sb.from("purchases").select("gifted_to, item_id").in("gifted_to", ids).eq("status", "completed"), devIds),
+    batchedQuery((ids) => sb.from("developer_customizations").select("developer_id, item_id, config").in("developer_id", ids).in("item_id", ["custom_color", "billboard", "loadout"]), devIds),
+    batchedQuery((ids) => sb.from("developer_achievements").select("developer_id, achievement_id").in("developer_id", ids), devIds),
+    batchedQuery((ids) => sb.from("raid_tags").select("building_id, attacker_login, tag_style, expires_at").in("building_id", ids).eq("active", true), devIds),
+    Promise.all(devIds.map((id) => sb.from("building_drops").select("id, building_id, rarity, points, max_pulls, pull_count, expires_at").eq("building_id", id).gt("expires_at", new Date().toISOString()))).then((results) => results.flatMap((r) => r.data ?? [])),
   ]);
 
   const ownedItemsMap: Record<number, string[]> = {};
-  for (const row of purchasesResult.data ?? []) {
+  for (const row of purchasesData) {
     if (!ownedItemsMap[row.developer_id]) ownedItemsMap[row.developer_id] = [];
     ownedItemsMap[row.developer_id].push(row.item_id);
   }
-  for (const row of giftPurchasesResult.data ?? []) {
+  for (const row of giftPurchasesData) {
     const devId = row.gifted_to as number;
     if (!ownedItemsMap[devId]) ownedItemsMap[devId] = [];
     ownedItemsMap[devId].push(row.item_id);
@@ -102,7 +118,7 @@ export async function GET(request: Request) {
   const customColorMap: Record<number, string> = {};
   const billboardImagesMap: Record<number, string[]> = {};
   const loadoutMap: Record<number, { crown: string | null; roof: string | null; aura: string | null }> = {};
-  for (const row of customizationsResult.data ?? []) {
+  for (const row of customizationsData) {
     const config = row.config as Record<string, unknown>;
     if (row.item_id === "custom_color" && typeof config?.color === "string") customColorMap[row.developer_id] = config.color;
     if (row.item_id === "billboard") {
@@ -113,19 +129,19 @@ export async function GET(request: Request) {
   }
 
   const achievementsMap: Record<number, string[]> = {};
-  for (const row of achievementsResult.data ?? []) {
+  for (const row of achievementsData) {
     if (!achievementsMap[row.developer_id]) achievementsMap[row.developer_id] = [];
     achievementsMap[row.developer_id].push(row.achievement_id);
   }
 
   const raidTagMap: Record<number, { attacker_login: string; tag_style: string; expires_at: string }> = {};
-  for (const row of raidTagsResult.data ?? []) raidTagMap[row.building_id] = { attacker_login: row.attacker_login, tag_style: row.tag_style, expires_at: row.expires_at };
+  for (const row of raidTagsData) raidTagMap[row.building_id] = { attacker_login: row.attacker_login, tag_style: row.tag_style, expires_at: row.expires_at };
 
   const idToRank = new Map<number, number>();
   for (const dev of devs) idToRank.set(dev.id, dev.rank);
 
   const _d: { n: number; id: string; r: string; p: number; m: number; c: number; x: string }[] = [];
-  for (const row of activeDropsResult.data ?? []) {
+  for (const row of activeDropsData) {
     if (row.pull_count < row.max_pulls) {
       const rank = idToRank.get(row.building_id);
       if (rank !== undefined) _d.push({ n: rank, id: row.id, r: row.rarity, p: row.points, m: row.max_pulls, c: row.pull_count, x: row.expires_at });

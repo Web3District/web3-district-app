@@ -1981,7 +1981,7 @@ function HomeContent() {
       const res = await fetch("/api/claim-free-item", { method: "POST" });
       if (res.ok) {
         trackFreeItemClaimed();
-        await reloadCity();
+        await reloadCity(true); // Bust cache to get fresh owned_items
         setGiftClaimed(true);
       }
     } finally {
