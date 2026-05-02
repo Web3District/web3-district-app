@@ -481,7 +481,6 @@ function HomeContent() {
   const [selectedBuilding, setSelectedBuilding] = useState<CityBuilding | null>(null);
   const [giftClaimed, setGiftClaimed] = useState(false);
   const [claimingGift, setClaimingGift] = useState(false);
-  const [userOwnedItems, setUserOwnedItems] = useState<string[] | null>(null);
   const [feedEvents, setFeedEvents] = useState<FeedEvent[]>([]);
   const [feedPanelOpen, setFeedPanelOpen] = useState(false);
   const [kudosSending, setKudosSending] = useState(false);
@@ -761,15 +760,6 @@ function HomeContent() {
       fetch("/api/items").then(r => r.json()).then(d => setDropPlantItems(d.items ?? [])).catch(() => {});
     }
   }, [authLogin]);
-
-  // Fetch user's owned items directly (bypass snapshot cache)
-  useEffect(() => {
-    if (!session || !authLogin) { setUserOwnedItems(null); return; }
-    fetch(`/api/owned-items?login=${encodeURIComponent(authLogin)}`)
-      .then((r) => r.ok ? r.json() : { items: [] })
-      .then((d) => setUserOwnedItems(d.items ?? []))
-      .catch(() => setUserOwnedItems([]));
-  }, [session, authLogin]);
 
   // Fly timer — ticks every second while flying and not paused
   useEffect(() => {
@@ -1992,12 +1982,6 @@ function HomeContent() {
       if (res.ok) {
         trackFreeItemClaimed();
         await reloadCity(true); // Bust cache to get fresh owned_items
-        // Refresh userOwnedItems immediately
-        if (authLogin) {
-          fetch(`/api/owned-items?login=${encodeURIComponent(authLogin)}`)
-            .then((r) => r.ok ? r.json() : { items: [] })
-            .then((d) => setUserOwnedItems(d.items ?? []));
-        }
         setGiftClaimed(true);
       }
     } finally {
@@ -2018,11 +2002,10 @@ function HomeContent() {
       : "/shop";
 
   // Show free gift CTA when user claimed but hasn't picked up the free item
-  // Use userOwnedItems (fresh from DB) instead of myBuilding.owned_items (from snapshot cache)
   const hasFreeGift =
     !!session &&
     !!myBuilding?.claimed &&
-    !(userOwnedItems ?? myBuilding.owned_items ?? []).includes("flag");
+    !myBuilding.owned_items.includes("flag");
 
   // Show district chooser once per session when user hasn't chosen yet
   const shouldShowDistrictChooser =
