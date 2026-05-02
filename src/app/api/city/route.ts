@@ -80,9 +80,11 @@ export async function GET(request: Request) {
   }
 
   // Full mode: enrich with purchases, customizations, etc.
-  // Note: Supabase handles large IN clauses fine (tested with 2500+ IDs)
-  const [purchasesResult, giftPurchasesResult, customizationsResult, achievementsResult, raidTagsResult, activeDropsResult] = await Promise.all([
-    sb.from("purchases").select("developer_id, item_id").in("developer_id", devIds).is("gifted_to", null).eq("status", "completed"),
+  console.log('[city-api] Fetching purchases for', devIds.length, 'developers');
+  const purchasesResult = await sb.from("purchases").select("developer_id, item_id").in("developer_id", devIds).is("gifted_to", null).eq("status", "completed");
+  console.log('[city-api] Purchases result:', purchasesResult.error ?? 'OK', 'rows:', purchasesResult.data?.length ?? 0);
+  
+  const [giftPurchasesResult, customizationsResult, achievementsResult, raidTagsResult, activeDropsResult] = await Promise.all([
     sb.from("purchases").select("gifted_to, item_id").in("gifted_to", devIds).eq("status", "completed"),
     sb.from("developer_customizations").select("developer_id, item_id, config").in("developer_id", devIds).in("item_id", ["custom_color", "billboard", "loadout"]),
     sb.from("developer_achievements").select("developer_id, achievement_id").in("developer_id", devIds),
