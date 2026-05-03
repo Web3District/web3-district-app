@@ -89,9 +89,9 @@ const THEMES: CityTheme[] = [
     roadMarkingColor: "#8090a0",
     sidewalkColor: "#484c58",
     building: {
-      windowLit: ["#a0c0f0", "#80a0e0", "#6080c8", "#c0d8f8", "#e0e8ff"],
-      windowOff: "#0c0e18", face: "#101828", roof: "#2a3858",
-      accent: "#6090e0",
+      windowLit: ["#ed0584", "#f43f5e", "#fb7185", "#fda4af", "#f472b6"],
+      windowOff: "#0a0a0a", face: "#000000", roof: "#0a0a0a",
+      accent: "#ed0584",
     },
     waterColor: "#0a1830", waterEmissive: "#0a2050", dockColor: "#3a2818",
   },
@@ -111,8 +111,8 @@ const THEMES: CityTheme[] = [
     roadMarkingColor: "#d0a840",
     sidewalkColor: "#585058",
     building: {
-      windowLit: ["#f8d880", "#f0b860", "#e89840", "#d07830", "#f0c060"],
-      windowOff: "#1a1018", face: "#281828", roof: "#604050",
+      windowLit: ["#ed0584", "#f43f5e", "#fb7185", "#fda4af", "#f472b6"],
+      windowOff: "#0a0a0a", face: "#000000", roof: "#0a0a0a",
       accent: "#ed0584",
     },
     waterColor: "#1a2040", waterEmissive: "#102060", dockColor: "#4a3020",
@@ -133,10 +133,9 @@ const THEMES: CityTheme[] = [
     roadMarkingColor: "#c060e0",
     sidewalkColor: "#484058",
     building: {
-      // AI District window palette: pink/rose tones (matches AI tower)
-      windowLit: ["#f43f5e", "#fb7185", "#e11d48", "#fda4af", "#f472b6"],
-      windowOff: "#0a0814", face: "#0a0a0a", roof: "#1a1a1a",
-      accent: "#f43f5e", // AI District pink
+      windowLit: ["#ed0584", "#f43f5e", "#fb7185", "#fda4af", "#f472b6"],
+      windowOff: "#0a0a0a", face: "#000000", roof: "#0a0a0a",
+      accent: "#ed0584",
     },
     waterColor: "#0c0830", waterEmissive: "#1008a0", dockColor: "#2a1838",
   },
@@ -156,9 +155,9 @@ const THEMES: CityTheme[] = [
     roadMarkingColor: "#60c080",
     sidewalkColor: "#404848",
     building: {
-      windowLit: ["#0e4429", "#006d32", "#26a641", "#39d353", "#ed0584"],
-      windowOff: "#060e08", face: "#0c1810", roof: "#1e4028",
-      accent: "#f0c060",
+      windowLit: ["#ed0584", "#f43f5e", "#fb7185", "#fda4af", "#f472b6"],
+      windowOff: "#0a0a0a", face: "#000000", roof: "#0a0a0a",
+      accent: "#ed0584",
     },
     waterColor: "#082018", waterEmissive: "#0a3020", dockColor: "#3a2818",
   },
