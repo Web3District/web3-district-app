@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
+const ACCENT = "#e040c0";
+
 interface Developer {
   id: number;
   github_login: string;
@@ -15,7 +17,6 @@ interface Developer {
   district: string | null;
   account_created_at: string;
   xp_total: number;
-  current_streak: number;
   claimed: boolean;
   claimed_by: string | null;
 }
@@ -114,28 +115,6 @@ export default function AdminUsersPage() {
     }
   }
 
-  async function handleUnban(userId: number, githubLogin: string) {
-    if (!confirm(`Unban user ${githubLogin}?`)) return;
-
-    try {
-      const supabase = createBrowserSupabase();
-      
-      const { error } = await supabase
-        .from("banned_users")
-        .delete()
-        .eq("user_id", userId);
-
-      if (error) throw error;
-
-      setSuccess(`User ${githubLogin} has been unbanned`);
-      setTimeout(() => setSuccess(null), 3000);
-      fetchUsers();
-    } catch (err: any) {
-      setError(err.message ?? "Failed to unban user");
-      setTimeout(() => setError(null), 3000);
-    }
-  }
-
   function escapeHtml(s: string) {
     const d = document.createElement("div");
     d.textContent = s;
@@ -144,20 +123,20 @@ export default function AdminUsersPage() {
 
   if (loading) {
     return (
-      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "#8c8c9c" }}>Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#0d0d0f]">
+        <p className="text-[#8c8c9c] font-pixel">Loading...</p>
       </div>
     );
   }
 
   if (error && !users.length) {
     return (
-      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ textAlign: "center" }}>
-          <p style={{ color: "#ef4444" }}>{error}</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#0d0d0f]">
+        <div className="text-center">
+          <p className="text-red-400 font-pixel">{error}</p>
           <button
             onClick={() => router.push("/admin/city")}
-            style={{ marginTop: 16, padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+            className="mt-4 rounded-none border border-[#374151] bg-[#161618] px-4 py-2 font-pixel text-white hover:bg-[#1c1c20]"
           >
             Back to Dashboard
           </button>
@@ -167,94 +146,90 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0 }}>
-      <header style={{ display: "flex", gap: 8, alignItems: "center", padding: "12px", borderBottom: "1px solid #1f2937" }}>
+    <div className="min-h-screen bg-[#0d0d0f] font-pixel text-[#e8dcc8]">
+      <header className="flex items-center gap-4 border-b border-[#2a2a30] px-6 py-4">
         <button
           onClick={() => router.push("/admin/city")}
-          style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+          className="rounded-none border border-[#2a2a30] bg-[#161618] px-3 py-1.5 text-sm hover:bg-[#1c1c20]"
         >
           ← Back
         </button>
-        <button
-          onClick={() => router.push("/admin/dashboard")}
-          style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
-        >
-          Dashboard
-        </button>
-        <div style={{ opacity: 0.8 }}>Users</div>
+        <h1 className="text-lg">User Management</h1>
       </header>
 
-      <main style={{ padding: 16 }}>
+      <main className="p-6">
         {success && (
-          <div style={{ marginBottom: 12, padding: "8px 12px", border: "1px solid #16a34a", background: "#16a34a20", borderRadius: 8, color: "#16a34a" }}>
+          <div className="mb-4 rounded-none border border-green-600 bg-green-900/20 px-4 py-3 text-green-400">
             {success}
           </div>
         )}
         {error && (
-          <div style={{ marginBottom: 12, padding: "8px 12px", border: "1px solid #ef4444", background: "#ef444420", borderRadius: 8, color: "#ef4444" }}>
+          <div className="mb-4 rounded-none border border-red-600 bg-red-900/20 px-4 py-3 text-red-400">
             {error}
           </div>
         )}
 
-        <div style={{ marginBottom: 12 }}>
+        <div className="mb-6 flex gap-3">
           <input
-            id="search"
-            placeholder="Search by id, email, wallet…"
+            type="text"
+            placeholder="Search by id, username..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ padding: 8, borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff", marginRight: 8, maxWidth: 320 }}
+            className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2.5 font-pixel text-white placeholder-[#6b7280] focus:border-[#e040c0] focus:outline-none"
           />
           <button
             onClick={fetchUsers}
-            style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+            className="rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2.5 font-pixel text-sm hover:bg-[#1c1c20]"
           >
             Reload
           </button>
         </div>
 
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
-          <thead>
-            <tr style={{ textAlign: "left", borderBottom: "1px solid #1f2937" }}>
-              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>ID</th>
-              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>Username</th>
-              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>XP</th>
-              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>Visits</th>
-              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>Contributions</th>
-              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>District</th>
-              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>Last activity</th>
-              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="usersBody">
-            {filteredUsers.map((u) => (
-              <tr key={u.id} style={{ borderBottom: "1px solid #1f2937" }}>
-                <td style={{ padding: "8px 10px", opacity: 0.8 }}>{u.id}</td>
-                <td style={{ padding: "8px 10px" }}>
-                  <div style={{ fontWeight: 600 }}>{escapeHtml(u.github_login)}</div>
-                  {u.name && <div style={{ fontSize: 12, opacity: 0.6 }}>{escapeHtml(u.name)}</div>}
-                </td>
-                <td style={{ padding: "8px 10px", opacity: 0.8 }}>{u.xp_total}</td>
-                <td style={{ padding: "8px 10px", opacity: 0.8 }}>{u.visit_count}</td>
-                <td style={{ padding: "8px 10px", opacity: 0.8 }}>{u.contributions.toLocaleString()}</td>
-                <td style={{ padding: "8px 10px", opacity: 0.8 }}>{u.district || "-"}</td>
-                <td style={{ padding: "8px 10px", opacity: 0.8 }}>
-                  {u.account_created_at ? u.account_created_at.replace("T", " ").slice(0, 19) : "-"}
-                </td>
-                <td style={{ padding: "8px 10px" }}>
-                  <button
-                    onClick={() => handleBan(u.id, u.github_login)}
-                    style={{ padding: "4px 8px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer", fontSize: 12 }}
-                  >
-                    Ban
-                  </button>
-                </td>
+        <div className="overflow-x-auto rounded-none border-4 border-[#1a1a24] bg-[#101018]">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-[#161618] text-[#8c8c9c]">
+              <tr>
+                <th className="px-4 py-3 font-pixel">ID</th>
+                <th className="px-4 py-3 font-pixel">Username</th>
+                <th className="px-4 py-3 font-pixel">XP</th>
+                <th className="px-4 py-3 font-pixel">Visits</th>
+                <th className="px-4 py-3 font-pixel">Contributions</th>
+                <th className="px-4 py-3 font-pixel">District</th>
+                <th className="px-4 py-3 font-pixel">Joined</th>
+                <th className="px-4 py-3 font-pixel">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-[#2a2a30]">
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-[#161618]/50">
+                  <td className="px-4 py-3 text-[#8c8c9c]">{user.id}</td>
+                  <td className="px-4 py-3">
+                    <div className="font-bold">{escapeHtml(user.github_login)}</div>
+                    {user.name && <div className="text-xs text-[#8c8c9c]">{escapeHtml(user.name)}</div>}
+                  </td>
+                  <td className="px-4 py-3" style={{ color: ACCENT }}>{user.xp_total}</td>
+                  <td className="px-4 py-3 text-[#8c8c9c]">{user.visit_count}</td>
+                  <td className="px-4 py-3 text-[#8c8c9c]">{user.contributions.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-[#8c8c9c]">{user.district || "-"}</td>
+                  <td className="px-4 py-3 text-[#8c8c9c]">
+                    {new Date(user.account_created_at).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => handleBan(user.id, user.github_login)}
+                      className="rounded-none border border-red-600 bg-red-900/20 px-3 py-1 text-xs text-red-400 hover:bg-red-900/40"
+                    >
+                      Ban
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {filteredUsers.length === 0 && (
-          <div style={{ marginTop: 24, textAlign: "center", opacity: 0.7 }}>
+          <div className="mt-8 text-center text-[#8c8c9c]">
             No users found{search ? ` for "${search}"` : ""}
           </div>
         )}

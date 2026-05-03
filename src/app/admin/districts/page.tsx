@@ -4,18 +4,6 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
-interface Developer {
-  id: number;
-  github_login: string;
-  name: string | null;
-  avatar_url: string | null;
-  district: string | null;
-  home_district: string | null;
-  claimed: boolean;
-  claimed_by: string | null;
-  xp_total: number;
-}
-
 interface Territory {
   id: number;
   owner_user_id: number;
@@ -62,15 +50,13 @@ export default function AdminDistrictsPage() {
     try {
       const supabase = createBrowserSupabase();
       
-      // Get all developers with districts (territories)
       const { data: devs, error: devsError } = await supabase
         .from("developers")
-        .select("id, github_login, name, district, home_district, claimed, claimed_by, xp_total, account_created_at")
+        .select("id, github_login, name, district, home_district, xp_total, account_created_at")
         .order("xp_total", { ascending: false });
 
       if (devsError) throw devsError;
 
-      // Convert to territory format
       const territoryList: Territory[] = (devs ?? [])
         .filter(d => d.district || d.home_district)
         .map((d, idx) => ({
@@ -97,66 +83,45 @@ export default function AdminDistrictsPage() {
 
   if (loading) {
     return (
-      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "#8c8c9c" }}>Loading...</p>
-      </div>
-    );
-  }
-
-  if (error && !territories.length) {
-    return (
-      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ textAlign: "center" }}>
-          <p style={{ color: "#ef4444" }}>{error}</p>
-          <button
-            onClick={() => router.push("/admin/city")}
-            style={{ marginTop: 16, padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
-          >
-            Back to Dashboard
-          </button>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-[#0d0d0f]">
+        <p className="text-[#8c8c9c] font-pixel">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0 }}>
-      <header style={{ display: "flex", gap: 8, alignItems: "center", padding: "12px", borderBottom: "1px solid #1f2937" }}>
+    <div className="min-h-screen bg-[#0d0d0f] font-pixel text-[#e8dcc8]">
+      <header className="flex items-center gap-4 border-b border-[#2a2a30] px-6 py-4">
         <button
           onClick={() => router.push("/admin/panel")}
-          style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+          className="rounded-none border border-[#2a2a30] bg-[#161618] px-3 py-1.5 text-sm hover:bg-[#1c1c20]"
         >
           ← Back
         </button>
-        <button
-          onClick={() => router.push("/admin/dashboard")}
-          style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
-        >
-          Dashboard
-        </button>
-        <div style={{ opacity: 0.8 }}>Territories</div>
+        <h1 className="text-lg">Territories</h1>
       </header>
 
-      <main style={{ padding: 16 }}>
-        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
-          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Territories (claimed by users via app)</h3>
-          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>No create from admin; users claim via the app.</p>
-          <div id="territories">
-            {territories.length === 0 ? (
-              <p style={{ opacity: 0.7 }}>No territories.</p>
-            ) : (
-              territories.map((t) => (
-                <div key={t.id} style={{ border: "1px solid #1f2937", borderRadius: 8, padding: 10, marginBottom: 8, fontSize: 14 }}>
-                  <div>
-                    <strong>#{t.id}</strong> owner_user_id: {t.owner_user_id} {t.owner_email ? ` (${escapeHtml(t.owner_email)})` : ""}
+      <main className="p-6">
+        <section className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
+          <h3 className="mb-2 text-lg text-[#e040c0]">Territories</h3>
+          <p className="mb-4 text-sm text-[#8c8c9c]">Users claim territories via the app.</p>
+          
+          {territories.length === 0 ? (
+            <p className="text-[#8c8c9c]">No territories.</p>
+          ) : (
+            <div className="space-y-2">
+              {territories.map((t) => (
+                <div key={t.id} className="rounded-none border-2 border-[#2a2a38] bg-[#1a1a24] p-4">
+                  <div className="font-bold">
+                    #{t.id} owner_user_id: {t.owner_user_id} {t.owner_email ? ` (${escapeHtml(t.owner_email)})` : ""}
                   </div>
-                  <div style={{ opacity: 0.8, fontSize: 12 }}>
-                    {escapeHtml(t.summary || "")} · {t.created_at || ""}
+                  <div className="text-xs text-[#8c8c9c]">
+                    {escapeHtml(t.summary || "")} · {t.created_at ? t.created_at.slice(0, 19) : ""}
                   </div>
                 </div>
-              ))
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

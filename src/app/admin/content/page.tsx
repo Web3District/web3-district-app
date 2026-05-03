@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
+const ACCENT = "#e040c0";
+
 interface Content {
   id?: number;
   web4city_title: string;
@@ -18,7 +20,6 @@ interface Content {
   lobby_title: string;
   lobby_subtitle: string;
   featured_image_lobby: string;
-  updated_at?: string;
 }
 
 const defaultContent: Content = {
@@ -100,18 +101,7 @@ export default function AdminContentPage() {
       const supabase = createBrowserSupabase();
       
       const payload = {
-        web4city_title: content.web4city_title,
-        web4city_subtitle: content.web4city_subtitle,
-        wallet_button_text: content.wallet_button_text,
-        wallet_button_link: content.wallet_button_link,
-        featured_image_passport: content.featured_image_passport,
-        featured_image_quest: content.featured_image_quest,
-        explore_title: content.explore_title,
-        explore_subtitle: content.explore_subtitle,
-        featured_image_explore: content.featured_image_explore,
-        lobby_title: content.lobby_title,
-        lobby_subtitle: content.lobby_subtitle,
-        featured_image_lobby: content.featured_image_lobby,
+        ...content,
         updated_at: new Date().toISOString(),
       };
 
@@ -123,15 +113,10 @@ export default function AdminContentPage() {
 
       let error;
       if (existing) {
-        const result = await supabase
-          .from("app_content")
-          .update(payload)
-          .eq("id", 1);
+        const result = await supabase.from("app_content").update(payload).eq("id", 1);
         error = result.error;
       } else {
-        const result = await supabase
-          .from("app_content")
-          .insert({ ...payload, id: 1 });
+        const result = await supabase.from("app_content").insert({ ...payload, id: 1 });
         error = result.error;
       }
 
@@ -151,167 +136,184 @@ export default function AdminContentPage() {
 
   if (loading) {
     return (
-      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "#8c8c9c" }}>Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#0d0d0f]">
+        <p className="text-[#8c8c9c] font-pixel">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0 }}>
-      <header style={{ display: "flex", gap: 8, alignItems: "center", padding: "12px", borderBottom: "1px solid #1f2937" }}>
+    <div className="min-h-screen bg-[#0d0d0f] font-pixel text-[#e8dcc8]">
+      <header className="flex items-center gap-4 border-b border-[#2a2a30] px-6 py-4">
         <button
           onClick={() => router.push("/admin/panel")}
-          style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+          className="rounded-none border border-[#2a2a30] bg-[#161618] px-3 py-1.5 text-sm hover:bg-[#1c1c20]"
         >
           ← Back
         </button>
-        <div style={{ opacity: 0.8 }}>Content</div>
+        <h1 className="text-lg">Content</h1>
       </header>
 
-      <main style={{ padding: 16 }}>
+      <main className="p-6">
         {success && (
-          <div style={{ marginBottom: 12, padding: "8px 12px", border: "1px solid #16a34a", background: "#16a34a20", borderRadius: 8, color: "#16a34a" }}>
+          <div className="mb-4 rounded-none border border-green-600 bg-green-900/20 px-4 py-3 text-green-400">
             {success}
           </div>
         )}
         {error && (
-          <div style={{ marginBottom: 12, padding: "8px 12px", border: "1px solid #ef4444", background: "#ef444420", borderRadius: 8, color: "#ef4444" }}>
+          <div className="mb-4 rounded-none border border-red-600 bg-red-900/20 px-4 py-3 text-red-400">
             {error}
           </div>
         )}
 
-        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
-          <h3 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600 }}>App Copy & Links</h3>
-          <form id="contentForm" onSubmit={handleSave}>
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Web4City Title</label>
-            <input
-              name="web4city_title"
-              value={content.web4city_title}
-              onChange={(e) => handleInputChange("web4city_title", e.target.value)}
-              placeholder="Web4City"
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Web4City Subtitle</label>
-            <input
-              name="web4city_subtitle"
-              value={content.web4city_subtitle}
-              onChange={(e) => handleInputChange("web4city_subtitle", e.target.value)}
-              placeholder="Your GitHub as a 3D City"
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Wallet Button Text</label>
-            <input
-              name="wallet_button_text"
-              value={content.wallet_button_text}
-              onChange={(e) => handleInputChange("wallet_button_text", e.target.value)}
-              placeholder="Connect Wallet"
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Wallet Button Link (optional)</label>
-            <input
-              name="wallet_button_link"
-              value={content.wallet_button_link}
-              onChange={(e) => handleInputChange("wallet_button_link", e.target.value)}
-              placeholder="https://..."
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Featured Image (Passport)</label>
-            <input
-              name="featured_image_passport"
-              value={content.featured_image_passport}
-              onChange={(e) => handleInputChange("featured_image_passport", e.target.value)}
-              placeholder="ProBlox_NEW.png"
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Featured Image (Quest)</label>
-            <input
-              name="featured_image_quest"
-              value={content.featured_image_quest}
-              onChange={(e) => handleInputChange("featured_image_quest", e.target.value)}
-              placeholder="QuestBlox_NEW.png"
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <hr style={{ margin: "12px 0", border: 0, borderTop: "1px solid #1f2937" }} />
-
-            <h4 style={{ margin: "12px 0 8px", fontSize: 14 }}>Explore</h4>
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Explore Title</label>
-            <input
-              name="explore_title"
-              value={content.explore_title}
-              onChange={(e) => handleInputChange("explore_title", e.target.value)}
-              placeholder="Explore City"
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Explore Subtitle</label>
-            <input
-              name="explore_subtitle"
-              value={content.explore_subtitle}
-              onChange={(e) => handleInputChange("explore_subtitle", e.target.value)}
-              placeholder="Browse Buildings"
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Featured Image (Explore)</label>
-            <input
-              name="featured_image_explore"
-              value={content.featured_image_explore}
-              onChange={(e) => handleInputChange("featured_image_explore", e.target.value)}
-              placeholder="Explore_NEW.png"
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <hr style={{ margin: "12px 0", border: 0, borderTop: "1px solid #1f2937" }} />
-
-            <h4 style={{ margin: "12px 0 8px", fontSize: 14 }}>Lobby</h4>
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Lobby Title</label>
-            <input
-              name="lobby_title"
-              value={content.lobby_title}
-              onChange={(e) => handleInputChange("lobby_title", e.target.value)}
-              placeholder="Lobby"
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Lobby Subtitle</label>
-            <input
-              name="lobby_subtitle"
-              value={content.lobby_subtitle}
-              onChange={(e) => handleInputChange("lobby_subtitle", e.target.value)}
-              placeholder="Meet other devs"
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Featured Image (Lobby)</label>
-            <input
-              name="featured_image_lobby"
-              value={content.featured_image_lobby}
-              onChange={(e) => handleInputChange("featured_image_lobby", e.target.value)}
-              placeholder="Lobby_NEW.png"
-              style={{ width: "100%", padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <div style={{ marginTop: 16 }}>
-              <button
-                type="submit"
-                style={{ padding: "6px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
-              >
-                Save
-              </button>
+        <section className="mb-6 rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
+          <h3 className="mb-4 text-lg text-[#e040c0]">App Copy & Links</h3>
+          <form onSubmit={handleSave} className="space-y-4">
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Web4City Title</label>
+              <input
+                value={content.web4city_title}
+                onChange={(e) => handleInputChange("web4city_title", e.target.value)}
+                placeholder="Web4City"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
             </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Web4City Subtitle</label>
+              <input
+                value={content.web4city_subtitle}
+                onChange={(e) => handleInputChange("web4city_subtitle", e.target.value)}
+                placeholder="Your GitHub as a 3D City"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Wallet Button Text</label>
+              <input
+                value={content.wallet_button_text}
+                onChange={(e) => handleInputChange("wallet_button_text", e.target.value)}
+                placeholder="Connect Wallet"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Wallet Button Link</label>
+              <input
+                value={content.wallet_button_link}
+                onChange={(e) => handleInputChange("wallet_button_link", e.target.value)}
+                placeholder="https://..."
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <hr className="border-[#2a2a30]" />
+
+            <h4 className="text-[#e040c0]">Passport</h4>
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Featured Image</label>
+              <input
+                value={content.featured_image_passport}
+                onChange={(e) => handleInputChange("featured_image_passport", e.target.value)}
+                placeholder="ProBlox_NEW.png"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <hr className="border-[#2a2a30]" />
+
+            <h4 className="text-[#e040c0]">Quest</h4>
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Featured Image</label>
+              <input
+                value={content.featured_image_quest}
+                onChange={(e) => handleInputChange("featured_image_quest", e.target.value)}
+                placeholder="QuestBlox_NEW.png"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <hr className="border-[#2a2a30]" />
+
+            <h4 className="text-[#e040c0]">Explore</h4>
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Title</label>
+              <input
+                value={content.explore_title}
+                onChange={(e) => handleInputChange("explore_title", e.target.value)}
+                placeholder="Explore City"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Subtitle</label>
+              <input
+                value={content.explore_subtitle}
+                onChange={(e) => handleInputChange("explore_subtitle", e.target.value)}
+                placeholder="Browse Buildings"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Featured Image</label>
+              <input
+                value={content.featured_image_explore}
+                onChange={(e) => handleInputChange("featured_image_explore", e.target.value)}
+                placeholder="Explore_NEW.png"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <hr className="border-[#2a2a30]" />
+
+            <h4 className="text-[#e040c0]">Lobby</h4>
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Title</label>
+              <input
+                value={content.lobby_title}
+                onChange={(e) => handleInputChange("lobby_title", e.target.value)}
+                placeholder="Lobby"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Subtitle</label>
+              <input
+                value={content.lobby_subtitle}
+                onChange={(e) => handleInputChange("lobby_subtitle", e.target.value)}
+                placeholder="Meet other devs"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Featured Image</label>
+              <input
+                value={content.featured_image_lobby}
+                onChange={(e) => handleInputChange("featured_image_lobby", e.target.value)}
+                placeholder="Lobby_NEW.png"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="mt-4 rounded-none border border-[#2a2a30] bg-[#161618] px-6 py-2 font-pixel text-white hover:bg-[#1c1c20]"
+              style={{ borderColor: ACCENT }}
+            >
+              Save
+            </button>
           </form>
         </section>
 
-        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
-          <h3 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600 }}>Preview</h3>
-          <pre style={{ whiteSpace: "pre-wrap", fontSize: 12, opacity: 0.8 }}>
+        <section className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
+          <h3 className="mb-4 text-lg text-[#e040c0]">Preview</h3>
+          <pre className="whitespace-pre-wrap text-xs text-[#8c8c9c]">
             {JSON.stringify(content, null, 2)}
           </pre>
         </section>

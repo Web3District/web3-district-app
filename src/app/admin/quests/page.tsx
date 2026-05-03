@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
+const ACCENT = "#e040c0";
+
 interface Quest {
   id?: number;
   quest_id: string;
@@ -16,7 +18,6 @@ interface Quest {
   reward_aura: number;
   sort_order: number;
   status: "draft" | "live";
-  created_at?: string;
 }
 
 export default function AdminQuestsPage() {
@@ -24,8 +25,8 @@ export default function AdminQuestsPage() {
   const [loading, setLoading] = useState(true);
   const [quests, setQuests] = useState<Quest[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  // Form state
   const [formData, setFormData] = useState({
     id: "",
     quest_id: "",
@@ -144,18 +145,15 @@ export default function AdminQuestsPage() {
       };
 
       if (formData.id) {
-        const { error } = await supabase
-          .from("quest_definitions")
-          .update(payload)
-          .eq("id", parseInt(formData.id, 10));
+        const { error } = await supabase.from("quest_definitions").update(payload).eq("id", parseInt(formData.id, 10));
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from("quest_definitions")
-          .insert(payload);
+        const { error } = await supabase.from("quest_definitions").insert(payload);
         if (error) throw error;
       }
 
+      setSuccess("Quest saved successfully");
+      setTimeout(() => setSuccess(null), 3000);
       handleNew();
       await fetchQuests();
     } catch (err: any) {
@@ -164,14 +162,13 @@ export default function AdminQuestsPage() {
     }
   }
 
-  async function handleApprove(id?: number, questId?: string) {
+  async function handleApprove(id?: number) {
     try {
       const supabase = createBrowserSupabase();
-      const { error } = await supabase
-        .from("quest_definitions")
-        .update({ status: "live" })
-        .eq("id", id ?? 0);
+      const { error } = await supabase.from("quest_definitions").update({ status: "live" }).eq("id", id ?? 0);
       if (error) throw error;
+      setSuccess("Quest approved");
+      setTimeout(() => setSuccess(null), 3000);
       await fetchQuests();
     } catch (err: any) {
       setError(err.message ?? "Failed to approve quest");
@@ -179,16 +176,15 @@ export default function AdminQuestsPage() {
     }
   }
 
-  async function handleDelete(id?: number, questId?: string) {
+  async function handleDelete(id?: number) {
     if (!confirm("Delete this quest?")) return;
 
     try {
       const supabase = createBrowserSupabase();
-      const { error } = await supabase
-        .from("quest_definitions")
-        .delete()
-        .eq("id", id ?? 0);
+      const { error } = await supabase.from("quest_definitions").delete().eq("id", id ?? 0);
       if (error) throw error;
+      setSuccess("Quest deleted");
+      setTimeout(() => setSuccess(null), 3000);
       await fetchQuests();
     } catch (err: any) {
       setError(err.message ?? "Failed to delete quest");
@@ -204,205 +200,193 @@ export default function AdminQuestsPage() {
 
   if (loading) {
     return (
-      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "#8c8c9c" }}>Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#0d0d0f]">
+        <p className="text-[#8c8c9c] font-pixel">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0 }}>
-      <header style={{ display: "flex", gap: 8, alignItems: "center", padding: "12px", borderBottom: "1px solid #1f2937" }}>
+    <div className="min-h-screen bg-[#0d0d0f] font-pixel text-[#e8dcc8]">
+      <header className="flex items-center gap-4 border-b border-[#2a2a30] px-6 py-4">
         <button
           onClick={() => router.push("/admin/panel")}
-          style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+          className="rounded-none border border-[#2a2a30] bg-[#161618] px-3 py-1.5 text-sm hover:bg-[#1c1c20]"
         >
           ← Back
         </button>
-        <button
-          onClick={() => router.push("/admin/dashboard")}
-          style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
-        >
-          Dashboard
-        </button>
-        <div style={{ opacity: 0.8 }}>Quests (quest_definitions)</div>
+        <h1 className="text-lg">Quests</h1>
       </header>
 
-      <main style={{ padding: 16 }}>
+      <main className="p-6">
+        {success && (
+          <div className="mb-4 rounded-none border border-green-600 bg-green-900/20 px-4 py-3 text-green-400">
+            {success}
+          </div>
+        )}
         {error && (
-          <div style={{ marginBottom: 12, padding: "8px 12px", border: "1px solid #ef4444", background: "#ef444420", borderRadius: 8, color: "#ef4444" }}>
+          <div className="mb-4 rounded-none border border-red-600 bg-red-900/20 px-4 py-3 text-red-400">
             {error}
           </div>
         )}
 
-        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
-          <h3 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600 }}>Create / Edit Quest</h3>
-          <form id="questForm" onSubmit={handleSave}>
-            <input type="hidden" name="id" value={formData.id} />
-            
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Quest ID (slug, e.g. connect_email)</label>
-            <input
-              name="quest_id"
-              value={formData.quest_id}
-              onChange={(e) => setFormData({ ...formData, quest_id: e.target.value })}
-              placeholder="quest_id"
-              required
-              style={{ width: "100%", maxWidth: 400, padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
+        <section className="mb-6 rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
+          <h3 className="mb-4 text-lg text-[#e040c0]">Create / Edit Quest</h3>
+          <form onSubmit={handleSave} className="space-y-4">
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Quest ID (slug)</label>
+              <input
+                value={formData.quest_id}
+                onChange={(e) => setFormData({ ...formData, quest_id: e.target.value })}
+                placeholder="connect_email"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                required
+              />
+            </div>
 
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Category</label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value as "personal" | "global" })}
-              style={{ width: "100%", maxWidth: 400, padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            >
-              <option value="personal">personal</option>
-              <option value="global">global</option>
-            </select>
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Title</label>
-            <input
-              name="title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="Title"
-              required
-              style={{ width: "100%", maxWidth: 400, padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Description</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Description"
-              rows={3}
-              style={{ width: "100%", maxWidth: 400, padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Requirements (JSON, e.g. {"{connections:[\"email\"]}"} or {"{check_in:true}"})</label>
-            <textarea
-              name="requirements"
-              value={formData.requirements}
-              onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
-              placeholder='{"connections":["email"]}'
-              rows={2}
-              style={{ width: "100%", maxWidth: 400, padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>GBLX cost</label>
-            <input
-              name="gblx_cost"
-              type="number"
-              min="0"
-              value={formData.gblx_cost}
-              onChange={(e) => setFormData({ ...formData, gblx_cost: e.target.value })}
-              style={{ width: "100%", maxWidth: 400, padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Reward GBLX</label>
-            <input
-              name="reward_gblx"
-              type="number"
-              min="0"
-              value={formData.reward_gblx}
-              onChange={(e) => setFormData({ ...formData, reward_gblx: e.target.value })}
-              style={{ width: "100%", maxWidth: 400, padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Reward Aura</label>
-            <input
-              name="reward_aura"
-              type="number"
-              min="0"
-              value={formData.reward_aura}
-              onChange={(e) => setFormData({ ...formData, reward_aura: e.target.value })}
-              style={{ width: "100%", maxWidth: 400, padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Sort order</label>
-            <input
-              name="sort_order"
-              type="number"
-              value={formData.sort_order}
-              onChange={(e) => setFormData({ ...formData, sort_order: e.target.value })}
-              style={{ width: "100%", maxWidth: 400, padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            />
-
-            <label style={{ display: "block", marginTop: 8, opacity: 0.9 }}>Status</label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value as "draft" | "live" })}
-              style={{ width: "100%", maxWidth: 400, padding: 8, margin: "6px 0", borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff" }}
-            >
-              <option value="draft">draft</option>
-              <option value="live">live</option>
-            </select>
-
-            <div style={{ marginTop: 12 }}>
-              <button
-                type="submit"
-                style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Category</label>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value as "personal" | "global" })}
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
               >
+                <option value="personal">personal</option>
+                <option value="global">global</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Title</label>
+              <input
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                placeholder="Connect your email"
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Description</label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Connect your email to get started"
+                rows={3}
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Requirements (JSON)</label>
+              <textarea
+                value={formData.requirements}
+                onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
+                placeholder='{"connections":["email"]}'
+                rows={2}
+                className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+              />
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="mb-1 block text-sm text-[#8c8c9c]">GBLX cost</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.gblx_cost}
+                  onChange={(e) => setFormData({ ...formData, gblx_cost: e.target.value })}
+                  className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm text-[#8c8c9c]">Reward GBLX</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.reward_gblx}
+                  onChange={(e) => setFormData({ ...formData, reward_gblx: e.target.value })}
+                  className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm text-[#8c8c9c]">Reward Aura</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.reward_aura}
+                  onChange={(e) => setFormData({ ...formData, reward_aura: e.target.value })}
+                  className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="mb-1 block text-sm text-[#8c8c9c]">Sort order</label>
+                <input
+                  type="number"
+                  value={formData.sort_order}
+                  onChange={(e) => setFormData({ ...formData, sort_order: e.target.value })}
+                  className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm text-[#8c8c9c]">Status</label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value as "draft" | "live" })}
+                  className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                >
+                  <option value="draft">draft</option>
+                  <option value="live">live</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <button type="submit" className="rounded-none border border-[#2a2a30] bg-[#161618] px-6 py-2 font-pixel text-white hover:bg-[#1c1c20]" style={{ borderColor: ACCENT }}>
                 Save
               </button>
-              <button
-                type="button"
-                onClick={handleNew}
-                style={{ marginLeft: 8, padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
-              >
+              <button type="button" onClick={handleNew} className="rounded-none border border-[#2a2a30] bg-[#161618] px-6 py-2 font-pixel text-white hover:bg-[#1c1c20]">
                 New
               </button>
             </div>
           </form>
         </section>
 
-        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
-          <h3 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600 }}>Quests list</h3>
-          <div id="quests">
-            {quests.length === 0 ? (
-              <p style={{ opacity: 0.7 }}>No quests.</p>
-            ) : (
-              quests.map((q, i) => (
-                <div key={q.id ?? i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8, border: "1px solid #1f2937", borderRadius: 8, padding: 12, marginBottom: 8 }}>
-                  <div>
-                    <strong>{escapeHtml(q.title || q.quest_id)}</strong>{" "}
-                    <span style={{ fontSize: 12, opacity: 0.8 }}>({escapeHtml(q.quest_id)})</span>
-                    <div style={{ fontSize: 12, opacity: 0.8 }}>
-                      {escapeHtml(q.category)} · cost {q.gblx_cost} GBLX · +{q.reward_gblx} GBLX, +{q.reward_aura} Aura · {q.status}
+        <section className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
+          <h3 className="mb-4 text-lg text-[#e040c0]">Quests list</h3>
+          
+          {quests.length === 0 ? (
+            <p className="text-[#8c8c9c]">No quests.</p>
+          ) : (
+            <div className="space-y-2">
+              {quests.map((q) => (
+                <div key={q.id} className="rounded-none border-2 border-[#2a2a38] bg-[#1a1a24] p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="font-bold">{escapeHtml(q.title)}</div>
+                      <div className="text-xs text-[#8c8c9c]">
+                        {q.quest_id} · {q.category} · cost {q.gblx_cost} GBLX · +{q.reward_gblx} GBLX, +{q.reward_aura} Aura · {q.status}
+                      </div>
+                      <div className="mt-1 text-xs text-[#8c8c9c]">
+                        {escapeHtml((q.description || "").slice(0, 100))}{(q.description || "").length > 100 ? "..." : ""}
+                      </div>
                     </div>
-                    <div style={{ fontSize: 12, opacity: 0.8 }}>
-                      {escapeHtml((q.description || "").slice(0, 80))}{(q.description || "").length > 80 ? "…" : ""}
+                    <div className="flex gap-2">
+                      <button onClick={() => handleEdit(q)} className="rounded-none border border-[#2a2a30] bg-[#161618] px-3 py-1 text-xs hover:bg-[#1c1c20]">Edit</button>
+                      {q.status === "draft" && (
+                        <button onClick={() => handleApprove(q.id)} className="rounded-none border border-green-600 bg-green-900/20 px-3 py-1 text-xs text-green-400 hover:bg-green-900/40">Go live</button>
+                      )}
+                      <button onClick={() => handleDelete(q.id)} className="rounded-none border border-red-600 bg-red-900/20 px-3 py-1 text-xs text-red-400 hover:bg-red-900/40">Delete</button>
                     </div>
-                  </div>
-                  <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                    <button
-                      onClick={() => handleEdit(q)}
-                      style={{ padding: "4px 8px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer", fontSize: 12 }}
-                    >
-                      Edit
-                    </button>
-                    {q.status === "draft" && (
-                      <button
-                        onClick={() => handleApprove(q.id, q.quest_id)}
-                        style={{ padding: "4px 8px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer", fontSize: 12 }}
-                      >
-                        Go live
-                      </button>
-                    )}
-                    <button
-                      onClick={() => handleDelete(q.id, q.quest_id)}
-                      style={{ padding: "4px 8px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer", fontSize: 12 }}
-                    >
-                      Delete
-                    </button>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

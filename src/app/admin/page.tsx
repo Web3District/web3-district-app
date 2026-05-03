@@ -42,20 +42,20 @@ export default function AdminPanelPage() {
 
   if (loading) {
     return (
-      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "#8c8c9c" }}>Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#0d0d0f]">
+        <p className="text-[#8c8c9c] font-pixel">Loading...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ textAlign: "center" }}>
-          <p style={{ color: "#ef4444" }}>{error}</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#0d0d0f]">
+        <div className="text-center">
+          <p className="text-red-400 font-pixel">{error}</p>
           <button
             onClick={() => router.push("/")}
-            style={{ marginTop: 16, padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+            className="mt-4 rounded-none border border-[#374151] bg-[#161618] px-4 py-2 font-pixel text-white hover:bg-[#1c1c20]"
           >
             Go Home
           </button>
@@ -65,117 +65,63 @@ export default function AdminPanelPage() {
   }
 
   return (
-    <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0 }}>
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", borderBottom: "1px solid #1f2937" }}>
-        <div>Admin Panel</div>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+    <div className="min-h-screen bg-[#0d0d0f] font-pixel text-[#e8dcc8]">
+      <header className="flex items-center justify-between border-b border-[#2a2a30] px-6 py-4">
+        <div className="text-lg">Admin Panel</div>
+        <div className="flex items-center gap-4">
           <a
             href="/admin/dashboard"
-            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8 }}
+            className="rounded-none border border-[#2a2a30] bg-[#161618] px-3 py-1.5 text-sm hover:bg-[#1c1c20]"
           >
             Dashboard
           </a>
-          <div style={{ fontSize: 12, opacity: 0.7 }}>Session TTL / Idle enforced</div>
+          <div className="text-xs text-[#8c8c9c]">Session TTL / Idle enforced</div>
           <button
             onClick={async () => {
               const supabase = createBrowserSupabase();
               await supabase.auth.signOut();
               router.push("/");
             }}
-            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+            className="rounded-none border border-[#2a2a30] bg-[#161618] px-3 py-1.5 text-sm hover:bg-[#1c1c20]"
           >
             Sign out
           </button>
         </div>
       </header>
 
-      <main style={{ padding: 16 }}>
-        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
-          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Live Status</h3>
-          <div id="status" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 8 }}></div>
-        </section>
-
-        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
-          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Users Overview</h3>
-          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>Telegram ID, Wallet, Badges (stub view)</p>
-          <a
-            href="/admin/users"
-            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8, display: "inline-block" }}
-          >
-            Open
+      <main className="p-6">
+        <div className="mb-6 grid gap-4 md:grid-cols-2">
+          <a href="/admin/users" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
+            <h3 className="mb-2 text-lg text-[#e040c0]">Users</h3>
+            <p className="text-sm text-[#8c8c9c]">View and manage all users</p>
           </a>
-        </section>
 
-        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
-          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Quests</h3>
-          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>Create/edit Featured and per-user quests.</p>
-          <a
-            href="/admin/quests"
-            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8, display: "inline-block" }}
-          >
-            Open
+          <a href="/admin/quests" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
+            <h3 className="mb-2 text-lg text-[#e040c0]">Quests</h3>
+            <p className="text-sm text-[#8c8c9c]">Create/edit quests</p>
           </a>
-        </section>
 
-        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
-          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Content Blocks</h3>
-          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>Edit texts, button links, and images used in the app.</p>
-          <a
-            href="/admin/content"
-            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8, display: "inline-block" }}
-          >
-            Open
+          <a href="/admin/venues" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
+            <h3 className="mb-2 text-lg text-[#e040c0]">Venues</h3>
+            <p className="text-sm text-[#8c8c9c]">Manage venue locations</p>
           </a>
-        </section>
 
-        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
-          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Venues</h3>
-          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>Manage venue locations and check-in spots.</p>
-          <a
-            href="/admin/venues"
-            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8, display: "inline-block" }}
-          >
-            Open
+          <a href="/admin/districts" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
+            <h3 className="mb-2 text-lg text-[#e040c0]">Districts</h3>
+            <p className="text-sm text-[#8c8c9c]">View territory claims</p>
           </a>
-        </section>
 
-        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
-          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Districts</h3>
-          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>View territory claims and district statistics.</p>
-          <a
-            href="/admin/districts"
-            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8, display: "inline-block" }}
-          >
-            Open
+          <a href="/admin/content" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
+            <h3 className="mb-2 text-lg text-[#e040c0]">Content</h3>
+            <p className="text-sm text-[#8c8c9c]">Edit app texts and images</p>
           </a>
-        </section>
+
+          <a href="/admin/city" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
+            <h3 className="mb-2 text-lg text-[#e040c0]">City Analytics</h3>
+            <p className="text-sm text-[#8c8c9c]">View city stats</p>
+          </a>
+        </div>
       </main>
-
-      <script dangerouslySetInnerHTML={{ __html: `
-        const box = document.getElementById('status');
-        function pill(ok) {
-          return '<span style="display:inline-block;padding:2px 8px;border-radius:999px;background:' + (ok ? '#16a34a' : '#dc2626') + ';font-size:12px">' + (ok ? 'UP' : 'DOWN') + '</span>';
-        }
-        function renderStatus(list) {
-          box.innerHTML = list.map(c => 
-            '<div style="border:1px solid #1f2937;border-radius:8px;padding:10px;background:#0b1220">' +
-              '<div style="font-weight:600">' + c.url.replace(location.origin, '') + '</div>' +
-              '<div style="opacity:.8">HTTP ' + c.code + ' ' + pill(c.ok) + '</div>' +
-            '</div>'
-          ).join('');
-        }
-        async function tick() {
-          try {
-            const res = await fetch('/admin/status_api.php');
-            const data = await res.json();
-            renderStatus(data.checks || []);
-          } catch(e) {
-            renderStatus([{url:'/admin/status_api.php', code: 0, ok: false}]);
-          }
-        }
-        tick();
-        setInterval(tick, 5000);
-      `}} />
     </div>
   );
 }
