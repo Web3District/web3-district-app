@@ -510,6 +510,49 @@ function HomeContent() {
   const [compareLang, setCompareLang] = useState<"en" | "pt">("en");
   const [clickedAd, setClickedAd] = useState<import("@/lib/skyAds").SkyAd | null>(null);
   const [skyAds, setSkyAds] = useState<import("@/lib/skyAds").SkyAd[]>(DEFAULT_SKY_ADS);
+
+  // Fetch admin ads from Supabase
+  useEffect(() => {
+    const site = typeof window !== "undefined" ? window.location.origin : "https://web4city.xyz";
+    
+    async function fetchAdminAds() {
+      try {
+        const supabase = createBrowserSupabase();
+        const { data: adminAds, error } = await supabase
+          .from("ads")
+          .select("*")
+          .eq("active", true)
+          .order("priority", { ascending: false });
+
+        if (error) throw error;
+
+        if (adminAds && adminAds.length > 0) {
+          const converted = adminAds.map((ad: any) => ({
+            id: ad.id,
+            text: ad.brand || ad.campaign || "ADVERTISEMENT",
+            brand: ad.brand,
+            description: ad.campaign,
+            color: "#f8d880",
+            bgColor: "#1a1018",
+            link: ad.cta_url || ad.target_url || site,
+            vehicle: ad.type === "blimp" ? "blimp" : ad.type === "plane" ? "plane" : "billboard" as const,
+            priority: ad.priority || 10,
+          }));
+
+          // Merge with defaults, admin ads take priority
+          setSkyAds(prev => {
+            const existingIds = new Set(prev.map(a => a.id));
+            const newAds = converted.filter((a: any) => !existingIds.has(a.id));
+            return [...prev, ...newAds];
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch admin ads:", err);
+      }
+    }
+
+    fetchAdminAds();
+  }, []);
   const [starCount, setStarCount] = useState<number | null>(null);
   const [discordMembers, setDiscordMembers] = useState<number | null>(null);
   const [pillModalOpen, setPillModalOpen] = useState(false);
