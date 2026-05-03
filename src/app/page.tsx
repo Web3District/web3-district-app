@@ -3622,19 +3622,7 @@ function HomeContent() {
                     {arcadeOnline > 0 ? `${arcadeOnline} online` : "Meet other devs"}
                   </span>
                 </button>
-                <button
-                  onClick={() => setActiveDistrictLobby(null)}
-                  className="btn-press px-7 py-3 text-xs sm:py-3.5 sm:text-sm text-bg"
-                  style={{
-                    backgroundColor: theme.accent,
-                    boxShadow: `4px 4px 0 0 ${theme.shadow}`,
-                  }}
-                >
-                  🏙️ Districts
-                  <span className="block text-[8px] opacity-60 normal-cap">
-                    District Lobbies
-                  </span>
-                </button>
+
                 {(
                   <div className="relative">
                     <button
