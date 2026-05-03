@@ -4,76 +4,7 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
-const ACCENT = "#e040c0";
-
-interface AdminPage {
-  href: string;
-  title: string;
-  description: string;
-  icon: string;
-  priority: "high" | "medium" | "low";
-}
-
-const adminPages: AdminPage[] = [
-  {
-    href: "/admin/city",
-    title: "City Analytics",
-    description: "View city stats, users, visits, contributions, and district breakdown",
-    icon: "📊",
-    priority: "high",
-  },
-  {
-    href: "/admin/users",
-    title: "User Management",
-    description: "View all users, search, ban/unban, and moderate",
-    icon: "👥",
-    priority: "high",
-  },
-  {
-    href: "/admin/districts",
-    title: "Districts",
-    description: "View territory claims and district building counts",
-    icon: "🗺️",
-    priority: "high",
-  },
-  {
-    href: "/admin/quests",
-    title: "Quests",
-    description: "Create, edit, and activate user quests and missions",
-    icon: "🎯",
-    priority: "medium",
-  },
-  {
-    href: "/admin/venues",
-    title: "Venues",
-    description: "Manage sponsor locations, check-in spots, and events",
-    icon: "📍",
-    priority: "medium",
-  },
-  {
-    href: "/admin/content",
-    title: "Content CMS",
-    description: "Update app texts, titles, and images without deploying",
-    icon: "📝",
-    priority: "medium",
-  },
-  {
-    href: "/admin/ads",
-    title: "Ads",
-    description: "Manage ad campaigns and sponsorships",
-    icon: "📢",
-    priority: "medium",
-  },
-  {
-    href: "/admin/drops",
-    title: "Drops",
-    description: "Create and manage building drops",
-    icon: "🎁",
-    priority: "low",
-  },
-];
-
-export default function AdminDashboardPage() {
+export default function AdminPanelPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -111,24 +42,20 @@ export default function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a12]">
-        <div className="text-center">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: ACCENT }} />
-          <p className="text-[#8c8c9c]">Loading admin dashboard...</p>
-        </div>
+      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "#8c8c9c" }}>Loading...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a12]">
-        <div className="text-center">
-          <p className="text-red-400">{error}</p>
+      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ textAlign: "center" }}>
+          <p style={{ color: "#ef4444" }}>{error}</p>
           <button
             onClick={() => router.push("/")}
-            className="mt-4 rounded-lg px-4 py-2"
-            style={{ backgroundColor: ACCENT }}
+            style={{ marginTop: 16, padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
           >
             Go Home
           </button>
@@ -138,98 +65,117 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a12] text-white">
-      {/* Header */}
-      <header className="border-b border-[#1f2937] px-6 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Web4City Admin</h1>
-            <p className="mt-1 text-sm text-[#8c8c9c]">
-              Welcome back, <span className="font-medium text-white">@{githubLogin}</span>
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <a
-              href="/"
-              className="rounded-lg border border-[#374151] bg-[#111827] px-4 py-2 text-sm hover:bg-[#1f2937]"
-            >
-              ← Back to App
-            </a>
-            <button
-              onClick={async () => {
-                const supabase = createBrowserSupabase();
-                await supabase.auth.signOut();
-                router.push("/");
-              }}
-              className="rounded-lg border border-red-600/30 bg-red-900/20 px-4 py-2 text-sm text-red-400 hover:bg-red-900/40"
-            >
-              Sign Out
-            </button>
-          </div>
+    <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0 }}>
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", borderBottom: "1px solid #1f2937" }}>
+        <div>Admin Panel</div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <a
+            href="/admin/dashboard"
+            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8 }}
+          >
+            Dashboard
+          </a>
+          <div style={{ fontSize: 12, opacity: 0.7 }}>Session TTL / Idle enforced</div>
+          <button
+            onClick={async () => {
+              const supabase = createBrowserSupabase();
+              await supabase.auth.signOut();
+              router.push("/");
+            }}
+            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+          >
+            Sign out
+          </button>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="p-6">
-        {/* Quick Stats */}
-        <section className="mb-8 rounded-xl border border-[#1f2937] bg-[#111827] p-6">
-          <h2 className="mb-4 text-lg font-bold">Quick Access</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {adminPages.filter(p => p.priority === "high").map((page) => (
-              <a
-                key={page.href}
-                href={page.href}
-                className="group rounded-xl border border-[#1f2937] bg-[#0b1220] p-4 transition-all hover:scale-[1.02] hover:border-[#e040c0]/50"
-              >
-                <div className="mb-2 text-2xl">{page.icon}</div>
-                <h3 className="font-bold group-hover:text-[#e040c0]">{page.title}</h3>
-                <p className="mt-1 text-xs text-[#8c8c9c]">{page.description}</p>
-              </a>
-            ))}
-          </div>
+      <main style={{ padding: 16 }}>
+        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
+          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Live Status</h3>
+          <div id="status" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 8 }}></div>
         </section>
 
-        {/* All Pages */}
-        <section className="rounded-xl border border-[#1f2937] bg-[#111827] p-6">
-          <h2 className="mb-4 text-lg font-bold">All Admin Pages</h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {adminPages.map((page) => (
-              <a
-                key={page.href}
-                href={page.href}
-                className="group flex items-start gap-3 rounded-lg border border-[#1f2937] bg-[#0b1220] p-4 transition-all hover:border-[#e040c0]/50 hover:bg-[#111827]"
-              >
-                <div className="text-2xl">{page.icon}</div>
-                <div className="flex-1">
-                  <h3 className="font-bold group-hover:text-[#e040c0]">{page.title}</h3>
-                  <p className="mt-1 text-xs text-[#8c8c9c]">{page.description}</p>
-                  {page.priority === "high" && (
-                    <span className="mt-2 inline-block rounded bg-green-900/30 px-2 py-0.5 text-[10px] text-green-400">
-                      High Priority
-                    </span>
-                  )}
-                </div>
-                <svg
-                  className="mt-1 h-5 w-5 text-[#6b7280] group-hover:text-[#e040c0]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
-            ))}
-          </div>
+        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
+          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Users Overview</h3>
+          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>Telegram ID, Wallet, Badges (stub view)</p>
+          <a
+            href="/admin/users"
+            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8, display: "inline-block" }}
+          >
+            Open
+          </a>
         </section>
 
-        {/* Footer */}
-        <footer className="mt-8 text-center text-sm text-[#6b7280]">
-          <p>Web4City Admin Panel • Built with Next.js & Supabase</p>
-          <p className="mt-1 text-xs">
-            Access restricted to authorized administrators only
-          </p>
-        </footer>
+        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
+          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Quests</h3>
+          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>Create/edit Featured and per-user quests.</p>
+          <a
+            href="/admin/quests"
+            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8, display: "inline-block" }}
+          >
+            Open
+          </a>
+        </section>
+
+        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
+          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Content Blocks</h3>
+          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>Edit texts, button links, and images used in the app.</p>
+          <a
+            href="/admin/content"
+            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8, display: "inline-block" }}
+          >
+            Open
+          </a>
+        </section>
+
+        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
+          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Venues</h3>
+          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>Manage venue locations and check-in spots.</p>
+          <a
+            href="/admin/venues"
+            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8, display: "inline-block" }}
+          >
+            Open
+          </a>
+        </section>
+
+        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
+          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Districts</h3>
+          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>View territory claims and district statistics.</p>
+          <a
+            href="/admin/districts"
+            style={{ padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", textDecoration: "none", borderRadius: 8, display: "inline-block" }}
+          >
+            Open
+          </a>
+        </section>
       </main>
+
+      <script dangerouslySetInnerHTML={{ __html: `
+        const box = document.getElementById('status');
+        function pill(ok) {
+          return '<span style="display:inline-block;padding:2px 8px;border-radius:999px;background:' + (ok ? '#16a34a' : '#dc2626') + ';font-size:12px">' + (ok ? 'UP' : 'DOWN') + '</span>';
+        }
+        function renderStatus(list) {
+          box.innerHTML = list.map(c => 
+            '<div style="border:1px solid #1f2937;border-radius:8px;padding:10px;background:#0b1220">' +
+              '<div style="font-weight:600">' + c.url.replace(location.origin, '') + '</div>' +
+              '<div style="opacity:.8">HTTP ' + c.code + ' ' + pill(c.ok) + '</div>' +
+            '</div>'
+          ).join('');
+        }
+        async function tick() {
+          try {
+            const res = await fetch('/admin/status_api.php');
+            const data = await res.json();
+            renderStatus(data.checks || []);
+          } catch(e) {
+            renderStatus([{url:'/admin/status_api.php', code: 0, ok: false}]);
+          }
+        }
+        tick();
+        setInterval(tick, 5000);
+      `}} />
     </div>
   );
 }

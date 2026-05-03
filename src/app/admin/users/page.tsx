@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
-const ACCENT = "#e040c0";
-
 interface Developer {
   id: number;
   github_login: string;
@@ -101,7 +99,6 @@ export default function AdminUsersPage() {
     try {
       const supabase = createBrowserSupabase();
       
-      // Add to banned table (you'll need to create this table)
       const { error } = await supabase
         .from("banned_users")
         .insert({ user_id: userId, reason: "Banned by admin", banned_at: new Date().toISOString() });
@@ -139,26 +136,28 @@ export default function AdminUsersPage() {
     }
   }
 
+  function escapeHtml(s: string) {
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a12]">
-        <div className="text-center">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: ACCENT }} />
-          <p className="text-[#8c8c9c]">Loading users...</p>
-        </div>
+      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "#8c8c9c" }}>Loading...</p>
       </div>
     );
   }
 
   if (error && !users.length) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a12]">
-        <div className="text-center">
-          <p className="text-red-400">{error}</p>
+      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ textAlign: "center" }}>
+          <p style={{ color: "#ef4444" }}>{error}</p>
           <button
             onClick={() => router.push("/admin/city")}
-            className="mt-4 rounded-lg px-4 py-2"
-            style={{ backgroundColor: ACCENT }}
+            style={{ marginTop: 16, padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
           >
             Back to Dashboard
           </button>
@@ -168,133 +167,94 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a12] text-white">
-      {/* Header */}
-      <header className="flex items-center justify-between border-b border-[#1f2937] px-6 py-4">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.push("/admin/city")}
-            className="rounded-lg border border-[#374151] bg-[#111827] px-3 py-1.5 text-sm hover:bg-[#1f2937]"
-          >
-            ← Back
-          </button>
-          <h1 className="text-xl font-bold">User Management</h1>
-        </div>
-        <div className="text-sm text-[#8c8c9c]">
-          {filteredUsers.length} / {users.length} users
-        </div>
+    <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0 }}>
+      <header style={{ display: "flex", gap: 8, alignItems: "center", padding: "12px", borderBottom: "1px solid #1f2937" }}>
+        <button
+          onClick={() => router.push("/admin/city")}
+          style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+        >
+          ← Back
+        </button>
+        <button
+          onClick={() => router.push("/admin/dashboard")}
+          style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+        >
+          Dashboard
+        </button>
+        <div style={{ opacity: 0.8 }}>Users</div>
       </header>
 
-      {/* Alerts */}
-      {success && (
-        <div className="mx-6 mt-4 rounded-lg border border-green-600/30 bg-green-900/20 px-4 py-3 text-green-400">
-          ✅ {success}
-        </div>
-      )}
-      {error && (
-        <div className="mx-6 mt-4 rounded-lg border border-red-600/30 bg-red-900/20 px-4 py-3 text-red-400">
-          ❌ {error}
-        </div>
-      )}
+      <main style={{ padding: 16 }}>
+        {success && (
+          <div style={{ marginBottom: 12, padding: "8px 12px", border: "1px solid #16a34a", background: "#16a34a20", borderRadius: 8, color: "#16a34a" }}>
+            {success}
+          </div>
+        )}
+        {error && (
+          <div style={{ marginBottom: 12, padding: "8px 12px", border: "1px solid #ef4444", background: "#ef444420", borderRadius: 8, color: "#ef4444" }}>
+            {error}
+          </div>
+        )}
 
-      {/* Search */}
-      <main className="p-6">
-        <div className="mb-6 flex gap-3">
+        <div style={{ marginBottom: 12 }}>
           <input
-            type="text"
-            placeholder="Search by username, ID, or name..."
+            id="search"
+            placeholder="Search by id, email, wallet…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-md rounded-lg border border-[#374151] bg-[#111827] px-4 py-2.5 text-white placeholder-[#6b7280] focus:border-[#e040c0] focus:outline-none"
+            style={{ padding: 8, borderRadius: 8, border: "1px solid #374151", background: "#0b1220", color: "#fff", marginRight: 8, maxWidth: 320 }}
           />
           <button
             onClick={fetchUsers}
-            className="rounded-lg border border-[#374151] bg-[#111827] px-4 py-2.5 hover:bg-[#1f2937]"
+            style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
           >
             Reload
           </button>
         </div>
 
-        {/* Users Table */}
-        <div className="overflow-x-auto rounded-lg border border-[#1f2937]">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-[#111827] text-[#8c8c9c]">
-              <tr>
-                <th className="px-4 py-3 font-medium">User</th>
-                <th className="px-4 py-3 font-medium">XP</th>
-                <th className="px-4 py-3 font-medium">Visits</th>
-                <th className="px-4 py-3 font-medium">Contributions</th>
-                <th className="px-4 py-3 font-medium">District</th>
-                <th className="px-4 py-3 font-medium">Claimed</th>
-                <th className="px-4 py-3 font-medium">Joined</th>
-                <th className="px-4 py-3 font-medium">Actions</th>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+          <thead>
+            <tr style={{ textAlign: "left", borderBottom: "1px solid #1f2937" }}>
+              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>ID</th>
+              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>Username</th>
+              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>XP</th>
+              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>Visits</th>
+              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>Contributions</th>
+              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>District</th>
+              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>Last activity</th>
+              <th style={{ padding: "8px 10px", opacity: 0.9, fontWeight: 600 }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody">
+            {filteredUsers.map((u) => (
+              <tr key={u.id} style={{ borderBottom: "1px solid #1f2937" }}>
+                <td style={{ padding: "8px 10px", opacity: 0.8 }}>{u.id}</td>
+                <td style={{ padding: "8px 10px" }}>
+                  <div style={{ fontWeight: 600 }}>{escapeHtml(u.github_login)}</div>
+                  {u.name && <div style={{ fontSize: 12, opacity: 0.6 }}>{escapeHtml(u.name)}</div>}
+                </td>
+                <td style={{ padding: "8px 10px", opacity: 0.8 }}>{u.xp_total}</td>
+                <td style={{ padding: "8px 10px", opacity: 0.8 }}>{u.visit_count}</td>
+                <td style={{ padding: "8px 10px", opacity: 0.8 }}>{u.contributions.toLocaleString()}</td>
+                <td style={{ padding: "8px 10px", opacity: 0.8 }}>{u.district || "-"}</td>
+                <td style={{ padding: "8px 10px", opacity: 0.8 }}>
+                  {u.account_created_at ? u.account_created_at.replace("T", " ").slice(0, 19) : "-"}
+                </td>
+                <td style={{ padding: "8px 10px" }}>
+                  <button
+                    onClick={() => handleBan(u.id, u.github_login)}
+                    style={{ padding: "4px 8px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer", fontSize: 12 }}
+                  >
+                    Ban
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-[#1f2937]">
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-[#111827]/50">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      {user.avatar_url && (
-                        <img
-                          src={user.avatar_url}
-                          alt={user.github_login}
-                          className="h-8 w-8 rounded-full"
-                        />
-                      )}
-                      <div>
-                        <div className="font-medium">{user.github_login}</div>
-                        {user.name && (
-                          <div className="text-xs text-[#8c8c9c]">{user.name}</div>
-                        )}
-                        <div className="text-xs text-[#6b7280]">ID: {user.id}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="rounded bg-purple-900/30 px-2 py-0.5 text-purple-400">
-                      {user.xp_total}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-[#8c8c9c]">{user.visit_count}</td>
-                  <td className="px-4 py-3 text-[#8c8c9c]">
-                    {user.contributions.toLocaleString()}
-                  </td>
-                  <td className="px-4 py-3">
-                    {user.district ? (
-                      <span className="rounded bg-blue-900/30 px-2 py-0.5 text-blue-400 capitalize">
-                        {user.district}
-                      </span>
-                    ) : (
-                      <span className="text-[#6b7280]">-</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    {user.claimed ? (
-                      <span className="text-green-400">✅ Yes</span>
-                    ) : (
-                      <span className="text-[#6b7280]">No</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-[#8c8c9c]">
-                    {new Date(user.account_created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-3">
-                    <button
-                      onClick={() => handleBan(user.id, user.github_login)}
-                      className="rounded border border-red-600/30 bg-red-900/20 px-3 py-1 text-xs text-red-400 hover:bg-red-900/40"
-                    >
-                      Ban
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
 
         {filteredUsers.length === 0 && (
-          <div className="mt-8 text-center text-[#8c8c9c]">
+          <div style={{ marginTop: 24, textAlign: "center", opacity: 0.7 }}>
             No users found{search ? ` for "${search}"` : ""}
           </div>
         )}

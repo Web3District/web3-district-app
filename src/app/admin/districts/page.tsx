@@ -4,18 +4,7 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
-const ACCENT = "#e040c0";
-
-interface District {
-  id: string;
-  name: string;
-  color: string;
-  description: string;
-  building_count: number;
-  claimed_buildings: number;
-}
-
-interface Building {
+interface Developer {
   id: number;
   github_login: string;
   name: string | null;
@@ -27,23 +16,18 @@ interface Building {
   xp_total: number;
 }
 
-const DISTRICT_COLORS: Record<string, string> = {
-  ai: "#3b82f6",
-  web3: "#8b5cf6",
-  growth: "#10b981",
-  gaming: "#f59e0b",
-  social: "#ec4899",
-  devtools: "#06b6d4",
-  cloud: "#6366f1",
-  downtown: "#e040c0",
-};
+interface Territory {
+  id: number;
+  owner_user_id: number;
+  owner_email?: string;
+  summary?: string;
+  created_at?: string;
+}
 
 export default function AdminDistrictsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [districts, setDistricts] = useState<District[]>([]);
-  const [buildings, setBuildings] = useState<Building[]>([]);
-  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
+  const [territories, setTerritories] = useState<Territory[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -71,77 +55,62 @@ export default function AdminDistrictsPage() {
       return;
     }
 
-    fetchData();
+    fetchTerritories();
   }
 
-  async function fetchData() {
+  async function fetchTerritories() {
     try {
       const supabase = createBrowserSupabase();
       
-      // Get all buildings
+      // Get all developers with districts (territories)
       const { data: devs, error: devsError } = await supabase
         .from("developers")
-        .select("id, github_login, name, avatar_url, district, home_district, claimed, claimed_by, xp_total")
+        .select("id, github_login, name, district, home_district, claimed, claimed_by, xp_total, account_created_at")
         .order("xp_total", { ascending: false });
 
       if (devsError) throw devsError;
 
-      setBuildings(devs ?? []);
+      // Convert to territory format
+      const territoryList: Territory[] = (devs ?? [])
+        .filter(d => d.district || d.home_district)
+        .map((d, idx) => ({
+          id: idx + 1,
+          owner_user_id: d.id,
+          owner_email: d.github_login,
+          summary: d.district ? `District: ${d.district}` : d.home_district ? `Home: ${d.home_district}` : undefined,
+          created_at: d.account_created_at,
+        }));
 
-      // Calculate district stats
-      const districtStats: Record<string, District> = {
-        ai: { id: "ai", name: "AI District", color: DISTRICT_COLORS.ai, description: "Artificial Intelligence & ML", building_count: 0, claimed_buildings: 0 },
-        web3: { id: "web3", name: "Web3 District", color: DISTRICT_COLORS.web3, description: "Blockchain & Crypto", building_count: 0, claimed_buildings: 0 },
-        growth: { id: "growth", name: "Growth District", color: DISTRICT_COLORS.growth, description: "Startups & Scale-ups", building_count: 0, claimed_buildings: 0 },
-        gaming: { id: "gaming", name: "Gaming District", color: DISTRICT_COLORS.gaming, description: "Games & Interactive", building_count: 0, claimed_buildings: 0 },
-        social: { id: "social", name: "Social District", color: DISTRICT_COLORS.social, description: "Social & Communication", building_count: 0, claimed_buildings: 0 },
-        devtools: { id: "devtools", name: "DevTools District", color: DISTRICT_COLORS.devtools, description: "Developer Tools", building_count: 0, claimed_buildings: 0 },
-        cloud: { id: "cloud", name: "Cloud District", color: DISTRICT_COLORS.cloud, description: "Cloud & Infrastructure", building_count: 0, claimed_buildings: 0 },
-        downtown: { id: "downtown", name: "Downtown", color: DISTRICT_COLORS.downtown, description: "City Center", building_count: 0, claimed_buildings: 0 },
-      };
-
-      devs?.forEach((dev: Building) => {
-        const district = dev.district ?? "unclaimed";
-        if (districtStats[district]) {
-          districtStats[district].building_count++;
-          if (dev.claimed) {
-            districtStats[district].claimed_buildings++;
-          }
-        }
-      });
-
-      setDistricts(Object.values(districtStats));
+      setTerritories(territoryList);
     } catch (err: any) {
-      setError(err.message ?? "Failed to fetch districts");
+      setError(err.message ?? "Failed to fetch territories");
     } finally {
       setLoading(false);
     }
   }
 
-  function getBuildingsByDistrict(district: string) {
-    return buildings.filter(b => b.district === district);
+  function escapeHtml(s: string) {
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
   }
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a12]">
-        <div className="text-center">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: ACCENT }} />
-          <p className="text-[#8c8c9c]">Loading districts...</p>
-        </div>
+      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "#8c8c9c" }}>Loading...</p>
       </div>
     );
   }
 
-  if (error && !districts.length) {
+  if (error && !territories.length) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a12]">
-        <div className="text-center">
-          <p className="text-red-400">{error}</p>
+      <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ textAlign: "center" }}>
+          <p style={{ color: "#ef4444" }}>{error}</p>
           <button
             onClick={() => router.push("/admin/city")}
-            className="mt-4 rounded-lg px-4 py-2"
-            style={{ backgroundColor: ACCENT }}
+            style={{ marginTop: 16, padding: "8px 12px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
           >
             Back to Dashboard
           </button>
@@ -151,114 +120,44 @@ export default function AdminDistrictsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a12] text-white">
-      {/* Header */}
-      <header className="flex items-center justify-between border-b border-[#1f2937] px-6 py-4">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.push("/admin/city")}
-            className="rounded-lg border border-[#374151] bg-[#111827] px-3 py-1.5 text-sm hover:bg-[#1f2937]"
-          >
-            ← Back
-          </button>
-          <h1 className="text-xl font-bold">District Management</h1>
-        </div>
+    <div style={{ fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,Arial", background: "#0f172a", color: "#fff", margin: 0 }}>
+      <header style={{ display: "flex", gap: 8, alignItems: "center", padding: "12px", borderBottom: "1px solid #1f2937" }}>
+        <button
+          onClick={() => router.push("/admin/panel")}
+          style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+        >
+          ← Back
+        </button>
+        <button
+          onClick={() => router.push("/admin/dashboard")}
+          style={{ padding: "6px 10px", border: "1px solid #374151", background: "#111827", color: "#fff", borderRadius: 8, cursor: "pointer" }}
+        >
+          Dashboard
+        </button>
+        <div style={{ opacity: 0.8 }}>Territories</div>
       </header>
 
-      <main className="p-6">
-        {/* District Cards */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {districts.map((district) => (
-            <button
-              key={district.id}
-              onClick={() => setSelectedDistrict(selectedDistrict === district.id ? null : district.id)}
-              className="rounded-xl border p-4 text-left transition-all hover:scale-[1.02]"
-              style={{
-                borderColor: district.color + "40",
-                backgroundColor: selectedDistrict === district.id ? district.color + "20" : "#111827",
-              }}
-            >
-              <div className="mb-2 flex items-center justify-between">
-                <h3 className="font-bold">{district.name}</h3>
-                <div
-                  className="h-3 w-3 rounded-full"
-                  style={{ backgroundColor: district.color }}
-                />
-              </div>
-              <p className="mb-3 text-xs text-[#8c8c9c]">{district.description}</p>
-              <div className="flex gap-4 text-sm">
-                <div>
-                  <div className="text-[#8c8c9c]">Buildings</div>
-                  <div className="font-bold">{district.building_count}</div>
+      <main style={{ padding: 16 }}>
+        <section style={{ border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginBottom: 16, background: "#0b1220" }}>
+          <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>Territories (claimed by users via app)</h3>
+          <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>No create from admin; users claim via the app.</p>
+          <div id="territories">
+            {territories.length === 0 ? (
+              <p style={{ opacity: 0.7 }}>No territories.</p>
+            ) : (
+              territories.map((t) => (
+                <div key={t.id} style={{ border: "1px solid #1f2937", borderRadius: 8, padding: 10, marginBottom: 8, fontSize: 14 }}>
+                  <div>
+                    <strong>#{t.id}</strong> owner_user_id: {t.owner_user_id} {t.owner_email ? ` (${escapeHtml(t.owner_email)})` : ""}
+                  </div>
+                  <div style={{ opacity: 0.8, fontSize: 12 }}>
+                    {escapeHtml(t.summary || "")} · {t.created_at || ""}
+                  </div>
                 </div>
-                <div>
-                  <div className="text-[#8c8c9c]">Claimed</div>
-                  <div className="font-bold">{district.claimed_buildings}</div>
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* Selected District Details */}
-        {selectedDistrict && (
-          <div className="rounded-xl border border-[#1f2937] bg-[#111827] p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold">
-                {districts.find(d => d.id === selectedDistrict)?.name} Buildings
-              </h2>
-              <button
-                onClick={() => setSelectedDistrict(null)}
-                className="text-sm text-[#8c8c9c] hover:text-white"
-              >
-                ✕ Close
-              </button>
-            </div>
-            <div className="max-h-96 overflow-y-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="text-[#8c8c9c]">
-                  <tr>
-                    <th className="pb-3">User</th>
-                    <th className="pb-3">XP</th>
-                    <th className="pb-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#1f2937]">
-                  {getBuildingsByDistrict(selectedDistrict).map((building) => (
-                    <tr key={building.id}>
-                      <td className="py-3">
-                        <div className="flex items-center gap-3">
-                          {building.avatar_url && (
-                            <img
-                              src={building.avatar_url}
-                              alt={building.github_login}
-                              className="h-6 w-6 rounded-full"
-                            />
-                          )}
-                          <span>{building.github_login}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 text-[#8c8c9c]">{building.xp_total}</td>
-                      <td className="py-3">
-                        {building.claimed ? (
-                          <span className="text-green-400">Claimed</span>
-                        ) : (
-                          <span className="text-[#6b7280]">Unclaimed</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+              ))
+            )}
           </div>
-        )}
-
-        {error && (
-          <div className="mt-4 rounded-lg border border-red-600/30 bg-red-900/20 px-4 py-3 text-red-400">
-            ❌ {error}
-          </div>
-        )}
+        </section>
       </main>
     </div>
   );
