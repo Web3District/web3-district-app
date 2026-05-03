@@ -32,7 +32,7 @@ const _box = /* @__PURE__ */ new THREE.BoxGeometry(1, 1, 1);
 const THEME = {
   windowLit: ["#a0c0f0", "#80a0e0", "#6080c8", "#c0d8f8", "#e0e8ff"],
   windowOff: "#0c0e18",
-  face: "#101828",
+  face: "#000000",
   roof: "#2a3858",
   fogColor: "#0a1428",
   ambientColor: "#4060b0",

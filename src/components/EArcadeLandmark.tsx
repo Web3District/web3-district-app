@@ -137,7 +137,7 @@ export default function EArcadeLandmark({
   position = DEFAULT_POS,
   themeAccent = ACCENT_FALLBACK,
   themeWindowLit = ["#a0c0f0", "#80a0e0", "#6080c8"],
-  themeFace = "#101828",
+  themeFace = "#000000",
 }: EArcadeLandmarkProps) {
   const groupRef = useRef<THREE.Group>(null);
   const signGlowRef = useRef<THREE.PointLight>(null);
