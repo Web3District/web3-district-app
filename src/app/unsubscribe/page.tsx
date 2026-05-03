@@ -46,7 +46,7 @@ export default async function UnsubscribePage({
           style={{
             fontSize: 28,
             letterSpacing: 4,
-            color: "#e040c0",
+            color: "#ed0584",
             marginTop: 0,
           }}
         >
@@ -56,7 +56,7 @@ export default async function UnsubscribePage({
         <div
           style={{
             height: 2,
-            background: "linear-gradient(90deg, transparent, #e040c0, transparent)",
+            background: "linear-gradient(90deg, transparent, #ed0584, transparent)",
             margin: "20px 0",
           }}
         />
@@ -73,7 +73,7 @@ export default async function UnsubscribePage({
           <>
             <p style={{ fontSize: 18 }}>
               You&apos;ve been unsubscribed from{" "}
-              <strong style={{ color: "#e040c0" }}>
+              <strong style={{ color: "#ed0584" }}>
                 {categoryLabels[category] ?? category}
               </strong>
               .
@@ -98,7 +98,7 @@ export default async function UnsubscribePage({
 
         <a
           href={siteUrl}
-          style={{ color: "#e040c0", fontSize: 14, textDecoration: "underline" }}
+          style={{ color: "#ed0584", fontSize: 14, textDecoration: "underline" }}
         >
           Back to Web3 District
         </a>

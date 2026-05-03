@@ -17,7 +17,7 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
           key={toast.id}
           className={`flex items-center gap-3 border px-4 py-3 text-xs shadow-lg animate-in fade-in slide-in-from-right-2 ${
             toast.type === "success"
-              ? "border-[#e040c0]/30 bg-[#e040c0]/10 text-[#e040c0]"
+              ? "border-[#ed0584]/30 bg-[#ed0584]/10 text-[#ed0584]"
               : "border-red-800/30 bg-red-900/20 text-red-400"
           }`}
         >

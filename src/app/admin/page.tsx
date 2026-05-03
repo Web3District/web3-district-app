@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 export default function AdminPanelPage() {
   const router = useRouter();
@@ -87,33 +87,33 @@ export default function AdminPanelPage() {
 
       <main className="p-6">
         <div className="mb-8">
-          <h2 className="text-xl text-[#e040c0] mb-2">Admin Dashboard</h2>
+          <h2 className="text-xl text-[#ed0584] mb-2">Admin Dashboard</h2>
           <p className="text-sm text-[#8c8c9c]">Manage Git City admin features</p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <a href="/admin/ads" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0] transition-colors">
-            <h3 className="mb-2 text-lg text-[#e040c0]">Ads</h3>
+          <a href="/admin/ads" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#ed0584] transition-colors">
+            <h3 className="mb-2 text-lg text-[#ed0584]">Ads</h3>
             <p className="text-sm text-[#8c8c9c]">Manage ad campaigns, track impressions and clicks</p>
           </a>
 
-          <a href="/admin/drops" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0] transition-colors">
-            <h3 className="mb-2 text-lg text-[#e040c0]">Drops</h3>
+          <a href="/admin/drops" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#ed0584] transition-colors">
+            <h3 className="mb-2 text-lg text-[#ed0584]">Drops</h3>
             <p className="text-sm text-[#8c8c9c]">Manage building drops and rewards</p>
           </a>
 
-          <a href="/admin/email-monitoring" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0] transition-colors">
-            <h3 className="mb-2 text-lg text-[#e040c0]">Email Monitoring</h3>
+          <a href="/admin/email-monitoring" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#ed0584] transition-colors">
+            <h3 className="mb-2 text-lg text-[#ed0584]">Email Monitoring</h3>
             <p className="text-sm text-[#8c8c9c]">Monitor email verification status</p>
           </a>
 
-          <a href="/admin/jobs" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0] transition-colors">
-            <h3 className="mb-2 text-lg text-[#e040c0]">Jobs</h3>
+          <a href="/admin/jobs" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#ed0584] transition-colors">
+            <h3 className="mb-2 text-lg text-[#ed0584]">Jobs</h3>
             <p className="text-sm text-[#8c8c9c]">Manage job listings</p>
           </a>
 
-          <a href="/admin/landmarks" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0] transition-colors">
-            <h3 className="mb-2 text-lg text-[#e040c0]">Landmarks</h3>
+          <a href="/admin/landmarks" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#ed0584] transition-colors">
+            <h3 className="mb-2 text-lg text-[#ed0584]">Landmarks</h3>
             <p className="text-sm text-[#8c8c9c]">Manage city landmarks</p>
           </a>
         </div>

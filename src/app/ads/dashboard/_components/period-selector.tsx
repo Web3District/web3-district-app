@@ -1,6 +1,6 @@
 "use client";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 const PERIODS = [
   { value: "7d", label: "7D" },

@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 function SuccessBannerInner() {
   const searchParams = useSearchParams();

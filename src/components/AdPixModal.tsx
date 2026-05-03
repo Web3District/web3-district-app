@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 const PIX_EXPIRY_SECONDS = 900;
 
 function formatCountdown(seconds: number): string {

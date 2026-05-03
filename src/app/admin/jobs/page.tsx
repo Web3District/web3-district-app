@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 interface Job {
   id: number;
@@ -170,7 +170,7 @@ export default function AdminJobsPage() {
         )}
 
         <section className="mb-6 rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
-          <h3 className="mb-4 text-lg text-[#e040c0]">Create Job</h3>
+          <h3 className="mb-4 text-lg text-[#ed0584]">Create Job</h3>
           <form onSubmit={handleSave} className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm text-[#8c8c9c]">Title</label>
@@ -178,7 +178,7 @@ export default function AdminJobsPage() {
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Senior Developer"
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
                 required
               />
             </div>
@@ -189,7 +189,7 @@ export default function AdminJobsPage() {
                 value={formData.company}
                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                 placeholder="Acme Inc"
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
                 required
               />
             </div>
@@ -200,7 +200,7 @@ export default function AdminJobsPage() {
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 placeholder="Remote"
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
               />
             </div>
 
@@ -209,7 +209,7 @@ export default function AdminJobsPage() {
               <select
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
               >
                 <option value="full-time">Full-time</option>
                 <option value="part-time">Part-time</option>
@@ -224,7 +224,7 @@ export default function AdminJobsPage() {
                 value={formData.url}
                 onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                 placeholder="https://..."
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
                 required
               />
             </div>
@@ -240,7 +240,7 @@ export default function AdminJobsPage() {
         </section>
 
         <section className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
-          <h3 className="mb-4 text-lg text-[#e040c0]">Jobs List</h3>
+          <h3 className="mb-4 text-lg text-[#ed0584]">Jobs List</h3>
           
           {jobs.length === 0 ? (
             <p className="text-[#8c8c9c]">No jobs posted.</p>

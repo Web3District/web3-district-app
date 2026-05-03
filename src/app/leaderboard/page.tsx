@@ -56,7 +56,7 @@ const GAME_TABS: { id: GameTabId; label: string }[] = [
   { id: "drops", label: "Drops" },
 ];
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 function rankColor(rank: number): string {
   if (rank === 1) return "#ffd700";

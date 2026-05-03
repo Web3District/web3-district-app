@@ -41,7 +41,7 @@ const THEME = {
   groundColor: "#242c38",
 };
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 const STAR_GOLD = "#FFD700";
 const WHITE = new THREE.Color("#ffffff");
 

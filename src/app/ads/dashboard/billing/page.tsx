@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 interface AdSummary {
   id: string;

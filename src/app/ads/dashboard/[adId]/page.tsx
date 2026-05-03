@@ -8,7 +8,7 @@ import { PeriodSelector, type Period } from "../_components/period-selector";
 import { DailyChart } from "../_components/daily-chart";
 import { ProgressBar } from "../_components/progress-bar";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 const VEHICLE_ICONS: Record<string, string> = {
   plane: "\u2708",

@@ -87,7 +87,7 @@ export function AdTable({
               type="checkbox"
               checked={allSelected}
               onChange={onSelectAll}
-              className="cursor-pointer accent-[#e040c0]"
+              className="cursor-pointer accent-[#ed0584]"
             />
           )}
           <SortButton label="AD" sortKey="brand" currentSort={sortKey} currentDir={sortDir} onSort={onSort} />
@@ -120,7 +120,7 @@ export function AdTable({
 
       {loading && !reportMode && (
         <div className="flex justify-center py-2">
-          <div className="h-1 w-24 animate-pulse rounded bg-[#e040c0]/30" />
+          <div className="h-1 w-24 animate-pulse rounded bg-[#ed0584]/30" />
         </div>
       )}
     </div>

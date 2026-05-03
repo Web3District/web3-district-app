@@ -317,7 +317,7 @@ function renderPlayer(
     );
   } else {
     const isLocal = p.id === localPlayerId;
-    ctx.fillStyle = isLocal ? "#e040c0" : "#4a9eff";
+    ctx.fillStyle = isLocal ? "#ed0584" : "#4a9eff";
     ctx.fillRect(px + 8, py + 4, 16, 24);
   }
 

@@ -455,7 +455,7 @@ export default function CityPOC() {
           minWidth: 220,
         }}
       >
-        <div style={{ fontSize: 14, color: "#e040c0", fontWeight: "bold" }}>
+        <div style={{ fontSize: 14, color: "#ed0584", fontWeight: "bold" }}>
           PERFORMANCE POC
         </div>
 
@@ -466,9 +466,9 @@ export default function CityPOC() {
             style={{
               flex: 1,
               padding: "6px 8px",
-              background: mode === "instanced" ? "#e040c0" : "rgba(200,230,74,0.1)",
-              color: mode === "instanced" ? "#0a0a14" : "#e040c0",
-              border: "1px solid #e040c0",
+              background: mode === "instanced" ? "#ed0584" : "rgba(200,230,74,0.1)",
+              color: mode === "instanced" ? "#0a0a14" : "#ed0584",
+              border: "1px solid #ed0584",
               borderRadius: 4,
               cursor: "pointer",
               fontFamily: "inherit",
@@ -506,8 +506,8 @@ export default function CityPOC() {
               style={{
                 padding: "4px 8px",
                 background: count === n ? "rgba(200,230,74,0.3)" : "rgba(255,255,255,0.05)",
-                color: count === n ? "#e040c0" : "#888",
-                border: `1px solid ${count === n ? "#e040c0" : "#333"}`,
+                color: count === n ? "#ed0584" : "#888",
+                border: `1px solid ${count === n ? "#ed0584" : "#333"}`,
                 borderRadius: 4,
                 cursor: "pointer",
                 fontFamily: "inherit",

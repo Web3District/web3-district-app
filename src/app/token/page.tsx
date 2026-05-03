@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 const GITC_CA = "0xd523f92f5f313288cf69ac9ca456b8a7d7a6dba3";
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 function A({ children }: { children: React.ReactNode }) {
   return <span style={{ color: ACCENT }}>{children}</span>;

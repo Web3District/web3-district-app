@@ -55,15 +55,15 @@ export default function DistrictLobbies({ onClose, initialSlug }: DistrictLobbie
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="relative z-10 w-full max-w-2xl mx-4 border-2 border-[#e040c0] bg-[#0d0d0f] shadow-[0_0_40px_rgba(224,64,192,0.3)]">
+      <div className="relative z-10 w-full max-w-2xl mx-4 border-2 border-[#ed0584] bg-[#0d0d0f] shadow-[0_0_40px_rgba(224,64,192,0.3)]">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#e040c0]/30">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#ed0584]/30">
           <h2 className="font-pixel text-lg text-[#e8dcc8]">
-            🏙️ <span style={{ color: "#e040c0" }}>District</span> Lobbies
+            🏙️ <span style={{ color: "#ed0584" }}>District</span> Lobbies
           </h2>
           <button
             onClick={onClose}
-            className="font-pixel text-[#e040c0] hover:text-white transition-colors text-xl"
+            className="font-pixel text-[#ed0584] hover:text-white transition-colors text-xl"
           >
             ✕
           </button>
@@ -113,7 +113,7 @@ export default function DistrictLobbies({ onClose, initialSlug }: DistrictLobbie
         </div>
         
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-[#e040c0]/20 text-center">
+        <div className="px-6 py-3 border-t border-[#ed0584]/20 text-center">
           <p className="font-pixel text-[9px] text-[#8c8c9c]">
             Enter a district lobby to meet other devs in real-time!
           </p>

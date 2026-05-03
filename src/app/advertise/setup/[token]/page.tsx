@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { SetupContent } from "./SetupContent";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 export const metadata: Metadata = {
   title: "Set Up Your Ad - Web3 District",

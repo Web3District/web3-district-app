@@ -83,8 +83,8 @@ const MILESTONE_MODE: "stars" | "devs" = "devs"; // "stars" = GitHub stars road 
 
 const THEMES = [
   { name: "Midnight", accent: "#6090e0", shadow: "#203870" },
-  { name: "Sunset", accent: "#e040c0", shadow: "#a02080" },
-  { name: "Neon", accent: "#e040c0", shadow: "#600860" },
+  { name: "Sunset", accent: "#ed0584", shadow: "#a02080" },
+  { name: "Neon", accent: "#ed0584", shadow: "#600860" },
   { name: "Emerald", accent: "#f0c060", shadow: "#806020" },
 ];
 
@@ -2514,7 +2514,7 @@ function HomeContent() {
           {introConfetti && (
             <div className="absolute inset-0 overflow-hidden">
               {Array.from({ length: 25 }).map((_, i) => {
-                const colors = [theme.accent, "#fff", theme.shadow, "#f0c060", "#e040c0", "#60c0f0"];
+                const colors = [theme.accent, "#fff", theme.shadow, "#f0c060", "#ed0584", "#60c0f0"];
                 const color = colors[i % colors.length];
                 const left = 10 + Math.random() * 80;
                 const delay = Math.random() * 0.6;
@@ -4549,7 +4549,7 @@ function HomeContent() {
                         </select>
                       )}
                       {dropPlantResult && (
-                        <p className={`text-[9px] ${dropPlantResult === "Planted!" ? "text-[#e040c0]" : "text-red-400"}`}>{dropPlantResult}</p>
+                        <p className={`text-[9px] ${dropPlantResult === "Planted!" ? "text-[#ed0584]" : "text-red-400"}`}>{dropPlantResult}</p>
                       )}
                       <div className="flex gap-2">
                         <button

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 interface Landmark {
   id: number;
@@ -174,7 +174,7 @@ export default function AdminLandmarksPage() {
         )}
 
         <section className="mb-6 rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
-          <h3 className="mb-4 text-lg text-[#e040c0]">Create Landmark</h3>
+          <h3 className="mb-4 text-lg text-[#ed0584]">Create Landmark</h3>
           <form onSubmit={handleSave} className="grid gap-4 md:grid-cols-2">
             <div className="md:col-span-2">
               <label className="mb-1 block text-sm text-[#8c8c9c]">Name</label>
@@ -182,7 +182,7 @@ export default function AdminLandmarksPage() {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Tower Bridge"
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
                 required
               />
             </div>
@@ -194,7 +194,7 @@ export default function AdminLandmarksPage() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Famous landmark in London"
                 rows={3}
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
               />
             </div>
 
@@ -206,7 +206,7 @@ export default function AdminLandmarksPage() {
                 value={formData.lat}
                 onChange={(e) => setFormData({ ...formData, lat: e.target.value })}
                 placeholder="51.5055"
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
                 required
               />
             </div>
@@ -219,7 +219,7 @@ export default function AdminLandmarksPage() {
                 value={formData.lng}
                 onChange={(e) => setFormData({ ...formData, lng: e.target.value })}
                 placeholder="-0.0754"
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
                 required
               />
             </div>
@@ -230,7 +230,7 @@ export default function AdminLandmarksPage() {
                 value={formData.image_url}
                 onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                 placeholder="https://..."
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#e040c0] focus:outline-none"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
               />
             </div>
 
@@ -245,7 +245,7 @@ export default function AdminLandmarksPage() {
         </section>
 
         <section className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
-          <h3 className="mb-4 text-lg text-[#e040c0]">Landmarks List</h3>
+          <h3 className="mb-4 text-lg text-[#ed0584]">Landmarks List</h3>
           
           {landmarks.length === 0 ? (
             <p className="text-[#8c8c9c]">No landmarks created.</p>

@@ -2,7 +2,7 @@
 
 import { useRef, useEffect } from "react";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 const CLICK_COLOR = "#64b5f6";
 const CONV_COLOR = "#ff9800";
 

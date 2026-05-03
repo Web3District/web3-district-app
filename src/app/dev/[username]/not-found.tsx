@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export default function DevNotFound() {
-  const accent = "#e040c0";
+  const accent = "#ed0584";
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-bg font-pixel uppercase text-warm">

@@ -13,7 +13,7 @@ export default async function Image() {
     getPitchStats(),
   ]);
 
-  const accent = "#e040c0";
+  const accent = "#ed0584";
   const bg = "#0d0d0f";
   const cream = "#e8dcc8";
   const border = "#2a2a30";

@@ -11,8 +11,8 @@
   --color-dim: #5c5c6c;
   --color-muted: #8c8c9c;
   --color-warm: #d4cfc4;
-  --color-lime: #e040c0; /* Neon pink accent */
-  --color-lime-dark: #a02080; /* Darker pink for shadows */
+  --color-lime: #ed0584; /* Neon pink accent */
+  --color-lime-dark: #a0045a; /* Darker pink for shadows */
   --font-pixel: "Silkscreen", monospace;
 }
 
@@ -84,8 +84,8 @@ body {
 
 /* ─── Free Gift CTA ─── */
 @keyframes gift-glow {
-  0%, 100% { box-shadow: 0 0 8px 2px var(--gift-glow-color, #e040c066), 4px 4px 0 0 var(--gift-shadow-color, #a02080); }
-  50% { box-shadow: 0 0 20px 6px var(--gift-glow-color, #e040c088), 4px 4px 0 0 var(--gift-shadow-color, #a02080); }
+  0%, 100% { box-shadow: 0 0 8px 2px var(--gift-glow-color, #ed058466), 4px 4px 0 0 var(--gift-shadow-color, #a02080); }
+  50% { box-shadow: 0 0 20px 6px var(--gift-glow-color, #ed058488), 4px 4px 0 0 var(--gift-shadow-color, #a02080); }
 }
 @keyframes gift-shimmer {
   0% { background-position: -200% 0; }
@@ -107,7 +107,7 @@ body {
 
 /* ─── Lo-fi Radio ─── */
 @keyframes radio-pulse {
-  0%, 100% { border-color: var(--radio-accent, #e040c0); }
+  0%, 100% { border-color: var(--radio-accent, #ed0584); }
   50% { border-color: var(--color-border); }
 }
 .radio-pulse {
@@ -127,7 +127,7 @@ body {
 }
 .eq-bar {
   width: 3px;
-  background: var(--radio-accent, #e040c0);
+  background: var(--radio-accent, #ed0584);
   display: inline-block;
 }
 .eq-bar-1 { animation: eq-bar-1 0.8s ease-in-out infinite; }
@@ -146,7 +146,7 @@ body {
   appearance: none;
   width: 10px;
   height: 10px;
-  background: var(--radio-accent, #e040c0);
+  background: var(--radio-accent, #ed0584);
   border: none;
   border-radius: 0;
   cursor: pointer;
@@ -154,7 +154,7 @@ body {
 .radio-volume::-moz-range-thumb {
   width: 10px;
   height: 10px;
-  background: var(--radio-accent, #e040c0);
+  background: var(--radio-accent, #ed0584);
   border: none;
   border-radius: 0;
   cursor: pointer;

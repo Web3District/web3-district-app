@@ -14,7 +14,7 @@ export default function ClaimButton({ githubLogin, claimed }: Props) {
   const [loading, setLoading] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
 
-  const accent = "#e040c0";
+  const accent = "#ed0584";
 
   useEffect(() => {
     const supabase = createBrowserSupabase();

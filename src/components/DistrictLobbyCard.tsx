@@ -66,7 +66,7 @@ export default function DistrictLobbyCard({ slug, onClose, session, onSignIn }: 
   const [onlineCount, setOnlineCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const accent = config?.color ?? "#e040c0";
+  const accent = config?.color ?? "#ed0584";
 
   useEffect(() => {
     const host = process.env.NEXT_PUBLIC_PARTYKIT_HOST;

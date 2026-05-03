@@ -150,7 +150,7 @@ export function AdsDashboard() {
       {loading && !reportMode && (
         <div className="fixed inset-x-0 top-0 z-50 h-0.5 overflow-hidden bg-border">
           <div
-            className="h-full w-1/3 bg-[#e040c0]"
+            className="h-full w-1/3 bg-[#ed0584]"
             style={{ animation: "loading-slide 1s ease-in-out infinite" }}
           />
           <style>{`@keyframes loading-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(400%); } }`}</style>
@@ -183,7 +183,7 @@ export function AdsDashboard() {
         {reportMode ? (
           <div className="mb-8 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-xs text-[#e040c0] tracking-widest">Web4City</span>
+              <span className="text-xs text-[#ed0584] tracking-widest">Web4City</span>
               <span className="text-xs text-dim">/</span>
               {filteredAndSorted.length > 0 && (
                 <>
@@ -226,7 +226,7 @@ export function AdsDashboard() {
               </a>
               <button
                 onClick={openCreateModal}
-                className="cursor-pointer border-2 border-[#e040c0] px-4 py-2 text-xs text-[#e040c0] transition-colors hover:bg-[#e040c0]/10"
+                className="cursor-pointer border-2 border-[#ed0584] px-4 py-2 text-xs text-[#ed0584] transition-colors hover:bg-[#ed0584]/10"
               >
                 + NEW AD
               </button>

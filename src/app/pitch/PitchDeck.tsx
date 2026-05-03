@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import type { PitchStats } from "@/lib/pitch-stats";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 const CREAM = "#e8dcc8";
 const MUTED = "#8c8c9c";
 const TOTAL_SLIDES = 13;

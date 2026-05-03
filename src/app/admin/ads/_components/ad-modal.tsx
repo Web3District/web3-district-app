@@ -98,7 +98,7 @@ export function AdModal({
             <button
               type="submit"
               disabled={saving}
-              className="cursor-pointer border-2 border-[#e040c0] bg-[#e040c0]/10 px-6 py-2.5 text-xs text-[#e040c0] transition-colors hover:bg-[#e040c0]/20 disabled:opacity-50"
+              className="cursor-pointer border-2 border-[#ed0584] bg-[#ed0584]/10 px-6 py-2.5 text-xs text-[#ed0584] transition-colors hover:bg-[#ed0584]/20 disabled:opacity-50"
             >
               {saving
                 ? mode === "create" ? "CREATING..." : "SAVING..."

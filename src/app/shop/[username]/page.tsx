@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 export default async function ShopPage({ params, searchParams }: Props) {
   const { username } = await params;

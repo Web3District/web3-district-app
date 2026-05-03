@@ -12,7 +12,7 @@ import AdPixModal from "@/components/AdPixModal";
 
 const AdPreview = dynamic(() => import("@/components/AdPreview"), { ssr: false });
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 type Vehicle = "plane" | "blimp" | "billboard" | "rooftop_sign" | "led_wrap";
 
@@ -245,7 +245,7 @@ export default function NewAdPage() {
               onChange={(e) => setBrand(e.target.value)}
               maxLength={40}
               placeholder="Your Brand"
-              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#e040c0]"
+              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#ed0584]"
             />
           </div>
 
@@ -263,7 +263,7 @@ export default function NewAdPage() {
               maxLength={MAX_TEXT_LENGTH + 10}
               rows={2}
               placeholder="YOUR BRAND MESSAGE HERE"
-              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream uppercase outline-none transition-colors focus:border-[#e040c0]"
+              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream uppercase outline-none transition-colors focus:border-[#ed0584]"
             />
           </div>
 
@@ -279,7 +279,7 @@ export default function NewAdPage() {
               maxLength={200}
               rows={2}
               placeholder="Short description shown on CTA popup"
-              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#e040c0] normal-case"
+              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#ed0584] normal-case"
             />
           </div>
 
@@ -291,7 +291,7 @@ export default function NewAdPage() {
               value={link}
               onChange={(e) => setLink(e.target.value)}
               placeholder="https://yoursite.com"
-              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#e040c0]"
+              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#ed0584]"
             />
           </div>
 
@@ -301,14 +301,14 @@ export default function NewAdPage() {
               <label className="text-[10px] text-muted normal-case">Text color</label>
               <div className="mt-1 flex items-center gap-2">
                 <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-8 w-8 cursor-pointer border-[2px] border-border bg-transparent" />
-                <input type="text" value={color} onChange={(e) => setColor(e.target.value)} maxLength={7} className="w-full border-[2px] border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#e040c0]" />
+                <input type="text" value={color} onChange={(e) => setColor(e.target.value)} maxLength={7} className="w-full border-[2px] border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#ed0584]" />
               </div>
             </div>
             <div>
               <label className="text-[10px] text-muted normal-case">Background</label>
               <div className="mt-1 flex items-center gap-2">
                 <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} className="h-8 w-8 cursor-pointer border-[2px] border-border bg-transparent" />
-                <input type="text" value={bgColor} onChange={(e) => setBgColor(e.target.value)} maxLength={7} className="w-full border-[2px] border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#e040c0]" />
+                <input type="text" value={bgColor} onChange={(e) => setBgColor(e.target.value)} maxLength={7} className="w-full border-[2px] border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#ed0584]" />
               </div>
             </div>
           </div>

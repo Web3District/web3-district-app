@@ -8,7 +8,7 @@ interface AdFormFieldsProps {
   onChange: (form: AdForm) => void;
 }
 
-const inputCls = "w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-[#e040c0]";
+const inputCls = "w-full border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-[#ed0584]";
 const labelCls = "mb-1 block text-[11px] text-muted";
 
 function toLocalDatetime(iso: string): string {
@@ -55,7 +55,7 @@ function DatePicker({ label, value, onChange, quickDays }: {
                 date.setHours(23, 59, 0, 0);
                 onChange(localIso(date));
               }}
-              className="cursor-pointer border border-border px-2 py-1 text-[10px] text-muted transition-colors hover:border-[#e040c0] hover:text-[#e040c0]"
+              className="cursor-pointer border border-border px-2 py-1 text-[10px] text-muted transition-colors hover:border-[#ed0584] hover:text-[#ed0584]"
             >
               +{d}d
             </button>
@@ -65,7 +65,7 @@ function DatePicker({ label, value, onChange, quickDays }: {
             onClick={() => {
               onChange(localIso(new Date()));
             }}
-            className="cursor-pointer border border-border px-2 py-1 text-[10px] text-muted transition-colors hover:border-[#e040c0] hover:text-[#e040c0]"
+            className="cursor-pointer border border-border px-2 py-1 text-[10px] text-muted transition-colors hover:border-[#ed0584] hover:text-[#ed0584]"
           >
             now
           </button>
@@ -94,7 +94,7 @@ export function AdFormFields({ form, onChange }: AdFormFieldsProps) {
               onClick={() => set("vehicle", val)}
               className={`cursor-pointer border px-3 py-2.5 text-xs transition-colors ${
                 form.vehicle === val
-                  ? "border-[#e040c0] bg-[#e040c0]/10 text-[#e040c0]"
+                  ? "border-[#ed0584] bg-[#ed0584]/10 text-[#ed0584]"
                   : "border-border text-muted hover:text-cream"
               } ${i > 0 ? "border-l-0" : ""}`}
             >
@@ -198,7 +198,7 @@ function SkyAdFields({ form, set }: { form: AdForm; set: <K extends keyof AdForm
         </div>
         <div>
           <label className={labelCls}>Priority</label>
-          <input type="number" value={form.priority} onChange={(e) => set("priority", parseInt(e.target.value) || 50)} className="w-20 border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-[#e040c0]" />
+          <input type="number" value={form.priority} onChange={(e) => set("priority", parseInt(e.target.value) || 50)} className="w-20 border border-border bg-bg px-3 py-2.5 text-xs text-cream outline-none focus:border-[#ed0584]" />
         </div>
       </div>
 

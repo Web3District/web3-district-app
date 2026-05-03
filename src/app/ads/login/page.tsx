@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 export default function AdsLoginPage() {
   return (
@@ -109,7 +109,7 @@ function AdsLoginInner() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
               required
-              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#e040c0] normal-case"
+              className="mt-1.5 w-full border-[3px] border-border bg-transparent px-3 py-2.5 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#ed0584] normal-case"
             />
 
             <button

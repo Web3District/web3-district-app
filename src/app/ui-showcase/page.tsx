@@ -12,7 +12,7 @@ const BORDER = "#2a2a30";
 const DIM = "#5c5c6c";
 const MUTED = "#8c8c9c";
 const WARM = "#d4cfc4";
-const LIME = "#e040c0";
+const LIME = "#ed0584";
 const LIME_DARK = "#a02080";
 const LIME_SHADOW = "#a02080";
 

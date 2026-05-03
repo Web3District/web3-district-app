@@ -102,7 +102,7 @@ interface PixModalData {
   githubLogin: string;
 }
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 const SHADOW = "#5a7a00";
 const PENDING_BILLBOARD_KEY = "pending_billboard";
 

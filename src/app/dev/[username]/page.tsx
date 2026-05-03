@@ -71,7 +71,7 @@ export default async function DevPage({ params }: Props) {
 
   if (!dev) notFound();
 
-  const accent = "#e040c0";
+  const accent = "#ed0584";
   const shadow = "#a02080";
   const ownedItems = await getOwnedItems(dev.id);
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 // Historical baselines from Himetrica (tracking was lost in Supabase due to www origin bug).
 // Same map as in /api/sky-ads/analytics — keep in sync.

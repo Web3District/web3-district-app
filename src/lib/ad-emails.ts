@@ -14,11 +14,11 @@ export async function sendAdExpiringEmail(
     subject: `Your Web4City ad expires in ${daysLeft} day${daysLeft === 1 ? "" : "s"}`,
     html: `
       <div style="font-family: 'Silkscreen', monospace; max-width: 480px; margin: 0 auto; padding: 24px; background: #0a0a0e; color: #f0f0f0;">
-        <h2 style="color: #e040c0; margin-top: 0;">Heads up!</h2>
+        <h2 style="color: #ed0584; margin-top: 0;">Heads up!</h2>
         <p>Your ad <strong>"${escapeHtml(adBrand)}"</strong> expires in <strong>${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>.</p>
         <p>Check your stats before it ends:</p>
-        <p><a href="${escapeHtml(trackingUrl)}" style="color: #e040c0;">View Dashboard</a></p>
-        <p>Want to keep running? <a href="https://web4city.xyz/advertise" style="color: #e040c0;">Renew your ad</a></p>
+        <p><a href="${escapeHtml(trackingUrl)}" style="color: #ed0584;">View Dashboard</a></p>
+        <p>Want to keep running? <a href="https://web4city.xyz/advertise" style="color: #ed0584;">Renew your ad</a></p>
         <hr style="border-color: #1c1c20; margin: 20px 0;" />
         <p style="font-size: 12px; color: #3a3a44;">Web4City - web4city.xyz</p>
       </div>
@@ -37,20 +37,20 @@ export async function sendAdExpiredEmail(
     subject: `Your Web4City ad "${escapeHtml(adBrand)}" has ended`,
     html: `
       <div style="font-family: 'Silkscreen', monospace; max-width: 480px; margin: 0 auto; padding: 24px; background: #0a0a0e; color: #f0f0f0;">
-        <h2 style="color: #e040c0; margin-top: 0;">Campaign complete</h2>
+        <h2 style="color: #ed0584; margin-top: 0;">Campaign complete</h2>
         <p>Your ad <strong>"${escapeHtml(adBrand)}"</strong> has ended. Here are the results:</p>
         <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
           <tr>
-            <td style="padding: 8px; border: 1px solid #1c1c20; color: #e040c0; font-size: 20px;">${stats.impressions.toLocaleString()}</td>
+            <td style="padding: 8px; border: 1px solid #1c1c20; color: #ed0584; font-size: 20px;">${stats.impressions.toLocaleString()}</td>
             <td style="padding: 8px; border: 1px solid #1c1c20;">impressions</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #1c1c20; color: #e040c0; font-size: 20px;">${stats.clicks.toLocaleString()}</td>
+            <td style="padding: 8px; border: 1px solid #1c1c20; color: #ed0584; font-size: 20px;">${stats.clicks.toLocaleString()}</td>
             <td style="padding: 8px; border: 1px solid #1c1c20;">clicks</td>
           </tr>
         </table>
         <p>Ready for another run?</p>
-        <p><a href="${escapeHtml(advertiseUrl)}" style="color: #e040c0;">Buy a new ad</a></p>
+        <p><a href="${escapeHtml(advertiseUrl)}" style="color: #ed0584;">Buy a new ad</a></p>
         <hr style="border-color: #1c1c20; margin: 20px 0;" />
         <p style="font-size: 12px; color: #3a3a44;">Web4City - web4city.xyz</p>
       </div>

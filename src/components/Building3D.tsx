@@ -172,7 +172,7 @@ function createWindowTexture(
 export const ClaimedGlow = memo(function ClaimedGlow({ height, width, depth }: { height: number; width: number; depth: number }) {
   const trimThickness = 1.2;
   const trimHeight = 2;
-  const accent = "#e040c0";
+  const accent = "#ed0584";
   const hw = width / 2 + trimThickness / 2;
   const hd = depth / 2 + trimThickness / 2;
 
@@ -656,14 +656,14 @@ export default function Building3D({ building, colors, atlasTexture, introMode, 
       {/* Skip heavy effects during intro - camera moves too fast to see them */}
       {!introMode && building.claimed && <ClaimedGlow height={building.height} width={building.width} depth={building.depth} />}
 
-      {!introMode && focused && <FocusBeacon height={building.height} width={building.width} depth={building.depth} accentColor={accentColor ?? "#e040c0"} />}
+      {!introMode && focused && <FocusBeacon height={building.height} width={building.width} depth={building.depth} accentColor={accentColor ?? "#ed0584"} />}
 
       {!introMode && (
-        <BuildingItemEffects building={building} accentColor={accentColor ?? colors.accent ?? "#e040c0"} focused={focused} />
+        <BuildingItemEffects building={building} accentColor={accentColor ?? colors.accent ?? "#ed0584"} focused={focused} />
       )}
 
       {!introMode && building.app_streak > 0 && (
-        <StreakFlame height={building.height} width={building.width} depth={building.depth} streakDays={building.app_streak} color={accentColor ?? colors.accent ?? "#e040c0"} />
+        <StreakFlame height={building.height} width={building.width} depth={building.depth} streakDays={building.app_streak} color={accentColor ?? colors.accent ?? "#ed0584"} />
       )}
 
       {/* XP Tier visual effects */}

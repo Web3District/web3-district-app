@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLeaderboardAuth } from "@/components/LeaderboardYouBadge";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 interface DropsEntry {
   rank: number;

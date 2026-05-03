@@ -28,7 +28,7 @@ import { ClaimedGlow } from "./Building3D";
 import type { BuildingDims } from "./ShopClient";
 import { ZONE_ITEMS } from "@/lib/zones";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 // Fallback dims if none provided
 const DEFAULT_DIMS: BuildingDims = { width: 20, height: 40, depth: 16 };

@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 const ETH_ADDRESS = "0x8C24A2b54128bC0717F533E6DA7338be30b9f732";
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 function SupportContent() {
   const searchParams = useSearchParams();

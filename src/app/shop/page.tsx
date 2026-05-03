@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Customize your building in Web3 District with effects, structures and more",
 };
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 export default async function ShopLanding() {
   // If user is logged in and has a claimed building, redirect to their shop

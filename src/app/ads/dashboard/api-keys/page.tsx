@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 interface ApiKey {
   id: string;
@@ -105,7 +105,7 @@ export default function ApiKeysPage() {
             onChange={(e) => setNewLabel(e.target.value)}
             placeholder="Label (e.g. CI/CD)"
             maxLength={100}
-            className="flex-1 border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#e040c0] normal-case"
+            className="flex-1 border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#ed0584] normal-case"
           />
           <button
             type="button"

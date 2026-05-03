@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Privacy Policy for Web3 District.",
 };
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 export default function PrivacyPage() {
   return (
@@ -171,7 +171,7 @@ function Section({
   return (
     <div className="border-[3px] border-border bg-bg-raised p-5 sm:p-6">
       <p className="text-sm text-cream">
-        <span style={{ color: "#e040c0" }}>{String(n).padStart(2, "0")}.</span>{" "}
+        <span style={{ color: "#ed0584" }}>{String(n).padStart(2, "0")}.</span>{" "}
         {title}
       </p>
       <div className="mt-3 flex flex-col gap-2 text-xs leading-relaxed text-muted normal-case">
@@ -184,7 +184,7 @@ function Section({
 function Li({ children }: { children: React.ReactNode }) {
   return (
     <li className="flex items-start gap-2">
-      <span style={{ color: "#e040c0" }}>+</span>
+      <span style={{ color: "#ed0584" }}>+</span>
       <span>{children}</span>
     </li>
   );

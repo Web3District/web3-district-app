@@ -5,7 +5,7 @@ import { SURVEYS } from "@/lib/surveys";
 import type { SurveyQuestion } from "@/lib/surveys";
 import { trackEArcadeSurveyStarted, trackEArcadeSurveyCompleted } from "@/lib/himetrica";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 const SURVEY_ID = "earcade_v1";
 const survey = SURVEYS[SURVEY_ID];
 

@@ -7,7 +7,7 @@ import { ROADMAP_PHASES, VOTABLE_ITEM_IDS } from "@/lib/roadmap-data";
 import type { RoadmapPhase, RoadmapItem, ItemStatus } from "@/lib/roadmap-data";
 import { toggleVote } from "./actions";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 const CREAM = "#e8dcc8";
 const MUTED = "#8c8c9c";
 

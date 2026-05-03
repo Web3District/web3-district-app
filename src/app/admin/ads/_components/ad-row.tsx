@@ -47,7 +47,7 @@ function SparkChart({ data }: { data: number[] }) {
               </span>
               <div className="w-full flex items-end" style={{ height: 64 }}>
                 <div
-                  className="w-full bg-[#e040c0]/30 rounded-t-sm"
+                  className="w-full bg-[#ed0584]/30 rounded-t-sm"
                   style={{ height: h }}
                 />
               </div>
@@ -96,7 +96,7 @@ export function AdRow({
               type="checkbox"
               checked={isSelected}
               onChange={onToggleSelect}
-              className="cursor-pointer accent-[#e040c0]"
+              className="cursor-pointer accent-[#ed0584]"
             />
           </div>
         )}
@@ -125,7 +125,7 @@ export function AdRow({
         <p className="hidden text-right text-sm tabular-nums text-cream md:block">
           {ad.cta_clicks.toLocaleString()}
         </p>
-        <p className="hidden text-right text-sm tabular-nums text-[#e040c0] md:block">{ad.ctr}</p>
+        <p className="hidden text-right text-sm tabular-nums text-[#ed0584] md:block">{ad.ctr}</p>
         <p className={`hidden text-right text-xs tabular-nums md:block ${endsColor}`}>
           {endsLabel}
         </p>
@@ -141,7 +141,7 @@ export function AdRow({
           >
             <button
               onClick={onEdit}
-              className="cursor-pointer border border-border px-2 py-1 text-[10px] text-muted transition-colors hover:border-[#e040c0] hover:text-[#e040c0]"
+              className="cursor-pointer border border-border px-2 py-1 text-[10px] text-muted transition-colors hover:border-[#ed0584] hover:text-[#ed0584]"
             >
               EDIT
             </button>
@@ -169,7 +169,7 @@ export function AdRow({
           <span className="text-xs text-cream">
             {ad.cta_clicks.toLocaleString()} clicks
           </span>
-          <span className="text-xs text-[#e040c0]">{ad.ctr}</span>
+          <span className="text-xs text-[#ed0584]">{ad.ctr}</span>
         </div>
       </div>
 
@@ -189,7 +189,7 @@ export function AdRow({
               <span className="text-xs text-dim">Link</span>
               <p className="mt-1 truncate text-sm">
                 {ad.link ? (
-                  <a href={ad.link} target="_blank" rel="noopener" className="text-[#e040c0] hover:underline">
+                  <a href={ad.link} target="_blank" rel="noopener" className="text-[#ed0584] hover:underline">
                     {ad.link.replace(/^https?:\/\/(www\.)?/, "")}
                   </a>
                 ) : (
@@ -227,7 +227,7 @@ export function AdRow({
                 <a
                   href={`/advertise/track/${ad.tracking_token}`}
                   target="_blank"
-                  className="text-xs text-[#e040c0] hover:underline"
+                  className="text-xs text-[#ed0584] hover:underline"
                 >
                   Open tracking page
                 </a>
@@ -244,7 +244,7 @@ export function AdRow({
               <div className="ml-auto flex gap-2 md:hidden">
                 <button
                   onClick={onEdit}
-                  className="cursor-pointer border border-border px-3 py-1.5 text-xs text-muted transition-colors hover:border-[#e040c0] hover:text-[#e040c0]"
+                  className="cursor-pointer border border-border px-3 py-1.5 text-xs text-muted transition-colors hover:border-[#ed0584] hover:text-[#ed0584]"
                 >
                   EDIT
                 </button>

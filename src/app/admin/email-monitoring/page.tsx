@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 interface EmailRecord {
   id: number;
@@ -107,7 +107,7 @@ export default function AdminEmailMonitoringPage() {
             placeholder="Search by email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2.5 font-pixel text-white placeholder-[#6b7280] focus:border-[#e040c0] focus:outline-none"
+            className="w-full max-w-md rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2.5 font-pixel text-white placeholder-[#6b7280] focus:border-[#ed0584] focus:outline-none"
           />
         </div>
 

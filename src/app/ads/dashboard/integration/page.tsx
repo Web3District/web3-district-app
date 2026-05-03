@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 function CopyButton({ text, label, copied, onCopy }: { text: string; label: string; copied: string | null; onCopy: (text: string, label: string) => void }) {
   return (
@@ -110,7 +110,7 @@ export default function IntegrationPage() {
         <div className="mt-3 grid grid-cols-2 gap-3">
           <button
             onClick={() => setMethod("pixel")}
-            className="group cursor-pointer border-[3px] p-4 text-left transition-all hover:border-[#e040c066]"
+            className="group cursor-pointer border-[3px] p-4 text-left transition-all hover:border-[#ed058466]"
             style={{
               borderColor: method === "pixel" ? ACCENT : "var(--color-border)",
               backgroundColor: method === "pixel" ? ACCENT + "08" : undefined,
@@ -129,7 +129,7 @@ export default function IntegrationPage() {
           </button>
           <button
             onClick={() => setMethod("s2s")}
-            className="group cursor-pointer border-[3px] p-4 text-left transition-all hover:border-[#e040c066]"
+            className="group cursor-pointer border-[3px] p-4 text-left transition-all hover:border-[#ed058466]"
             style={{
               borderColor: method === "s2s" ? ACCENT : "var(--color-border)",
               backgroundColor: method === "s2s" ? ACCENT + "08" : undefined,

@@ -1,4 +1,4 @@
-const ACCENT = "#e040c0";
+const ACCENT = "#ed0584";
 
 interface Props {
   label: string;
