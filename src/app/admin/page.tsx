@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
+const ACCENT = "#e040c0";
+
 export default function AdminPanelPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -67,58 +69,52 @@ export default function AdminPanelPage() {
   return (
     <div className="min-h-screen bg-[#0d0d0f] font-pixel text-[#e8dcc8]">
       <header className="flex items-center justify-between border-b border-[#2a2a30] px-6 py-4">
-        <div className="text-lg">Admin Panel</div>
-        <div className="flex items-center gap-4">
-          <a
-            href="/admin/dashboard"
-            className="rounded-none border border-[#2a2a30] bg-[#161618] px-3 py-1.5 text-sm hover:bg-[#1c1c20]"
-          >
-            Dashboard
-          </a>
-          <div className="text-xs text-[#8c8c9c]">Session TTL / Idle enforced</div>
-          <button
-            onClick={async () => {
-              const supabase = createBrowserSupabase();
-              await supabase.auth.signOut();
-              router.push("/");
-            }}
-            className="rounded-none border border-[#2a2a30] bg-[#161618] px-3 py-1.5 text-sm hover:bg-[#1c1c20]"
-          >
-            Sign out
-          </button>
+        <div>
+          <div className="text-lg">Admin Panel</div>
+          <div className="text-xs text-[#8c8c9c] mt-1">Logged in as @{githubLogin}</div>
         </div>
+        <button
+          onClick={async () => {
+            const supabase = createBrowserSupabase();
+            await supabase.auth.signOut();
+            router.push("/");
+          }}
+          className="rounded-none border border-[#2a2a30] bg-[#161618] px-3 py-1.5 text-sm hover:bg-[#1c1c20]"
+        >
+          Sign out
+        </button>
       </header>
 
       <main className="p-6">
-        <div className="mb-6 grid gap-4 md:grid-cols-2">
-          <a href="/admin/users" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
-            <h3 className="mb-2 text-lg text-[#e040c0]">Users</h3>
-            <p className="text-sm text-[#8c8c9c]">View and manage all users</p>
+        <div className="mb-8">
+          <h2 className="text-xl text-[#e040c0] mb-2">Admin Dashboard</h2>
+          <p className="text-sm text-[#8c8c9c]">Manage Git City admin features</p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <a href="/admin/ads" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0] transition-colors">
+            <h3 className="mb-2 text-lg text-[#e040c0]">Ads</h3>
+            <p className="text-sm text-[#8c8c9c]">Manage ad campaigns, track impressions and clicks</p>
           </a>
 
-          <a href="/admin/quests" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
-            <h3 className="mb-2 text-lg text-[#e040c0]">Quests</h3>
-            <p className="text-sm text-[#8c8c9c]">Create/edit quests</p>
+          <a href="/admin/drops" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0] transition-colors">
+            <h3 className="mb-2 text-lg text-[#e040c0]">Drops</h3>
+            <p className="text-sm text-[#8c8c9c]">Manage building drops and rewards</p>
           </a>
 
-          <a href="/admin/venues" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
-            <h3 className="mb-2 text-lg text-[#e040c0]">Venues</h3>
-            <p className="text-sm text-[#8c8c9c]">Manage venue locations</p>
+          <a href="/admin/email-monitoring" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0] transition-colors">
+            <h3 className="mb-2 text-lg text-[#e040c0]">Email Monitoring</h3>
+            <p className="text-sm text-[#8c8c9c]">Monitor email verification status</p>
           </a>
 
-          <a href="/admin/districts" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
-            <h3 className="mb-2 text-lg text-[#e040c0]">Districts</h3>
-            <p className="text-sm text-[#8c8c9c]">View territory claims</p>
+          <a href="/admin/jobs" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0] transition-colors">
+            <h3 className="mb-2 text-lg text-[#e040c0]">Jobs</h3>
+            <p className="text-sm text-[#8c8c9c]">Manage job listings</p>
           </a>
 
-          <a href="/admin/content" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
-            <h3 className="mb-2 text-lg text-[#e040c0]">Content</h3>
-            <p className="text-sm text-[#8c8c9c]">Edit app texts and images</p>
-          </a>
-
-          <a href="/admin/city" className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0]">
-            <h3 className="mb-2 text-lg text-[#e040c0]">City Analytics</h3>
-            <p className="text-sm text-[#8c8c9c]">View city stats</p>
+          <a href="/admin/landmarks" className="group rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6 hover:border-[#e040c0] transition-colors">
+            <h3 className="mb-2 text-lg text-[#e040c0]">Landmarks</h3>
+            <p className="text-sm text-[#8c8c9c]">Manage city landmarks</p>
           </a>
         </div>
       </main>
