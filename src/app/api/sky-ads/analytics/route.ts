@@ -66,13 +66,17 @@ export async function GET(request: Request) {
   }
 
   // Merge historical baselines (only for "all" period since these predate Supabase tracking)
+  // Only add baselines for ads that still exist in the database
   if (period === "all") {
     for (const [adId, baseline] of Object.entries(HISTORICAL_BASELINES)) {
-      const cur = aggregated.get(adId) ?? { impressions: 0, clicks: 0, cta_clicks: 0 };
-      cur.impressions += baseline.impressions;
-      cur.clicks += baseline.clicks;
-      cur.cta_clicks += baseline.cta_clicks;
-      aggregated.set(adId, cur);
+      // Only include baseline if ad still exists in DB
+      if (adMap.has(adId)) {
+        const cur = aggregated.get(adId) ?? { impressions: 0, clicks: 0, cta_clicks: 0 };
+        cur.impressions += baseline.impressions;
+        cur.clicks += baseline.clicks;
+        cur.cta_clicks += baseline.cta_clicks;
+        aggregated.set(adId, cur);
+      }
     }
   }
 

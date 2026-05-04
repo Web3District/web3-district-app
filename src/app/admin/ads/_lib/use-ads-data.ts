@@ -164,12 +164,13 @@ export function useAdsData({ filters, onToast }: UseAdsDataOptions) {
         });
         if (!res.ok) throw new Error("Failed to delete");
         onToast("Ad deleted", "success");
+        fetchStats(); // Refresh to ensure UI syncs with DB
       } catch {
         setAds(prev);
         onToast("Failed to delete ad", "error");
       }
     },
-    [ads, onToast],
+    [ads, onToast, fetchStats],
   );
 
   // Create

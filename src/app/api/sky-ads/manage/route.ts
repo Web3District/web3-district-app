@@ -143,15 +143,27 @@ export async function DELETE(request: Request) {
 
   const admin = getSupabaseAdmin();
 
+  // Check if ad exists first
+  const { data: existing } = await admin.from("sky_ads").select("id").eq("id", id).single();
+  if (!existing) {
+    return NextResponse.json({ error: "Ad not found", id }, { status: 404 });
+  }
+
   // Delete related events first, then the ad
-  await admin.from("sky_ad_events").delete().eq("ad_id", id);
+  const { error: eventsError } = await admin.from("sky_ad_events").delete().eq("ad_id", id);
+  if (eventsError) {
+    console.error("Failed to delete events for ad", id, eventsError);
+  }
+  
   const { error } = await admin.from("sky_ads").delete().eq("id", id);
 
   if (error) {
+    console.error("Failed to delete ad", id, error);
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  return NextResponse.json({ ok: true });
+  console.log("Successfully deleted ad", id);
+  return NextResponse.json({ ok: true, deleted: id });
 }
 
 // Batch operations: pause, resume, or delete multiple ads
