@@ -3419,9 +3419,7 @@ function HomeContent() {
                 Web4<span style={{ color: theme.accent }}>City</span>
               </h1>
               <p className="mt-2 text-[10px] leading-relaxed text-cream/80 normal-case">
-                {stats.total_developers > 0
-                  ? `A city of ${stats.total_developers.toLocaleString()} GitHub developers. Find yourself.`
-                  : "A global city of developers. Find yourself."}
+                The Vibecoders City. Claim Your land, build and play.
               </p>
 
             </div>
