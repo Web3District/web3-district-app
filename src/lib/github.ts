@@ -327,13 +327,14 @@ function precomputeComposites(
 }
 
 // ─── District Layout ────────────────────────────────────────
+// Official Districts: Web3, AI, Quantum, VC, Growth
 
 export const DISTRICT_NAMES: Record<string, string> = {
-  downtown: 'Downtown',
-  frontend: 'Frontend', backend: 'Backend', fullstack: 'Full Stack',
-  mobile: 'Mobile', data_ai: 'Data & AI', devops: 'DevOps & Cloud',
-  security: 'Security', gamedev: 'GameDev', vibe_coder: 'Vibe Coder',
-  creator: 'Creator',
+  web3: 'Web3',
+  ai: 'AI',
+  quantum: 'Quantum',
+  vc: 'VC',
+  growth: 'Growth',
 };
 
 export const DISTRICT_COLORS: Record<string, string> = {
@@ -346,34 +347,33 @@ export const DISTRICT_COLORS: Record<string, string> = {
 };
 
 export const DISTRICT_DESCRIPTIONS: Record<string, string> = {
-  downtown: 'The elite core. Top 50 devs by global rank.',
-  frontend: 'Pixels, components, and beautiful interfaces.',
-  backend: 'APIs, systems, and server-side logic.',
-  fullstack: 'Jack of all trades. Ship everything.',
-  mobile: 'Native apps for iOS and Android.',
-  data_ai: 'Data science, ML, and AI.',
-  devops: 'Infrastructure, CI/CD, and cloud.',
-  security: 'Hacking, defense, and cryptography.',
-  gamedev: 'Game engines, physics, and fun.',
-  vibe_coder: 'Aesthetic code. Vibes over velocity.',
-  creator: 'Open-source tools and content.',
+  web3: 'Blockchain, crypto, and decentralized future.',
+  ai: 'Machine learning, neural networks, and intelligent systems.',
+  quantum: 'Quantum computing, physics, and next-gen algorithms.',
+  vc: 'Venture capital, startups, and investment ecosystem.',
+  growth: 'Marketing, community, and scaling strategies.',
 };
 
+// Language mapping to 5 official districts
 const LANGUAGE_TO_DISTRICT: Record<string, string> = {
-  TypeScript: 'frontend', JavaScript: 'frontend', CSS: 'frontend',
-  HTML: 'frontend', SCSS: 'frontend', Vue: 'frontend', Svelte: 'frontend',
-  Java: 'backend', Go: 'backend', Rust: 'backend', 'C#': 'backend',
-  PHP: 'backend', Ruby: 'backend', Elixir: 'backend', C: 'backend',
-  'C++': 'backend', Assembly: 'backend', Verilog: 'backend', VHDL: 'backend',
-  Python: 'data_ai', 'Jupyter Notebook': 'data_ai', R: 'data_ai', Julia: 'data_ai',
-  Swift: 'mobile', Kotlin: 'mobile', Dart: 'mobile', 'Objective-C': 'mobile',
-  HCL: 'devops', Shell: 'devops', Dockerfile: 'devops', Nix: 'devops',
-  GDScript: 'gamedev', Lua: 'gamedev',
+  // Web3 District
+  Solidity: 'web3', Rust: 'web3', Move: 'web3', Cairo: 'web3',
+  // AI District
+  Python: 'ai', R: 'ai', Julia: 'ai', 'Jupyter Notebook': 'ai',
+  TypeScript: 'ai', JavaScript: 'ai',
+  // Quantum District
+  Q: 'quantum', QSharp: 'quantum', C: 'quantum', 'C++': 'quantum',
+  // VC District (business/finance languages)
+  Java: 'vc', 'C#': 'vc', Go: 'vc',
+  // Growth District (web/mobile/marketing tech)
+  Swift: 'growth', Kotlin: 'growth', Dart: 'growth',
+  PHP: 'growth', Ruby: 'growth', Elixir: 'growth',
+  Vue: 'growth', Svelte: 'growth',
 };
 
 export function inferDistrict(lang: string | null): string {
-  if (!lang) return 'fullstack';
-  return LANGUAGE_TO_DISTRICT[lang] ?? 'fullstack';
+  if (!lang) return 'growth';
+  return LANGUAGE_TO_DISTRICT[lang] ?? 'growth';
 }
 
 function localBlockAxisPos(idx: number, footprint: number): number {
@@ -403,9 +403,7 @@ export function generateCityLayout(devs: DeveloperRecord[]): {
   const composites = precomputeComposites(devs, maxContrib, maxStars, maxContribV2);
 
   const DISTRICT_ORDER = [
-    'ai', 'web3', 'quantum', 'growth', 'vc',
-    'backend', 'frontend', 'fullstack', 'data_ai', 'devops',
-    'mobile', 'gamedev', 'vibe_coder', 'creator', 'security',
+    'web3', 'ai', 'quantum', 'vc', 'growth',
   ];
 
   const districtGroups: Record<string, DeveloperRecord[]> = {};
@@ -764,7 +762,7 @@ export function generateCityLayout(devs: DeveloperRecord[]): {
   // ── District zones (computed from actual building positions) ──
   const dzMap: Record<string, CityBuilding[]> = {};
   for (const b of buildings) {
-    const did = b.district ?? 'fullstack';
+    const did = b.district ?? 'growth';
     if (!dzMap[did]) dzMap[did] = [];
     dzMap[did].push(b);
   }

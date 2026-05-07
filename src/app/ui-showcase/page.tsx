@@ -249,8 +249,8 @@ export default function UIShowcasePage() {
       {district && <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.85)" }} onClick={() => setDistrict(false)}>
         <div style={{ background: BG_RAISED, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 24, maxWidth: 480, ...PX }} onClick={e => e.stopPropagation()}>
           <h3 style={{ fontSize: 14, fontWeight: 700, color: LIME, letterSpacing: 2, marginBottom: 14 }}>CHOOSE DISTRICT</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6 }}>
-            {[{n:"Frontend",c:"#3b82f6"},{n:"Backend",c:"#22c55e"},{n:"Fullstack",c:"#a855f7"},{n:"Mobile",c:"#f59e0b"},{n:"Data/AI",c:LIME},{n:"DevOps",c:"#06b6d4"},{n:"Security",c:"#ef4444"},{n:"GameDev",c:"#ec4899"}].map(d => (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 6 }}>
+            {[{n:"Web3",c:"#8b5cf6"},{n:"AI",c:"#ec4899"},{n:"Quantum",c:"#06b6d4"},{n:"VC",c:"#f97316"},{n:"Growth",c:"#10b981"}].map(d => (
               <div key={d.n} style={{ background: `${d.c}11`, border: `1px solid ${d.c}44`, padding: "6px 4px", textAlign: "center" }}><div style={{ fontSize: 9, fontWeight: 700, color: d.c }}>{d.n}</div></div>
             ))}
           </div>

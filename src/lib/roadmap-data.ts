@@ -68,7 +68,7 @@ export const ROADMAP_PHASES: RoadmapPhase[] = [
       {
         id: "districts",
         name: "Districts",
-        description: "10 specialized neighborhoods: Frontend, Backend, DevOps, and more",
+        description: "5 specialized districts: Web3, AI, Quantum, VC, and Growth",
         status: "done",
       },
       {

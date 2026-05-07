@@ -71,7 +71,7 @@ export default function MiniMap({ buildings, playerX, playerZ, visible, currentD
     return buildings.map(b => ({
       px: Math.round(ox + (b.position[0] - wb.x0) * s),
       py: Math.round(oy + (b.position[2] - wb.z0) * s),
-      d: b.home_district ?? b.district ?? "fullstack",
+      d: b.home_district ?? b.district ?? "growth",
     }));
   }, [buildings, wb]);
 

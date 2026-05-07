@@ -2277,7 +2277,7 @@ function HomeContent() {
           for (const b of buildings) {
             const dx = mapX - b.position[0], dz = mapZ - b.position[2];
             const dist = dx * dx + dz * dz;
-            if (dist < bestDist) { bestDist = dist; nearestDistrict = b.district ?? "fullstack"; }
+            if (dist < bestDist) { bestDist = dist; nearestDistrict = b.district ?? "growth"; }
           }
           const district = nearestDistrict
             ? districtZones.find(d => d.id === nearestDistrict) ?? null
