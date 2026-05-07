@@ -446,9 +446,11 @@ function ColorPickerPanel({
 function NormiesStylePanel({
   isOwned,
   onClaim,
+  onClaimed,
 }: {
   isOwned: boolean;
   onClaim: () => Promise<boolean>;
+  onClaimed?: () => void;
 }) {
   const [claiming, setClaiming] = useState(false);
   const [feedback, setFeedback] = useState<"claimed" | null>(null);
@@ -463,6 +465,7 @@ function NormiesStylePanel({
     setClaiming(false);
     if (ok) {
       setFeedback("claimed");
+      if (onClaimed) onClaimed();
       setTimeout(() => setFeedback(null), 2000);
     }
   };
@@ -481,6 +484,9 @@ function NormiesStylePanel({
       <div className="flex-1">
         <span className="text-[10px] text-muted normal-case">Normies color: </span>
         <span className="text-[10px] font-bold" style={{ color: normiesColor }}>{normiesColor}</span>
+        {isOwned && (
+          <span className="ml-2 text-[8px] text-[#39d353]">✓ Active on your building</span>
+        )}
       </div>
       {isOwned ? (
         <span className="text-[10px] text-[#39d353]">✓ Claimed!</span>
@@ -1520,6 +1526,12 @@ export default function ShopClient({
                     // Already owned, scroll to upload — no action needed on card
                     return;
                   }
+                  // normies_style: always allow click to show panel and preview
+                  if (isNormiesStyle) {
+                    // Set preview to Normies color when clicked
+                    setPreviewColor("#48494b");
+                    return;
+                  }
                   if (isOwned) return; // faces items don't equip/unequip
                   // Free items (normies_style) don't show confirmation - panel handles claiming
                   if (shopItem && shopItem.price_usd_cents > 0) {
@@ -1551,8 +1563,16 @@ export default function ShopClient({
                     <button
                       onClick={facesSoldOut && !isFacesOwned ? undefined : handleClick}
                       disabled={isBuying || (facesSoldOut && !isFacesOwned)}
-                      onMouseEnter={() => setHighlightItem(itemId)}
-                      onMouseLeave={() => setHighlightItem(null)}
+                      onMouseEnter={() => {
+                        setHighlightItem(itemId);
+                        // Show Normies color preview on hover
+                        if (isNormiesStyle) setPreviewColor("#48494b");
+                      }}
+                      onMouseLeave={() => {
+                        setHighlightItem(null);
+                        // Clear preview when not hovering normies_style
+                        if (isNormiesStyle && !owned.includes("normies_style")) setPreviewColor(null);
+                      }}
                       className={[
                         "flex flex-col items-center justify-center p-2 transition-all w-full aspect-square",
                         isFacesOwned ? "border-[3px] border-[#39d353] bg-[rgba(57,211,83,0.1)]" : "border-2 border-border bg-bg-card opacity-60",
@@ -1696,6 +1716,15 @@ export default function ShopClient({
                     }
                   } catch { /* ignore */ }
                   return false;
+                }}
+                onClaimed={() => {
+                  // Add to owned items
+                  setOwned((prev) =>
+                    prev.includes("normies_style") ? prev : [...prev, "normies_style"]
+                  );
+                  // Set as the current custom color
+                  setCustomColor("#48494b");
+                  setPreviewColor(null);
                 }}
               />
             )}
