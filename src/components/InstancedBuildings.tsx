@@ -91,14 +91,14 @@ const fragmentShader = /* glsl */ `
     vec2 atlasUv = uvParams.xy + vUv * uvParams.zw;
     vec3 wallColor = texture2D(uAtlas, atlasUv).rgb;
 
-    // Custom color tint: blend custom color with theme face color at 50%
+    // Custom color tint: use custom color at 100% (matches shop preview)
     // vTint.a > 0.5 means this building has a custom color
     if (vTint.a > 0.5) {
       // Detect face pixels (background between windows) vs window pixels
       // Face pixels are close to uFaceColor, windows are brighter
       float isFacePixel = step(length(wallColor - uFaceColor), 0.08);
-      vec3 blendedTint = mix(uFaceColor, vTint.rgb, 0.5);
-      wallColor = mix(wallColor, blendedTint, isFacePixel);
+      // Apply custom color directly to face pixels (no blending for accurate preview match)
+      wallColor = mix(wallColor, vTint.rgb, isFacePixel);
     }
 
     // Emissive glow for lit windows, scaled by city energy
