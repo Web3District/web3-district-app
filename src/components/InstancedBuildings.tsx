@@ -290,20 +290,29 @@ export default memo(function InstancedBuildings({
       // Rise starts at 0 (will animate to 1)
       rise[i] = 0;
 
-      // District color tint based on home_district (rgb = color, a = flag)
-      const districtColor = b.home_district ? DISTRICT_COLORS[b.home_district] : null;
-      if (districtColor) {
-        _c.set(districtColor);
-        tint[i * 4 + 0] = _c.r;
-        tint[i * 4 + 1] = _c.g;
-        tint[i * 4 + 2] = _c.b;
-        tint[i * 4 + 3] = 1.0;
-      } else if (b.custom_color) {
+      // OPTION A: Custom color takes priority over district color
+      // This makes shop items valuable - users can override district default
+      if (b.custom_color) {
         _c.set(b.custom_color);
         tint[i * 4 + 0] = _c.r;
         tint[i * 4 + 1] = _c.g;
         tint[i * 4 + 2] = _c.b;
         tint[i * 4 + 3] = 1.0;
+      } else if (b.home_district) {
+        // District color is the default for uncustomized buildings
+        const districtColor = DISTRICT_COLORS[b.home_district];
+        if (districtColor) {
+          _c.set(districtColor);
+          tint[i * 4 + 0] = _c.r;
+          tint[i * 4 + 1] = _c.g;
+          tint[i * 4 + 2] = _c.b;
+          tint[i * 4 + 3] = 1.0;
+        } else {
+          tint[i * 4 + 0] = 0;
+          tint[i * 4 + 1] = 0;
+          tint[i * 4 + 2] = 0;
+          tint[i * 4 + 3] = 0;
+        }
       } else {
         tint[i * 4 + 0] = 0;
         tint[i * 4 + 1] = 0;
