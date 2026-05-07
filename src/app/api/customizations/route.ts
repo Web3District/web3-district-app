@@ -139,8 +139,11 @@ export async function POST(request: Request) {
       }
     }
 
-    // Apply the Normies color
+    // Apply the Normies color to BOTH normies_style AND custom_color
+    // (building rendering reads from custom_color)
     const normiesColor = "#48494b";
+    
+    // Save to normies_style (for tracking)
     const { error: upsertError } = await sb
       .from("developer_customizations")
       .upsert(
@@ -158,6 +161,23 @@ export async function POST(request: Request) {
         { error: "Failed to save Normies customization" },
         { status: 500 }
       );
+    }
+
+    // Also save to custom_color so the building renders correctly
+    const { error: customColorError } = await sb
+      .from("developer_customizations")
+      .upsert(
+        {
+          developer_id: dev.id,
+          item_id: "custom_color",
+          config: { color: normiesColor },
+        },
+        { onConflict: "developer_id,item_id" }
+      );
+
+    if (customColorError) {
+      console.error("Custom color upsert error:", customColorError);
+      // Non-fatal - normies_style was saved, continue
     }
 
     return NextResponse.json({ success: true, color: normiesColor });

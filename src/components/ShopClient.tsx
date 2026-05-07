@@ -1722,9 +1722,12 @@ export default function ShopClient({
                   setOwned((prev) =>
                     prev.includes("normies_style") ? prev : [...prev, "normies_style"]
                   );
-                  // Set as the current custom color
+                  // Set as the current custom color (building reads from this)
                   setCustomColor("#48494b");
                   setPreviewColor(null);
+                  // Trigger save indicator
+                  setSaved(true);
+                  setTimeout(() => setSaved(false), 2000);
                 }}
               />
             )}
