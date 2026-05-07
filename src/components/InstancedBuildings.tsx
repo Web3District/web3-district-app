@@ -290,9 +290,7 @@ export default memo(function InstancedBuildings({
       // Rise starts at 0 (will animate to 1)
       rise[i] = 0;
 
-      // OPTION A: Custom color takes priority over district color (2026-05-07 fix)
-      // This makes shop items valuable - users can override district default
-      // serc1n normies_style test deployment
+      // NORMIES DEPLOYMENT FIX - custom color priority
       if (b.custom_color) {
         _c.set(b.custom_color);
         tint[i * 4 + 0] = _c.r;
