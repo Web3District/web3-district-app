@@ -95,6 +95,74 @@ export async function POST(request: Request) {
 
   const { item_id, color } = body;
 
+  // Handle normies_style (free limited edition item)
+  if (item_id === "normies_style") {
+    // Check if item is available (until June 6, 2026)
+    const now = new Date();
+    const deadline = new Date("2026-06-06T23:59:59Z");
+    if (now > deadline) {
+      return NextResponse.json(
+        { error: "Normies Style is no longer available" },
+        { status: 403 }
+      );
+    }
+
+    // Check if already claimed
+    const { data: existingNormie } = await sb
+      .from("purchases")
+      .select("id")
+      .eq("developer_id", dev.id)
+      .eq("item_id", "normies_style")
+      .eq("status", "completed")
+      .maybeSingle();
+
+    if (!existingNormie) {
+      // Grant the free item
+      const { error: insertError } = await sb
+        .from("purchases")
+        .insert({
+          developer_id: dev.id,
+          item_id: "normies_style",
+          provider: "free",
+          provider_tx_id: null,
+          amount_cents: 0,
+          currency: "usd",
+          status: "completed",
+        });
+
+      if (insertError) {
+        console.error("Normies grant error:", insertError);
+        return NextResponse.json(
+          { error: "Failed to claim Normies Style" },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Apply the Normies color
+    const normiesColor = "#48494b";
+    const { error: upsertError } = await sb
+      .from("developer_customizations")
+      .upsert(
+        {
+          developer_id: dev.id,
+          item_id: "normies_style",
+          config: { color: normiesColor },
+        },
+        { onConflict: "developer_id,item_id" }
+      );
+
+    if (upsertError) {
+      console.error("Normies upsert error:", upsertError);
+      return NextResponse.json(
+        { error: "Failed to save Normies customization" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true, color: normiesColor });
+  }
+
   if (item_id !== "custom_color") {
     return NextResponse.json(
       { error: "Use /api/customizations/upload for billboard" },
@@ -102,7 +170,7 @@ export async function POST(request: Request) {
     );
   }
 
-  // Validate ownership
+  // Validate ownership for custom_color
   const { data: purchase } = await sb
     .from("purchases")
     .select("id")

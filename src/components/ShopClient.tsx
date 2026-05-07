@@ -441,6 +441,66 @@ function ColorPickerPanel({
   );
 }
 
+/* ─── Normies Style Panel ─────────────────────────────────────── */
+
+function NormiesStylePanel({
+  isOwned,
+  onClaim,
+}: {
+  isOwned: boolean;
+  onClaim: () => Promise<boolean>;
+}) {
+  const [claiming, setClaiming] = useState(false);
+  const [feedback, setFeedback] = useState<"claimed" | null>(null);
+  const normiesColor = "#48494b";
+  const normiesAvatar = "https://avatars.githubusercontent.com/u/108618842?v=4";
+
+  const handleClaim = async () => {
+    if (isOwned || claiming) return;
+    setClaiming(true);
+    setFeedback(null);
+    const ok = await onClaim();
+    setClaiming(false);
+    if (ok) {
+      setFeedback("claimed");
+      setTimeout(() => setFeedback(null), 2000);
+    }
+  };
+
+  return (
+    <div className="mt-2 flex items-center gap-3 border-2 border-border/50 bg-bg/50 px-3 py-2">
+      {/* serc1n's avatar as preview */}
+      <Image
+        src={normiesAvatar}
+        alt="Normies Style"
+        width={32}
+        height={32}
+        className="border-2 border-border shrink-0"
+        style={{ imageRendering: "pixelated" }}
+      />
+      <div className="flex-1">
+        <span className="text-[10px] text-muted normal-case">Normies color: </span>
+        <span className="text-[10px] font-bold" style={{ color: normiesColor }}>{normiesColor}</span>
+      </div>
+      {isOwned ? (
+        <span className="text-[10px] text-[#39d353]">✓ Claimed!</span>
+      ) : (
+        <button
+          onClick={handleClaim}
+          disabled={claiming}
+          className="btn-press px-3 py-1 text-[10px] text-bg disabled:opacity-40"
+          style={{
+            backgroundColor: feedback === "claimed" ? "#39d353" : ACCENT,
+            boxShadow: `2px 2px 0 0 ${SHADOW}`,
+          }}
+        >
+          {claiming ? "..." : feedback === "claimed" ? "Claimed!" : "Claim Free"}
+        </button>
+      )}
+    </div>
+  );
+}
+
 /* ─── Billboard Upload Panel (Multi-Slot) ─────────────────────── */
 
 function BillboardUploadPanel({
@@ -1461,10 +1521,14 @@ export default function ShopClient({
                     return;
                   }
                   if (isOwned) return; // faces items don't equip/unequip
+                  // Free items (normies_style) don't show confirmation - panel handles claiming
                   if (shopItem && shopItem.price_usd_cents > 0) {
                     setConfirmBuyItem(isConfirming ? null : itemId);
                   }
                 };
+
+                const isNormiesStyle = itemId === "normies_style";
+                const normiesAvatar = "https://avatars.githubusercontent.com/u/108618842?v=4";
 
                 const facesScarcity = shopItem ? getScarcityInfo(shopItem, totalPurchaseCounts[itemId] ?? 0) : null;
                 const facesSoldOut = facesScarcity?.expired === true;
@@ -1496,7 +1560,18 @@ export default function ShopClient({
                         "hover:border-border-light",
                       ].join(" ")}
                     >
-                      <span className="text-3xl">{ITEM_EMOJIS[itemId] ?? "?"}</span>
+                      {isNormiesStyle ? (
+                        <Image
+                          src={normiesAvatar}
+                          alt="Normies Style"
+                          width={40}
+                          height={40}
+                          className="shrink-0"
+                          style={{ imageRendering: "pixelated" }}
+                        />
+                      ) : (
+                        <span className="text-3xl">{ITEM_EMOJIS[itemId] ?? "?"}</span>
+                      )}
                       <span className="mt-1 text-[10px] text-cream truncate w-full text-center">
                         {ITEM_NAMES[itemId] ?? itemId}
                       </span>
@@ -1597,6 +1672,26 @@ export default function ShopClient({
                     if (res.ok) {
                       setCustomColor(null);
                       setPreviewColor(null);
+                      return true;
+                    }
+                  } catch { /* ignore */ }
+                  return false;
+                }}
+              />
+            )}
+
+            {/* Normies Style panel (free limited edition) */}
+            {items.some((i) => i.id === "normies_style") && (
+              <NormiesStylePanel
+                isOwned={owned.includes("normies_style")}
+                onClaim={async () => {
+                  try {
+                    const res = await fetch("/api/customizations", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ item_id: "normies_style" }),
+                    });
+                    if (res.ok) {
                       return true;
                     }
                   } catch { /* ignore */ }

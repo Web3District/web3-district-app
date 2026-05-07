@@ -66,7 +66,7 @@ export const ITEM_EMOJIS: Record<string, string> = {
   flag: "🏁", helipad: "🚁", spire: "🪣", satellite_dish: "📡", crown_item: "👑",
   antenna_array: "☀️", rooftop_garden: "🌿", rooftop_fire: "🔥", pool_party: "🏊",
   neon_trim: "💡", spotlight: "🔦", hologram_ring: "💫", lightning_aura: "⚡",
-  custom_color: "🎨", billboard: "📺", led_banner: "🪧", normies_style: "🐥",
+  custom_color: "🎨", billboard: "📺", led_banner: "🪧", normies_style: "https://avatars.githubusercontent.com/u/108618842?v=4",
   neon_outline: "🔮", particle_aura: "✨",
   streak_freeze: "🧊",
   // Raid
