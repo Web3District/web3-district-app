@@ -166,6 +166,69 @@ function makeRadialTexture(
     return tex;
 }
 
+/** Emerald orb texture — smooth green gradient with clean alpha edge.
+ *  Fixed: larger canvas, proper alpha falloff, no green dots/artifacts. */
+function makeEmeraldOrbTexture(size = 256): THREE.CanvasTexture {
+    const c = document.createElement("canvas");
+    c.width = size; c.height = size;
+    const ctx = c.getContext("2d")!;
+    ctx.clearRect(0, 0, size, size);
+
+    const cx = size / 2;
+    const cy = size / 2;
+    const r = size * 0.46;
+
+    // Clip to circle for clean edge
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+
+    // Radial gradient: bright green center → darker green edge
+    const g = ctx.createRadialGradient(
+        cx - r * 0.15, cy - r * 0.15, r * 0.1,
+        cx, cy, r
+    );
+    g.addColorStop(0.00, "rgba(180,255,210,1.0)");   // bright green-white center
+    g.addColorStop(0.50, "rgba(60,200,120,1.0)");    // emerald green mid
+    g.addColorStop(1.00, "rgba(30,140,80,1.0)");     // darker green edge (NOT transparent)
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, size, size);
+
+    // Subtle grain for texture (emulates surface detail)
+    const rng = mulberry32(7777);
+    ctx.globalAlpha = 0.06;
+    for (let i = 0; i < 100; i++) {
+        const ang = rng() * Math.PI * 2;
+        const rad = Math.sqrt(rng()) * r * 0.85;
+        const x = cx + Math.cos(ang) * rad;
+        const y = cy + Math.sin(ang) * rad;
+        const rr = (1 + rng() * 3) * (size / 256);
+        ctx.fillStyle = rng() < 0.5 ? "#b8ffd8" : "#50d090";
+        ctx.beginPath();
+        ctx.arc(x, y, rr, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+
+    // Clean alpha edge to kill any artifacts
+    ctx.globalCompositeOperation = "destination-in";
+    const edge = ctx.createRadialGradient(cx, cy, r * 0.97, cx, cy, r * 1.02);
+    edge.addColorStop(0.0, "rgba(0,0,0,1)");
+    edge.addColorStop(1.0, "rgba(0,0,0,0)");
+    ctx.fillStyle = edge;
+    ctx.fillRect(0, 0, size, size);
+    ctx.globalCompositeOperation = "source-over";
+
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.minFilter = THREE.LinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    return tex;
+}
+
 /** Synthwave striped disc texture (Neon theme).
  *  Yellow-top → pink-bottom gradient with horizontal dark stripe cuts. */
 function makeSynthwaveMoonTexture(size = 256): THREE.CanvasTexture {
@@ -534,9 +597,9 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
         };
         // Emerald
         return {
-            discTex: makeRadialTexture("rgba(180,255,210,1.0)", "rgba(60,200,120,0.6)", "rgba(0,0,0,0)", 128),
-            discScale: cfg.scale, discOpacity: 0.82,
-            discColor: new THREE.Color(1.2, 2.0, 1.4),
+            discTex: makeEmeraldOrbTexture(256),
+            discScale: cfg.scale, discOpacity: 0.90,
+            discColor: new THREE.Color(1.1, 1.6, 1.2),
         };
     }, [themeIndex]);
 
@@ -550,6 +613,7 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
         // Crisp alpha edge for Midnight moon — trims near-transparent halo pixels
         if (themeIndex === 0) m.alphaTest = 0.02;
         if (themeIndex === 1) m.alphaTest = 0.015;
+        if (themeIndex === 3) m.alphaTest = 0.02; // Emerald orb — clean edge
         return m;
     }, [discTex, discOpacity, discColor, themeIndex]);
 
