@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 60; // Edge cache for 60s
+export const revalidate = 0; // DISABLED CACHE FOR DEBUGGING
 
 export async function GET(request: Request) {
   const sb = getSupabaseAdmin();
@@ -106,8 +106,10 @@ export async function GET(request: Request) {
   const customColorMap: Record<number, string> = {};
   const billboardImagesMap: Record<number, string[]> = {};
   const loadoutMap: Record<number, { crown: string | null; roof: string | null; aura: string | null }> = {};
+  console.log('[city-api] Customizations result:', customizationsResult.error ?? 'OK', 'rows:', customizationsResult.data?.length ?? 0);
   for (const row of customizationsResult.data ?? []) {
     const config = row.config as Record<string, unknown>;
+    console.log('[city-api] Customization:', row.developer_id, row.item_id, config);
     if (row.item_id === "custom_color" && typeof config?.color === "string") customColorMap[row.developer_id] = config.color;
     if (row.item_id === "billboard") {
       if (Array.isArray(config?.images)) billboardImagesMap[row.developer_id] = config.images as string[];
