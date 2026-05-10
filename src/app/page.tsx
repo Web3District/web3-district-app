@@ -519,7 +519,7 @@ function HomeContent() {
     try {
       const supabase = createBrowserSupabase();
       const { data: adminAds, error } = await supabase
-        .from("ads")
+        .from("sky_ads")
         .select("*")
         .eq("active", true)
         .order("priority", { ascending: false });
