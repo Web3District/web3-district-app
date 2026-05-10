@@ -532,10 +532,10 @@ function HomeContent() {
           text: ad.brand || ad.campaign || "ADVERTISEMENT",
           brand: ad.brand,
           description: ad.campaign,
-          color: "#f8d880",
-          bgColor: "#1a1018",
-          link: ad.cta_url || ad.target_url || site,
-          vehicle: ad.type === "blimp" ? "blimp" : ad.type === "plane" ? "plane" : "billboard" as const,
+          color: ad.color || "#f8d880",
+          bgColor: ad.bg_color || "#1a1018",
+          link: ad.link || site,
+          vehicle: ad.vehicle === "blimp" ? "blimp" : ad.vehicle === "plane" ? "plane" : ad.vehicle === "billboard" ? "billboard" : ad.vehicle === "rooftop_sign" ? "rooftop_sign" : ad.vehicle === "led_wrap" ? "led_wrap" : "billboard" as const,
           priority: ad.priority || 10,
         }));
 
