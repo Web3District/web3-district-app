@@ -23,6 +23,7 @@ function parseDevice(ua: string): string {
 const ALLOWED_ORIGINS = new Set([
   "https://thegitcity.com",
   "https://www.thegitcity.com",
+  "https://web4city.xyz",
   "http://localhost:3001",
   "http://localhost:3000",
 ]);
