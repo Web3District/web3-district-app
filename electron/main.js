@@ -9,7 +9,7 @@ let mainWindow;
 const APP_NAME = 'Web4City Admin';
 const ADMIN_URL = isDev 
   ? 'http://localhost:3000/admin/login' 
-  : `file://${path.join(__dirname, '../out/admin/login.html')}`;
+  : `file://${path.join(process.resourcesPath, 'app.asar/out/admin/login/index.html')}`;
 
 function createWindow() {
   // Create the browser window
@@ -18,28 +18,33 @@ function createWindow() {
     height: 900,
     minWidth: 1024,
     minHeight: 768,
-    titleBarStyle: 'hiddenInset', // Native macOS title bar
-    vibrancy: 'sidebar', // macOS translucency
-    visualEffectState: 'active',
+    titleBarStyle: 'hiddenInset', // Cool black top bar (macOS native)
     backgroundColor: '#0a0a0f',
+    trafficLightPosition: { x: 15, y: 12 }, // Position window controls
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
+      webSecurity: false, // Allow OAuth redirects
+      allowRunningInsecureContent: true,
+      sandbox: false, // Better compatibility with Next.js
+      enableWebSQL: true,
+      database: true,
+      plugins: true,
+      nativeWindowOpen: true, // Allow popup windows for OAuth
+      safeDialogs: true,
     },
-    icon: path.join(__dirname, 'icon.png'),
     show: false, // Don't show until ready
   });
 
   // Load the admin dashboard
+  // Always load from localhost - Next.js needs to be running
+  const port = process.env.PORT || 3002; // Web4City dev server port
+  mainWindow.loadURL(`http://localhost:${port}/admin/login`);
+  
+  // Open DevTools in development
   if (isDev) {
-    // Development mode - load from localhost
-    mainWindow.loadURL('http://localhost:3000/admin/login');
-    // Open DevTools in development
     mainWindow.webContents.openDevTools();
-  } else {
-    // Production mode - load exported Next.js build
-    mainWindow.loadFile(path.join(__dirname, '../out/admin/login/index.html'));
   }
 
   // Show window when ready
@@ -121,7 +126,8 @@ function createMenu() {
           accelerator: 'CmdOrCtrl+1',
           click: () => {
             if (mainWindow) {
-              mainWindow.loadURL(isDev ? 'http://localhost:3000/admin/city' : `file://${path.join(__dirname, '../out/admin/city/index.html')}`);
+              const port = process.env.PORT || 3002;
+              mainWindow.loadURL(`http://localhost:${port}/admin/city`);
             }
           },
         },
@@ -130,7 +136,8 @@ function createMenu() {
           accelerator: 'CmdOrCtrl+2',
           click: () => {
             if (mainWindow) {
-              mainWindow.loadURL(isDev ? 'http://localhost:3000/admin/ads' : `file://${path.join(__dirname, '../out/admin/ads/index.html')}`);
+              const port = process.env.PORT || 3002;
+              mainWindow.loadURL(`http://localhost:${port}/admin/ads`);
             }
           },
         },
@@ -139,7 +146,8 @@ function createMenu() {
           accelerator: 'CmdOrCtrl+3',
           click: () => {
             if (mainWindow) {
-              mainWindow.loadURL(isDev ? 'http://localhost:3000/admin/drops' : `file://${path.join(__dirname, '../out/admin/drops/index.html')}`);
+              const port = process.env.PORT || 3002;
+              mainWindow.loadURL(`http://localhost:${port}/admin/drops`);
             }
           },
         },
@@ -214,15 +222,31 @@ app.on('activate', () => {
   }
 });
 
-// Security: Prevent navigation to external URLs
+// Handle OAuth popup windows and navigation
 app.on('web-contents-created', (event, contents) => {
+  // Allow OAuth popup windows (GitHub login)
+  contents.setWindowOpenHandler(({ url }) => {
+    const parsedUrl = new URL(url);
+    // Allow GitHub OAuth and Supabase auth URLs
+    if (parsedUrl.hostname.includes('github.com') || 
+        parsedUrl.hostname.includes('supabase.co') ||
+        parsedUrl.hostname.includes('supabase.in')) {
+      return { action: 'allow' };
+    }
+    // Open other external URLs in system browser
+    require('electron').shell.openExternal(url);
+    return { action: 'deny' };
+  });
+
+  // Navigation handling
   contents.on('will-navigate', (event, navigationUrl) => {
     const parsedUrl = new URL(navigationUrl);
-    // Allow navigation within the app
-    if (isDev && parsedUrl.origin !== 'http://localhost:3000') {
-      event.preventDefault();
-    } else if (!isDev && parsedUrl.protocol !== 'file:') {
-      event.preventDefault();
+    // Allow navigation within the app and OAuth flows
+    const allowedHosts = ['localhost', 'github.com', 'supabase.co', 'supabase.in'];
+    if (isDev && parsedUrl.origin !== 'http://localhost:3002') {
+      if (!allowedHosts.some(host => parsedUrl.hostname.includes(host))) {
+        event.preventDefault();
+      }
     }
   });
 });

@@ -134,15 +134,13 @@ export function AdsDashboard() {
   }, [selectedIds, handleBatch]);
 
   const toggleReportMode = useCallback(() => {
-    setReportMode((prev) => {
-      const next = !prev;
-      const url = new URL(window.location.href);
-      if (next) url.searchParams.set("report", "true");
-      else url.searchParams.delete("report");
-      window.history.replaceState({}, "", url.toString());
-      return next;
-    });
-  }, []);
+    const next = !reportMode;
+    setReportMode(next);
+    const url = new URL(window.location.href);
+    if (next) url.searchParams.set("report", "true");
+    else url.searchParams.delete("report");
+    window.history.replaceState({}, "", url.toString());
+  }, [reportMode]);
 
   return (
     <div className="min-h-screen bg-bg p-4 sm:p-6 lg:p-8">

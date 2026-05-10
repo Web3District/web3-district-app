@@ -70,3 +70,9 @@ packages/vscode-extension/dist/
 packages/vscode-extension/package-lock.json
 packages/vscode-extension/*.vsix*.env.local
 STRIPE-*.md
+
+# Electron build artifacts
+electron/dist/
+electron/.next/
+electron/node_modules/
+
