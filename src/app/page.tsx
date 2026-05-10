@@ -541,17 +541,38 @@ function HomeContent() {
 
         // Replace all ads with fresh data from DB
         setSkyAds(converted);
-      } else {
-        // No admin ads, use defaults
-        setSkyAds(DEFAULT_SKY_ADS);
+        // Cache successful fetch
+        localStorage.setItem("web4city_cached_ads", JSON.stringify(converted));
       }
+      // If no admin ads, keep defaults (don't override)
     } catch (err) {
       console.error("Failed to fetch admin ads:", err);
-      setSkyAds(DEFAULT_SKY_ADS);
+      // CRITICAL FIX: Don't fall back to defaults on error!
+      // Keep current ads or use cached version
+      const cached = localStorage.getItem("web4city_cached_ads");
+      if (cached) {
+        try {
+          setSkyAds(JSON.parse(cached));
+          console.log("🐥 Using cached ads after fetch failure");
+        } catch {
+          // Cache corrupted, keep current state
+        }
+      }
+      // If no cache, keep whatever ads are currently showing
     }
   }, []);
 
   useEffect(() => {
+    // Load cached ads immediately on mount (for instant display)
+    const cached = localStorage.getItem("web4city_cached_ads");
+    if (cached) {
+      try {
+        setSkyAds(JSON.parse(cached));
+      } catch {
+        // Cache corrupted, use defaults
+      }
+    }
+
     fetchAdminAds();
 
     // Listen for ad updates from admin dashboard

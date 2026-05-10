@@ -35,12 +35,15 @@ function createWindow() {
       safeDialogs: true,
     },
     show: false, // Don't show until ready
+    icon: path.join(__dirname, 'icon.png'), // Custom Web4City icon
   });
 
   // Load the admin dashboard
-  // Always load from localhost - Next.js needs to be running
-  const port = process.env.PORT || 3002; // Web4City dev server port
-  mainWindow.loadURL(`http://localhost:${port}/admin/login`);
+  // Production: load from web4city.xyz, Dev: load from localhost
+  const adminUrl = isDev 
+    ? 'http://localhost:3002/admin/login'
+    : 'https://web4city.xyz/admin/login';
+  mainWindow.loadURL(adminUrl);
   
   // Open DevTools in development
   if (isDev) {

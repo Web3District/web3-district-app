@@ -37,6 +37,7 @@
           "arch": ["arm64"]
         }
       ],
+      "icon": "icon.png",
       "darkModeSupport": true,
       "hardenedRuntime": false,
       "gatekeeperAssess": false
