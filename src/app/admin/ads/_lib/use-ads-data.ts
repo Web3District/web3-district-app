@@ -140,6 +140,8 @@ export function useAdsData({ filters, onToast }: UseAdsDataOptions) {
         });
         if (!res.ok) throw new Error("Failed to toggle");
         onToast(newActive ? "Ad resumed" : "Ad paused", "success");
+        // Notify city page to refresh ads
+        localStorage.setItem("web4city_ads_changed", Date.now().toString());
       } catch {
         // Revert
         setAds((prev) =>
@@ -165,6 +167,8 @@ export function useAdsData({ filters, onToast }: UseAdsDataOptions) {
         if (!res.ok) throw new Error("Failed to delete");
         onToast("Ad deleted", "success");
         fetchStats(); // Refresh to ensure UI syncs with DB
+        // Notify city page to refresh ads
+        localStorage.setItem("web4city_ads_changed", Date.now().toString());
       } catch {
         setAds(prev);
         onToast("Failed to delete ad", "error");
@@ -198,6 +202,8 @@ export function useAdsData({ filters, onToast }: UseAdsDataOptions) {
         }
         onToast("Ad created", "success");
         fetchStats();
+        // Notify city page to refresh ads
+        localStorage.setItem("web4city_ads_changed", Date.now().toString());
         return true;
       } catch {
         onToast("Failed to create ad", "error");
@@ -238,6 +244,8 @@ export function useAdsData({ filters, onToast }: UseAdsDataOptions) {
         }
         onToast("Ad updated", "success");
         fetchStats();
+        // Notify city page to refresh ads
+        localStorage.setItem("web4city_ads_changed", Date.now().toString());
         return true;
       } catch {
         onToast("Failed to save ad", "error");
@@ -266,6 +274,8 @@ export function useAdsData({ filters, onToast }: UseAdsDataOptions) {
         }
         onToast(`${ids.length} ads ${action === "delete" ? "deleted" : action === "pause" ? "paused" : "resumed"}`, "success");
         fetchStats();
+        // Notify city page to refresh ads
+        localStorage.setItem("web4city_ads_changed", Date.now().toString());
         return true;
       } catch {
         onToast("Batch operation failed", "error");

@@ -512,47 +512,70 @@ function HomeContent() {
   const [skyAds, setSkyAds] = useState<import("@/lib/skyAds").SkyAd[]>(DEFAULT_SKY_ADS);
 
   // Fetch admin ads from Supabase
-  useEffect(() => {
+  // Fetch admin ads from Supabase
+  const fetchAdminAds = useCallback(async () => {
     const site = typeof window !== "undefined" ? window.location.origin : "https://web4city.xyz";
     
-    async function fetchAdminAds() {
-      try {
-        const supabase = createBrowserSupabase();
-        const { data: adminAds, error } = await supabase
-          .from("ads")
-          .select("*")
-          .eq("active", true)
-          .order("priority", { ascending: false });
+    try {
+      const supabase = createBrowserSupabase();
+      const { data: adminAds, error } = await supabase
+        .from("ads")
+        .select("*")
+        .eq("active", true)
+        .order("priority", { ascending: false });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        if (adminAds && adminAds.length > 0) {
-          const converted = adminAds.map((ad: any) => ({
-            id: ad.id,
-            text: ad.brand || ad.campaign || "ADVERTISEMENT",
-            brand: ad.brand,
-            description: ad.campaign,
-            color: "#f8d880",
-            bgColor: "#1a1018",
-            link: ad.cta_url || ad.target_url || site,
-            vehicle: ad.type === "blimp" ? "blimp" : ad.type === "plane" ? "plane" : "billboard" as const,
-            priority: ad.priority || 10,
-          }));
+      if (adminAds && adminAds.length > 0) {
+        const converted = adminAds.map((ad: any) => ({
+          id: ad.id,
+          text: ad.brand || ad.campaign || "ADVERTISEMENT",
+          brand: ad.brand,
+          description: ad.campaign,
+          color: "#f8d880",
+          bgColor: "#1a1018",
+          link: ad.cta_url || ad.target_url || site,
+          vehicle: ad.type === "blimp" ? "blimp" : ad.type === "plane" ? "plane" : "billboard" as const,
+          priority: ad.priority || 10,
+        }));
 
-          // Merge with defaults, admin ads take priority
-          setSkyAds(prev => {
-            const existingIds = new Set(prev.map(a => a.id));
-            const newAds = converted.filter((a: any) => !existingIds.has(a.id));
-            return [...prev, ...newAds];
-          });
-        }
-      } catch (err) {
-        console.error("Failed to fetch admin ads:", err);
+        // Replace all ads with fresh data from DB
+        setSkyAds(converted);
+      } else {
+        // No admin ads, use defaults
+        setSkyAds(DEFAULT_SKY_ADS);
       }
+    } catch (err) {
+      console.error("Failed to fetch admin ads:", err);
+      setSkyAds(DEFAULT_SKY_ADS);
     }
-
-    fetchAdminAds();
   }, []);
+
+  useEffect(() => {
+    fetchAdminAds();
+
+    // Listen for ad updates from admin dashboard
+    const handleAdUpdate = () => {
+      console.log("🐥 Ad update detected - refreshing ads!");
+      fetchAdminAds();
+    };
+
+    window.addEventListener("storage", (e) => {
+      if (e.key === "web4city_ads_changed") {
+        handleAdUpdate();
+        // Clear the flag so it can trigger again
+        localStorage.removeItem("web4city_ads_changed");
+      }
+    });
+
+    // Also check periodically every 60 seconds
+    const interval = setInterval(fetchAdminAds, 60000);
+
+    return () => {
+      window.removeEventListener("storage", handleAdUpdate);
+      clearInterval(interval);
+    };
+  }, [fetchAdminAds]);
   const [starCount, setStarCount] = useState<number | null>(null);
   const [discordMembers, setDiscordMembers] = useState<number | null>(null);
   const [pillModalOpen, setPillModalOpen] = useState(false);
