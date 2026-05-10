@@ -1,0 +1,78 @@
+{
+  "name": "web4city-admin",
+  "version": "1.0.0",
+  "description": "Web4City Central Admin Dashboard - Native macOS App",
+  "main": "main.js",
+  "scripts": {
+    "start": "NODE_ENV=development electron .",
+    "build": "next build && next export",
+    "build:app": "npm run build && electron-builder --mac",
+    "build:app:dir": "npm run build && electron-builder --mac --dir",
+    "dist": "npm run build && electron-builder --mac",
+    "dist:win": "npm run build && electron-builder --win",
+    "dist:linux": "npm run build && electron-builder --linux"
+  },
+  "build": {
+    "appId": "xyz.web4city.admin",
+    "productName": "Web4City Admin",
+    "directories": {
+      "output": "dist",
+      "buildResources": "electron"
+    },
+    "files": [
+      "electron/**/*",
+      "out/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "electron/icon.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["arm64", "x64"]
+        }
+      ],
+      "darkModeSupport": true,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
+    },
+    "dmg": {
+      "title": "Web4City Admin",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      }
+    },
+    "asar": true,
+    "compression": "maximum"
+  },
+  "keywords": [
+    "web4city",
+    "admin",
+    "dashboard",
+    "electron",
+    "macos"
+  ],
+  "author": {
+    "name": "Web3District",
+    "email": "boss@z3bras.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  }
+}
