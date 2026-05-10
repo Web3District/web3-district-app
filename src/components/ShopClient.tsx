@@ -1728,6 +1728,13 @@ export default function ShopClient({
                   // Trigger save indicator
                   setSaved(true);
                   setTimeout(() => setSaved(false), 2000);
+                  
+                  // CRITICAL: Store in localStorage so city page knows to refresh
+                  localStorage.setItem("normies_claimed", JSON.stringify({
+                    claimed: true,
+                    color: "#48494b",
+                    timestamp: Date.now()
+                  }));
                 }}
               />
             )}

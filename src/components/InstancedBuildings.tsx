@@ -91,12 +91,14 @@ const fragmentShader = /* glsl */ `
     vec2 atlasUv = uvParams.xy + vUv * uvParams.zw;
     vec3 wallColor = texture2D(uAtlas, atlasUv).rgb;
 
+    // Detect face pixels (background between windows) vs window pixels
+    // Face pixels are close to uFaceColor, windows are brighter
+    float dist = length(wallColor - uFaceColor);
+    float isFacePixel = 1.0 - smoothstep(0.05, 0.15, dist);
+
     // Custom color tint: use custom color at 100% (matches shop preview)
     // vTint.a > 0.5 means this building has a custom color
     if (vTint.a > 0.5) {
-      // Detect face pixels (background between windows) vs window pixels
-      // Face pixels are close to uFaceColor, windows are brighter
-      float isFacePixel = step(length(wallColor - uFaceColor), 0.08);
       // Apply custom color directly to face pixels (no blending for accurate preview match)
       wallColor = mix(wallColor, vTint.rgb, isFacePixel);
     }
@@ -104,7 +106,10 @@ const fragmentShader = /* glsl */ `
     // Emissive glow for lit windows, scaled by city energy
     // Both ambient and emissive dim when city sleeps
     float ambientBase = 0.08 + 0.22 * uCityEnergy;
-    vec3 emissive = wallColor * 1.8 * uCityEnergy;
+    // Only apply emissive to window pixels (not face/custom color pixels)
+    // isFacePixel > 0.5 means this is a face pixel (no emissive)
+    float isWindow = 1.0 - isFacePixel;
+    vec3 emissive = wallColor * 1.8 * uCityEnergy * isWindow;
     vec3 wallFinal = wallColor * ambientBase + emissive;
 
     // Live building boost: pushes windows past bloom threshold
