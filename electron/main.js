@@ -122,36 +122,48 @@ function createMenu() {
       ],
     },
     {
-      label: 'View',
+      label: 'Admin Pages',
       submenu: [
         {
           label: 'Dashboard',
           accelerator: 'CmdOrCtrl+1',
           click: () => {
-            if (mainWindow) {
-              const port = process.env.PORT || 3002;
-              mainWindow.loadURL(`http://localhost:${port}/admin/city`);
-            }
+            if (mainWindow) mainWindow.loadURL(adminUrl.replace('/login', ''));
           },
         },
         {
           label: 'Ads Manager',
           accelerator: 'CmdOrCtrl+2',
           click: () => {
-            if (mainWindow) {
-              const port = process.env.PORT || 3002;
-              mainWindow.loadURL(`http://localhost:${port}/admin/ads`);
-            }
+            if (mainWindow) mainWindow.loadURL(adminUrl.replace('/login', '/ads'));
           },
         },
         {
           label: 'Drops',
           accelerator: 'CmdOrCtrl+3',
           click: () => {
-            if (mainWindow) {
-              const port = process.env.PORT || 3002;
-              mainWindow.loadURL(`http://localhost:${port}/admin/drops`);
-            }
+            if (mainWindow) mainWindow.loadURL(adminUrl.replace('/login', '/drops'));
+          },
+        },
+        {
+          label: 'Email Monitoring',
+          accelerator: 'CmdOrCtrl+4',
+          click: () => {
+            if (mainWindow) mainWindow.loadURL(adminUrl.replace('/login', '/email-monitoring'));
+          },
+        },
+        {
+          label: 'Jobs',
+          accelerator: 'CmdOrCtrl+5',
+          click: () => {
+            if (mainWindow) mainWindow.loadURL(adminUrl.replace('/login', '/jobs'));
+          },
+        },
+        {
+          label: 'Landmarks',
+          accelerator: 'CmdOrCtrl+6',
+          click: () => {
+            if (mainWindow) mainWindow.loadURL(adminUrl.replace('/login', '/landmarks'));
           },
         },
         { type: 'separator' },
