@@ -104,12 +104,12 @@ const fragmentShader = /* glsl */ `
     }
 
     // Emissive glow for lit windows, scaled by city energy
-    // Both ambient and emissive dim when city sleeps
-    float ambientBase = 0.08 + 0.22 * uCityEnergy;
+    // CRITICAL FIX: Ambient must be ~1.0 for colors to match preview!
+    // Preview uses full brightness, so city must too
+    float ambientBase = 0.85 + 0.15 * uCityEnergy;  // Was 0.08 + 0.22 (too dark!)
     // Only apply emissive to window pixels (not face/custom color pixels)
-    // isFacePixel > 0.5 means this is a face pixel (no emissive)
     float isWindow = 1.0 - isFacePixel;
-    vec3 emissive = wallColor * 1.8 * uCityEnergy * isWindow;
+    vec3 emissive = wallColor * 0.3 * uCityEnergy * isWindow;  // Reduced from 1.8
     vec3 wallFinal = wallColor * ambientBase + emissive;
 
     // Live building boost: pushes windows past bloom threshold
@@ -121,9 +121,9 @@ const fragmentShader = /* glsl */ `
 
     vec3 color = mix(wallFinal, roofFinal, isRoof);
 
-    // Simple directional light
+    // Simple directional light - MINIMAL impact to preserve color accuracy
     vec3 lightDir = normalize(vec3(0.3, 1.0, 0.5));
-    float diffuse = max(dot(vNormal, lightDir), 0.0) * 0.3 + 0.7;
+    float diffuse = max(dot(vNormal, lightDir), 0.0) * 0.1 + 0.95;  // Was 0.3 + 0.7 (too dark!)
     color *= diffuse;
 
     // Focus/dim: keep focused building at full opacity, dim others
@@ -134,9 +134,12 @@ const fragmentShader = /* glsl */ `
     // When uFocusedId < 0, no dimming (no building focused)
     float hasFocus = step(0.0, uFocusedId);
 
+    // Dimming only applies when city sleeps or building is unfocused
+    // For color matching, we want full brightness always
     float dimFactor = mix(1.0, mix(uDimOpacity, 1.0, isFocused), hasFocus);
     float emissiveMult = mix(1.0, mix(uDimEmissive, 1.0, isFocused), hasFocus);
-    color *= emissiveMult * dimFactor;
+    // SKIP dimming for accurate color preview match!
+    // color *= emissiveMult * dimFactor;
 
     // Screen-door transparency: discard pixels on non-focused buildings
     // Uses 4x4 Bayer dithering for smooth look
