@@ -76,3 +76,4 @@ electron/dist/
 electron/.next/
 electron/node_modules/
 
+.env*.local
