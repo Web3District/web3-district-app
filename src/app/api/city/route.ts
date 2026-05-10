@@ -86,7 +86,7 @@ export async function GET(request: Request) {
   
   const [giftPurchasesResult, customizationsResult, achievementsResult, raidTagsResult, activeDropsResult] = await Promise.all([
     sb.from("purchases").select("gifted_to, item_id").in("gifted_to", devIds).eq("status", "completed"),
-    sb.from("developer_customizations").select("developer_id, item_id, config").in("developer_id", devIds).in("item_id", ["custom_color", "billboard", "loadout"]),
+    sb.from("developer_customizations").select("developer_id, item_id, config").in("developer_id", devIds).in("item_id", ["custom_color", "billboard", "loadout"]).order("developer_id"),
     sb.from("developer_achievements").select("developer_id, achievement_id").in("developer_id", devIds),
     sb.from("raid_tags").select("building_id, attacker_login, tag_style, expires_at").in("building_id", devIds).eq("active", true),
     sb.from("building_drops").select("id, building_id, rarity, points, max_pulls, pull_count, expires_at").in("building_id", devIds).gt("expires_at", new Date().toISOString()),
@@ -107,10 +107,14 @@ export async function GET(request: Request) {
   const billboardImagesMap: Record<number, string[]> = {};
   const loadoutMap: Record<number, { crown: string | null; roof: string | null; aura: string | null }> = {};
   console.log('[city-api] Customizations result:', customizationsResult.error ?? 'OK', 'rows:', customizationsResult.data?.length ?? 0);
+  if (customizationsResult.error) console.error('[city-api] Customizations error:', customizationsResult.error);
   for (const row of customizationsResult.data ?? []) {
     const config = row.config as Record<string, unknown>;
-    console.log('[city-api] Customization:', row.developer_id, row.item_id, config);
-    if (row.item_id === "custom_color" && typeof config?.color === "string") customColorMap[row.developer_id] = config.color;
+    console.log('[city-api] Customization row:', { dev_id: row.developer_id, item: row.item_id, config });
+    if (row.item_id === "custom_color" && typeof config?.color === "string") {
+      console.log('[city-api] Found custom_color for dev', row.developer_id, ':', config.color);
+      customColorMap[row.developer_id] = config.color;
+    }
     if (row.item_id === "billboard") {
       if (Array.isArray(config?.images)) billboardImagesMap[row.developer_id] = config.images as string[];
       else if (typeof config?.image_url === "string") billboardImagesMap[row.developer_id] = [config.image_url];
