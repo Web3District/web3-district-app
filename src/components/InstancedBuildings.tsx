@@ -298,9 +298,6 @@ export default memo(function InstancedBuildings({
       // Rise starts at 0 (will animate to 1)
       rise[i] = 0;
 
-      // Restored original GitCity default color (black)
-      const DEFAULT_BUILDING_COLOR = "#000000"; // Original GitCity black
-      
       // Custom color has priority
       if (b.custom_color) {
         _c.set(b.custom_color);
@@ -308,13 +305,26 @@ export default memo(function InstancedBuildings({
         tint[i * 4 + 1] = _c.g;
         tint[i * 4 + 2] = _c.b;
         tint[i * 4 + 3] = 1.0;
+      } else if (b.home_district) {
+        // District color is the default for uncustomized buildings
+        const districtColor = DISTRICT_COLORS[b.home_district];
+        if (districtColor) {
+          _c.set(districtColor);
+          tint[i * 4 + 0] = _c.r;
+          tint[i * 4 + 1] = _c.g;
+          tint[i * 4 + 2] = _c.b;
+          tint[i * 4 + 3] = 1.0;
+        } else {
+          tint[i * 4 + 0] = 0;
+          tint[i * 4 + 1] = 0;
+          tint[i * 4 + 2] = 0;
+          tint[i * 4 + 3] = 0;
+        }
       } else {
-        // All other buildings use the same default color (no district variation)
-        _c.set(DEFAULT_BUILDING_COLOR);
-        tint[i * 4 + 0] = _c.r;
-        tint[i * 4 + 1] = _c.g;
-        tint[i * 4 + 2] = _c.b;
-        tint[i * 4 + 3] = 1.0;
+        tint[i * 4 + 0] = 0;
+        tint[i * 4 + 1] = 0;
+        tint[i * 4 + 2] = 0;
+        tint[i * 4 + 3] = 0;
       }
     }
 

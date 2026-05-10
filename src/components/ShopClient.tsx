@@ -447,13 +447,16 @@ function NormiesStylePanel({
   isOwned,
   onClaim,
   onClaimed,
+  onUnequip,
 }: {
   isOwned: boolean;
   onClaim: () => Promise<boolean>;
   onClaimed?: () => void;
+  onUnequip?: () => Promise<boolean>;
 }) {
   const [claiming, setClaiming] = useState(false);
-  const [feedback, setFeedback] = useState<"claimed" | null>(null);
+  const [unequipping, setUnequipping] = useState(false);
+  const [feedback, setFeedback] = useState<"claimed" | "removed" | null>(null);
   const normiesColor = "#48494b";
   const normiesAvatar = "https://avatars.githubusercontent.com/u/108618842?v=4";
 
@@ -466,6 +469,18 @@ function NormiesStylePanel({
     if (ok) {
       setFeedback("claimed");
       if (onClaimed) onClaimed();
+      setTimeout(() => setFeedback(null), 2000);
+    }
+  };
+
+  const handleUnequip = async () => {
+    if (!isOwned || unequipping) return;
+    setUnequipping(true);
+    setFeedback(null);
+    const ok = onUnequip ? await onUnequip() : false;
+    setUnequipping(false);
+    if (ok) {
+      setFeedback("removed");
       setTimeout(() => setFeedback(null), 2000);
     }
   };
@@ -489,7 +504,16 @@ function NormiesStylePanel({
         )}
       </div>
       {isOwned ? (
-        <span className="text-[10px] text-[#39d353]">✓ Claimed!</span>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={handleUnequip}
+            disabled={unequipping}
+            className="border-2 border-border px-2 py-1 text-[10px] text-muted hover:text-cream disabled:opacity-40"
+          >
+            {unequipping ? "..." : feedback === "removed" ? "Unequipped!" : "Unequip"}
+          </button>
+          <span className="text-[10px] text-[#39d353]">✓ Active</span>
+        </div>
       ) : (
         <button
           onClick={handleClaim}
@@ -1735,6 +1759,23 @@ export default function ShopClient({
                     color: "#48494b",
                     timestamp: Date.now()
                   }));
+                }}
+                onUnequip={async () => {
+                  try {
+                    const res = await fetch("/api/customizations", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ item_id: "custom_color", color: null }),
+                    });
+                    if (res.ok) {
+                      setCustomColor(null);
+                      setPreviewColor(null);
+                      // Remove from owned (normies_style is still owned, just unequipped)
+                      setOwned((prev) => prev.filter(id => id !== "normies_style"));
+                      return true;
+                    }
+                  } catch { /* ignore */ }
+                  return false;
                 }}
               />
             )}
