@@ -1772,6 +1772,13 @@ export default function ShopClient({
                       setPreviewColor(null);
                       // Remove from owned (normies_style is still owned, just unequipped)
                       setOwned((prev) => prev.filter(id => id !== "normies_style"));
+                      
+                      // CRITICAL: Force city to reload immediately
+                      localStorage.setItem("shop_changed", JSON.stringify({
+                        type: "unequip",
+                        timestamp: Date.now()
+                      }));
+                      
                       return true;
                     }
                   } catch { /* ignore */ }

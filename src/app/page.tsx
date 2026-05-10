@@ -1171,6 +1171,36 @@ function HomeContent() {
     return () => clearInterval(interval);
   }, [authLogin]);
 
+  // SHOP CHANGES - Listen for unequip/equip actions and refresh city
+  useEffect(() => {
+    const checkShopChanges = () => {
+      try {
+        const raw = localStorage.getItem("shop_changed");
+        if (!raw) return;
+        
+        const data = JSON.parse(raw);
+        const age = Date.now() - data.timestamp;
+        
+        // Only process if changed within last 5 seconds
+        if (age < 5000 && authLogin) {
+          // Clear the flag
+          localStorage.removeItem("shop_changed");
+          
+          // Refresh the city to get new custom_color
+          console.log(`🛍️ Shop changed (${data.type})! Refreshing city...`);
+          reloadCity(true);  // Bust cache to get fresh data
+        }
+      } catch (e) {
+        console.error("Shop change check error:", e);
+      }
+    };
+    
+    // Check on mount and every 1 second (faster for shop changes)
+    checkShopChanges();
+    const interval = setInterval(checkShopChanges, 1000);
+    return () => clearInterval(interval);
+  }, [authLogin]);
+
   // Rabbit cinematic text phase timing (8s total flyover)
   useEffect(() => {
     if (!rabbitCinematic) {
