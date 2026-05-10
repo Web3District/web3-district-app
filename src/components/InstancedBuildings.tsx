@@ -298,47 +298,23 @@ export default memo(function InstancedBuildings({
       // Rise starts at 0 (will animate to 1)
       rise[i] = 0;
 
-      // DEBUG MODE: All buildings use BLACK default color
-      // Disabled: district colors and custom_color to isolate the bug
-      const DEBUG_DEFAULT_COLOR = "#000000"; // Pure black for all buildings
-      
-      // TEMPORARILY DISABLED: custom_color and district colors
-      // This helps us verify the base rendering works before adding color features
-      _c.set(DEBUG_DEFAULT_COLOR);
-      tint[i * 4 + 0] = _c.r;
-      tint[i * 4 + 1] = _c.g;
-      tint[i * 4 + 2] = _c.b;
-      tint[i * 4 + 3] = 1.0;
-      
-      // Original code (commented out for debugging):
-      /*
+      // STEP 1: Enable custom_color only (for debugging)
+      // District colors still disabled
       if (b.custom_color) {
         _c.set(b.custom_color);
         tint[i * 4 + 0] = _c.r;
         tint[i * 4 + 1] = _c.g;
         tint[i * 4 + 2] = _c.b;
         tint[i * 4 + 3] = 1.0;
-      } else if (b.home_district) {
-        const districtColor = DISTRICT_COLORS[b.home_district];
-        if (districtColor) {
-          _c.set(districtColor);
-          tint[i * 4 + 0] = _c.r;
-          tint[i * 4 + 1] = _c.g;
-          tint[i * 4 + 2] = _c.b;
-          tint[i * 4 + 3] = 1.0;
-        } else {
-          tint[i * 4 + 0] = 0;
-          tint[i * 4 + 1] = 0;
-          tint[i * 4 + 2] = 0;
-          tint[i * 4 + 3] = 0;
-        }
       } else {
-        tint[i * 4 + 0] = 0;
-        tint[i * 4 + 1] = 0;
-        tint[i * 4 + 2] = 0;
-        tint[i * 4 + 3] = 0;
+        // All other buildings stay BLACK for now
+        const DEBUG_DEFAULT_COLOR = "#000000";
+        _c.set(DEBUG_DEFAULT_COLOR);
+        tint[i * 4 + 0] = _c.r;
+        tint[i * 4 + 1] = _c.g;
+        tint[i * 4 + 2] = _c.b;
+        tint[i * 4 + 3] = 1.0;
       }
-      */
     }
 
     return { uvFrontData: uvF, uvSideData: uvS, riseData: rise, tintData: tint };
