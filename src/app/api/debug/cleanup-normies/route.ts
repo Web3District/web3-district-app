@@ -38,32 +38,66 @@ export async function POST() {
     return NextResponse.json({ error: "Developer not found" }, { status: 404 });
   }
 
+  let deleted = [];
+
   // Delete normies_style customization (if exists)
-  const { error: deleteError } = await sb
+  const { error: deleteNormiesError } = await sb
     .from("developer_customizations")
     .delete()
     .eq("developer_id", dev.id)
     .eq("item_id", "normies_style");
 
-  if (deleteError) {
-    return NextResponse.json(
-      { error: "Failed to delete normies_style", details: deleteError },
-      { status: 500 }
-    );
+  if (deleteNormiesError) {
+    console.error("Failed to delete normies_style:", deleteNormiesError);
+  } else {
+    deleted.push("normies_style customization");
   }
 
   // Also delete normies_style from purchases (if exists)
-  const { error: deletePurchaseError } = await sb
+  const { error: deleteNormiesPurchaseError } = await sb
     .from("purchases")
     .delete()
     .eq("developer_id", dev.id)
     .eq("item_id", "normies_style");
 
+  if (deleteNormiesPurchaseError) {
+    console.error("Failed to delete normies_style purchase:", deleteNormiesPurchaseError);
+  } else {
+    deleted.push("normies_style purchase");
+  }
+
+  // CRITICAL: Also delete custom_color (old normies code saved it there)
+  const { error: deleteColorError } = await sb
+    .from("developer_customizations")
+    .delete()
+    .eq("developer_id", dev.id)
+    .eq("item_id", "custom_color");
+
+  if (deleteColorError) {
+    console.error("Failed to delete custom_color:", deleteColorError);
+  } else {
+    deleted.push("custom_color (old normies data)");
+  }
+
+  // Delete custom_color purchase if it exists (was auto-created by old code)
+  const { error: deleteColorPurchaseError } = await sb
+    .from("purchases")
+    .delete()
+    .eq("developer_id", dev.id)
+    .eq("item_id", "custom_color");
+
+  if (deleteColorPurchaseError) {
+    console.error("Failed to delete custom_color purchase:", deleteColorPurchaseError);
+  } else {
+    deleted.push("custom_color purchase");
+  }
+
   return NextResponse.json({
     success: true,
-    message: "Normies style cleaned up from database",
+    message: "All normies data cleaned up from database",
     github_login: githubLogin,
     developer_id: dev.id,
-    note: "Now set your custom_color in the shop - it will work correctly!",
+    deleted: deleted,
+    note: "Now buy custom_color in the shop and set YOUR color - it will work correctly!",
   });
 }
