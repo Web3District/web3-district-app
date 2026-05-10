@@ -161,9 +161,16 @@ function createMenu() {
         },
         {
           label: 'Landmarks',
-          accelerator: 'CmdOrCtrl+6',
+          accelerator: 'CmdOrCtrl+5',
           click: () => {
             if (mainWindow) mainWindow.loadURL(adminUrl.replace('/login', '/landmarks'));
+          },
+        },
+        {
+          label: 'Users & Analytics',
+          accelerator: 'CmdOrCtrl+6',
+          click: () => {
+            if (mainWindow) mainWindow.loadURL(adminUrl.replace('/login', '/users'));
           },
         },
         { type: 'separator' },
