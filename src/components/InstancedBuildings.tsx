@@ -298,9 +298,8 @@ export default memo(function InstancedBuildings({
       // Rise starts at 0 (will animate to 1)
       rise[i] = 0;
 
-      // DEBUG MODE: All buildings use same default color (no district colors)
-      // This helps isolate the custom_color bug
-      const DEBUG_DEFAULT_COLOR = "#6b7280"; // Gray-500 - neutral default
+      // Restored original GitCity default color (black)
+      const DEFAULT_BUILDING_COLOR = "#000000"; // Original GitCity black
       
       // Custom color has priority
       if (b.custom_color) {
@@ -311,7 +310,7 @@ export default memo(function InstancedBuildings({
         tint[i * 4 + 3] = 1.0;
       } else {
         // All other buildings use the same default color (no district variation)
-        _c.set(DEBUG_DEFAULT_COLOR);
+        _c.set(DEFAULT_BUILDING_COLOR);
         tint[i * 4 + 0] = _c.r;
         tint[i * 4 + 1] = _c.g;
         tint[i * 4 + 2] = _c.b;
