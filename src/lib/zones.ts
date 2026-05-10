@@ -30,7 +30,6 @@ export const ITEM_NAMES: Record<string, string> = {
   custom_color: "Custom Color",
   billboard: "Billboard",
   led_banner: "LED Banner",
-  normies_style: "Normies Style",
   neon_outline: "Neon Outline",
   particle_aura: "Particle Aura",
   streak_freeze: "Streak Freeze",
@@ -66,7 +65,7 @@ export const ITEM_EMOJIS: Record<string, string> = {
   flag: "🏁", helipad: "🚁", spire: "🪣", satellite_dish: "📡", crown_item: "👑",
   antenna_array: "☀️", rooftop_garden: "🌿", rooftop_fire: "🔥", pool_party: "🏊",
   neon_trim: "💡", spotlight: "🔦", hologram_ring: "💫", lightning_aura: "⚡",
-  custom_color: "🎨", billboard: "📺", led_banner: "🪧", normies_style: "https://avatars.githubusercontent.com/u/108618842?v=4",
+  custom_color: "🎨", billboard: "📺", led_banner: "🪧",
   neon_outline: "🔮", particle_aura: "✨",
   streak_freeze: "🧊",
   // Raid
@@ -83,7 +82,7 @@ export const ITEM_EMOJIS: Record<string, string> = {
   github_star: "⭐",
 };
 
-export const FACES_ITEMS = ["custom_color", "billboard", "led_banner", "normies_style"];
+export const FACES_ITEMS = ["custom_color", "billboard", "led_banner"];
 
 export const RAID_VEHICLE_ITEMS = ["raid_helicopter", "raid_drone", "raid_rocket"];
 export const RAID_TAG_ITEMS = ["tag_neon", "tag_fire", "tag_gold"];

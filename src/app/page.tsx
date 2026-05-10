@@ -1141,36 +1141,6 @@ function HomeContent() {
     return () => window.removeEventListener("keydown", onKey);
   }, [flyMode, exploreMode, focusedBuilding, shareData, selectedBuilding, giftClaimed, giftModalOpen, comparePair, compareBuilding, founderMessageOpen, pillModalOpen, eArcadeOpen, activeSponsor, rabbitCinematic, endRabbitCinematic, raidState.phase, raidActions, invitePreview]);
 
-  // NORMIES COLOR CLAIM - Check if user just claimed and refresh city
-  useEffect(() => {
-    const checkNormiesClaim = () => {
-      try {
-        const raw = localStorage.getItem("normies_claimed");
-        if (!raw) return;
-        
-        const data = JSON.parse(raw);
-        const age = Date.now() - data.timestamp;
-        
-        // Only process if claimed within last 5 seconds
-        if (data.claimed && age < 5000 && authLogin) {
-          // Clear the flag
-          localStorage.removeItem("normies_claimed");
-          
-          // Refresh the city to get new custom_color
-          console.log("🎨 Normies claimed! Refreshing city...");
-          reloadCity(true);  // Bust cache to get fresh custom_color
-        }
-      } catch (e) {
-        console.error("Normies claim check error:", e);
-      }
-    };
-    
-    // Check on mount and every 2 seconds
-    checkNormiesClaim();
-    const interval = setInterval(checkNormiesClaim, 2000);
-    return () => clearInterval(interval);
-  }, [authLogin]);
-
   // SHOP CHANGES - Listen for unequip/equip actions and refresh city
   useEffect(() => {
     const checkShopChanges = () => {

@@ -441,95 +441,7 @@ function ColorPickerPanel({
   );
 }
 
-/* ─── Normies Style Panel ─────────────────────────────────────── */
 
-function NormiesStylePanel({
-  isOwned,
-  onClaim,
-  onClaimed,
-  onUnequip,
-}: {
-  isOwned: boolean;
-  onClaim: () => Promise<boolean>;
-  onClaimed?: () => void;
-  onUnequip?: () => Promise<boolean>;
-}) {
-  const [claiming, setClaiming] = useState(false);
-  const [unequipping, setUnequipping] = useState(false);
-  const [feedback, setFeedback] = useState<"claimed" | "removed" | null>(null);
-  const normiesColor = "#48494b";
-  const normiesAvatar = "https://avatars.githubusercontent.com/u/108618842?v=4";
-
-  const handleClaim = async () => {
-    if (isOwned || claiming) return;
-    setClaiming(true);
-    setFeedback(null);
-    const ok = await onClaim();
-    setClaiming(false);
-    if (ok) {
-      setFeedback("claimed");
-      if (onClaimed) onClaimed();
-      setTimeout(() => setFeedback(null), 2000);
-    }
-  };
-
-  const handleUnequip = async () => {
-    if (!isOwned || unequipping) return;
-    setUnequipping(true);
-    setFeedback(null);
-    const ok = onUnequip ? await onUnequip() : false;
-    setUnequipping(false);
-    if (ok) {
-      setFeedback("removed");
-      setTimeout(() => setFeedback(null), 2000);
-    }
-  };
-
-  return (
-    <div className="mt-2 flex items-center gap-3 border-2 border-border/50 bg-bg/50 px-3 py-2">
-      {/* serc1n's avatar as preview */}
-      <Image
-        src={normiesAvatar}
-        alt="Normies Style"
-        width={32}
-        height={32}
-        className="border-2 border-border shrink-0"
-        style={{ imageRendering: "pixelated" }}
-      />
-      <div className="flex-1">
-        <span className="text-[10px] text-muted normal-case">Normies color: </span>
-        <span className="text-[10px] font-bold" style={{ color: normiesColor }}>{normiesColor}</span>
-        {isOwned && (
-          <span className="ml-2 text-[8px] text-[#39d353]">✓ Active on your building</span>
-        )}
-      </div>
-      {isOwned ? (
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={handleUnequip}
-            disabled={unequipping}
-            className="border-2 border-border px-2 py-1 text-[10px] text-muted hover:text-cream disabled:opacity-40"
-          >
-            {unequipping ? "..." : feedback === "removed" ? "Unequipped!" : "Unequip"}
-          </button>
-          <span className="text-[10px] text-[#39d353]">✓ Active</span>
-        </div>
-      ) : (
-        <button
-          onClick={handleClaim}
-          disabled={claiming}
-          className="btn-press px-3 py-1 text-[10px] text-bg disabled:opacity-40"
-          style={{
-            backgroundColor: feedback === "claimed" ? "#39d353" : ACCENT,
-            boxShadow: `2px 2px 0 0 ${SHADOW}`,
-          }}
-        >
-          {claiming ? "..." : feedback === "claimed" ? "Claimed!" : "Claim Free"}
-        </button>
-      )}
-    </div>
-  );
-}
 
 /* ─── Billboard Upload Panel (Multi-Slot) ─────────────────────── */
 
@@ -1550,21 +1462,11 @@ export default function ShopClient({
                     // Already owned, scroll to upload — no action needed on card
                     return;
                   }
-                  // normies_style: always allow click to show panel and preview
-                  if (isNormiesStyle) {
-                    // Set preview to Normies color when clicked
-                    setPreviewColor("#48494b");
-                    return;
-                  }
                   if (isOwned) return; // faces items don't equip/unequip
-                  // Free items (normies_style) don't show confirmation - panel handles claiming
                   if (shopItem && shopItem.price_usd_cents > 0) {
                     setConfirmBuyItem(isConfirming ? null : itemId);
                   }
                 };
-
-                const isNormiesStyle = itemId === "normies_style";
-                const normiesAvatar = "https://avatars.githubusercontent.com/u/108618842?v=4";
 
                 const facesScarcity = shopItem ? getScarcityInfo(shopItem, totalPurchaseCounts[itemId] ?? 0) : null;
                 const facesSoldOut = facesScarcity?.expired === true;
@@ -1587,16 +1489,8 @@ export default function ShopClient({
                     <button
                       onClick={facesSoldOut && !isFacesOwned ? undefined : handleClick}
                       disabled={isBuying || (facesSoldOut && !isFacesOwned)}
-                      onMouseEnter={() => {
-                        setHighlightItem(itemId);
-                        // Show Normies color preview on hover
-                        if (isNormiesStyle) setPreviewColor("#48494b");
-                      }}
-                      onMouseLeave={() => {
-                        setHighlightItem(null);
-                        // Clear preview when not hovering normies_style
-                        if (isNormiesStyle && !owned.includes("normies_style")) setPreviewColor(null);
-                      }}
+                      onMouseEnter={() => setHighlightItem(itemId)}
+                      onMouseLeave={() => setHighlightItem(null)}
                       className={[
                         "flex flex-col items-center justify-center p-2 transition-all w-full aspect-square",
                         isFacesOwned ? "border-[3px] border-[#39d353] bg-[rgba(57,211,83,0.1)]" : "border-2 border-border bg-bg-card opacity-60",
@@ -1604,18 +1498,7 @@ export default function ShopClient({
                         "hover:border-border-light",
                       ].join(" ")}
                     >
-                      {isNormiesStyle ? (
-                        <Image
-                          src={normiesAvatar}
-                          alt="Normies Style"
-                          width={40}
-                          height={40}
-                          className="shrink-0"
-                          style={{ imageRendering: "pixelated" }}
-                        />
-                      ) : (
-                        <span className="text-3xl">{ITEM_EMOJIS[itemId] ?? "?"}</span>
-                      )}
+                      <span className="text-3xl">{ITEM_EMOJIS[itemId] ?? "?"}</span>
                       <span className="mt-1 text-[10px] text-cream truncate w-full text-center">
                         {ITEM_NAMES[itemId] ?? itemId}
                       </span>
@@ -1701,6 +1584,13 @@ export default function ShopClient({
                     if (res.ok) {
                       setCustomColor(c);
                       setPreviewColor(null);
+                      
+                      // CRITICAL: Force city to reload immediately
+                      localStorage.setItem("shop_changed", JSON.stringify({
+                        type: "equip",
+                        timestamp: Date.now()
+                      }));
+                      
                       return true;
                     }
                   } catch { /* ignore */ }
@@ -1716,62 +1606,6 @@ export default function ShopClient({
                     if (res.ok) {
                       setCustomColor(null);
                       setPreviewColor(null);
-                      return true;
-                    }
-                  } catch { /* ignore */ }
-                  return false;
-                }}
-              />
-            )}
-
-            {/* Normies Style panel (free limited edition) */}
-            {items.some((i) => i.id === "normies_style") && (
-              <NormiesStylePanel
-                isOwned={owned.includes("normies_style")}
-                onClaim={async () => {
-                  try {
-                    const res = await fetch("/api/customizations", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ item_id: "normies_style" }),
-                    });
-                    if (res.ok) {
-                      return true;
-                    }
-                  } catch { /* ignore */ }
-                  return false;
-                }}
-                onClaimed={() => {
-                  // Add to owned items
-                  setOwned((prev) =>
-                    prev.includes("normies_style") ? prev : [...prev, "normies_style"]
-                  );
-                  // Set as the current custom color (building reads from this)
-                  setCustomColor("#48494b");
-                  setPreviewColor(null);
-                  // Trigger save indicator
-                  setSaved(true);
-                  setTimeout(() => setSaved(false), 2000);
-                  
-                  // CRITICAL: Store in localStorage so city page knows to refresh
-                  localStorage.setItem("normies_claimed", JSON.stringify({
-                    claimed: true,
-                    color: "#48494b",
-                    timestamp: Date.now()
-                  }));
-                }}
-                onUnequip={async () => {
-                  try {
-                    const res = await fetch("/api/customizations", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ item_id: "custom_color", color: null }),
-                    });
-                    if (res.ok) {
-                      setCustomColor(null);
-                      setPreviewColor(null);
-                      // Remove from owned (normies_style is still owned, just unequipped)
-                      setOwned((prev) => prev.filter(id => id !== "normies_style"));
                       
                       // CRITICAL: Force city to reload immediately
                       localStorage.setItem("shop_changed", JSON.stringify({
@@ -1786,6 +1620,8 @@ export default function ShopClient({
                 }}
               />
             )}
+
+
 
             {/* Billboard upload */}
             {items.some((i) => i.id === "billboard") && (
