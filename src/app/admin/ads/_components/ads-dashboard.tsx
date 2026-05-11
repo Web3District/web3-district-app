@@ -13,12 +13,16 @@ import { SummaryCards } from "./summary-cards";
 import { AdFilters } from "./ad-filters";
 import { BatchToolbar } from "./batch-toolbar";
 import { AdTable } from "./ad-table";
+import { InteractionsPanel } from "./interactions-panel";
+import { InteractionsOverview } from "./interactions-overview";
 
 export function AdsDashboard() {
   const searchParams = useSearchParams();
   const { filters, setFilter, handleSort } = useAdsUrlState();
   const { toasts, addToast, dismissToast } = useToast();
   const [reportMode, setReportMode] = useState(searchParams?.get("report") === "true");
+  const [interactionsMode, setInteractionsMode] = useState(searchParams?.get("interactions") === "true");
+  const [selectedAdForInteractions, setSelectedAdForInteractions] = useState<{ id: string; brand: string } | null>(null);
 
   const {
     ads,
@@ -139,8 +143,19 @@ export function AdsDashboard() {
     const url = new URL(window.location.href);
     if (next) url.searchParams.set("report", "true");
     else url.searchParams.delete("report");
+    url.searchParams.delete("interactions");
     window.history.replaceState({}, "", url.toString());
   }, [reportMode]);
+
+  const toggleInteractionsMode = useCallback(() => {
+    const next = !interactionsMode;
+    setInteractionsMode(next);
+    setSelectedAdForInteractions(null);
+    const url = new URL(window.location.href);
+    if (next) url.searchParams.set("interactions", "true");
+    else url.searchParams.delete("interactions");
+    window.history.replaceState({}, "", url.toString());
+  }, [interactionsMode]);
 
   return (
     <div className="min-h-screen bg-bg p-4 sm:p-6 lg:p-8">
@@ -211,6 +226,16 @@ export function AdsDashboard() {
             </div>
             <div className="flex gap-3">
               <button
+                onClick={toggleInteractionsMode}
+                className={`cursor-pointer border px-4 py-2 text-xs transition-colors ${
+                  interactionsMode
+                    ? "border-[#ed0584] bg-[#ed0584]/10 text-[#ed0584]"
+                    : "border-border text-muted hover:border-border-light hover:text-cream"
+                }`}
+              >
+                📊 INTERACTIONS
+              </button>
+              <button
                 onClick={toggleReportMode}
                 className="cursor-pointer border border-border px-4 py-2 text-xs text-muted transition-colors hover:border-border-light hover:text-cream"
               >
@@ -222,21 +247,48 @@ export function AdsDashboard() {
               >
                 BACK
               </a>
-              <button
-                onClick={openCreateModal}
-                className="cursor-pointer border-2 border-[#ed0584] px-4 py-2 text-xs text-[#ed0584] transition-colors hover:bg-[#ed0584]/10"
-              >
-                + NEW AD
-              </button>
+              {!interactionsMode && (
+                <button
+                  onClick={openCreateModal}
+                  className="cursor-pointer border-2 border-[#ed0584] px-4 py-2 text-xs text-[#ed0584] transition-colors hover:bg-[#ed0584]/10"
+                >
+                  + NEW AD
+                </button>
+              )}
             </div>
           </div>
         )}
 
-        {/* Summary Cards */}
-        <SummaryCards totals={totals} periodDays={filters.period === "7d" ? 7 : filters.period === "30d" ? 30 : null} />
+        {/* Interactions Mode */}
+        {interactionsMode ? (
+          <>
+            {selectedAdForInteractions ? (
+              <div>
+                <button
+                  onClick={() => setSelectedAdForInteractions(null)}
+                  className="mb-4 cursor-pointer text-xs text-[#ed0584] hover:underline"
+                >
+                  ← Back to all ads
+                </button>
+                <InteractionsPanel
+                  adId={selectedAdForInteractions.id}
+                  brand={selectedAdForInteractions.brand}
+                />
+              </div>
+            ) : (
+              <InteractionsOverview
+                ads={ads}
+                onSelectAd={(ad) => setSelectedAdForInteractions({ id: ad.id, brand: ad.brand || ad.id })}
+              />
+            )}
+          </>
+        ) : (
+          /* Summary Cards */
+          <SummaryCards totals={totals} periodDays={filters.period === "7d" ? 7 : filters.period === "30d" ? 30 : null} />
+        )}
 
         {/* Filters */}
-        {!reportMode && (
+        {!reportMode && !interactionsMode && (
           <AdFilters
             filters={filters}
             setFilter={setFilter}
@@ -247,14 +299,14 @@ export function AdsDashboard() {
         )}
 
         {/* Error */}
-        {error && !reportMode && (
+        {error && !reportMode && !interactionsMode && (
           <div className="mb-4 border border-red-800 bg-red-900/20 p-4 text-xs text-red-400">
             {error}
           </div>
         )}
 
         {/* Batch Toolbar */}
-        {!reportMode && (
+        {!reportMode && !interactionsMode && (
           <BatchToolbar
             count={selectedIds.size}
             onPause={batchPause}
@@ -265,25 +317,27 @@ export function AdsDashboard() {
         )}
 
         {/* Table */}
-        <AdTable
-          ads={filteredAndSorted}
-          loading={loading}
-          isFirstLoad={isFirstLoad}
-          sortKey={filters.sort}
-          sortDir={filters.dir}
-          expandedId={expandedId}
-          selectedIds={selectedIds}
-          reportMode={reportMode}
-          onSort={handleSort}
-          onToggleExpand={(id) =>
-            setExpandedId((prev) => (prev === id ? null : id))
-          }
-          onToggleSelect={toggleSelect}
-          onSelectAll={selectAll}
-          onEdit={openEditModal}
-          onToggleActive={handleToggle}
-          onDelete={requestDelete}
-        />
+        {!interactionsMode && (
+          <AdTable
+            ads={filteredAndSorted}
+            loading={loading}
+            isFirstLoad={isFirstLoad}
+            sortKey={filters.sort}
+            sortDir={filters.dir}
+            expandedId={expandedId}
+            selectedIds={selectedIds}
+            reportMode={reportMode}
+            onSort={handleSort}
+            onToggleExpand={(id) =>
+              setExpandedId((prev) => (prev === id ? null : id))
+            }
+            onToggleSelect={toggleSelect}
+            onSelectAll={selectAll}
+            onEdit={openEditModal}
+            onToggleActive={handleToggle}
+            onDelete={requestDelete}
+          />
+        )}
       </div>
     </div>
   );
