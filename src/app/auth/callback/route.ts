@@ -238,8 +238,8 @@ export async function GET(request: Request) {
     const adminLogins = (process.env.ADMIN_GITHUB_LOGINS ?? "").split(",").map((s) => s.trim().toLowerCase());
     
     if (adminLogins.includes(githubLogin)) {
-      // User is admin, redirect to admin dashboard
-      return NextResponse.redirect(`${origin}/admin/ads`);
+      // User is admin, redirect to admin dashboard home
+      return NextResponse.redirect(`${origin}${next}`);
     }
     // Not an admin, redirect to home
     return NextResponse.redirect(`${origin}/?error=not_admin`);

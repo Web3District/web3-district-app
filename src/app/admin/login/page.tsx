@@ -8,7 +8,7 @@ export default function AdminLoginPage() {
     await supabase.auth.signInWithOAuth({
       provider: "github",
       options: { 
-        redirectTo: `${window.location.origin}/auth/callback?next=/admin/ads` 
+        redirectTo: `${window.location.origin}/auth/callback?next=/admin` 
       },
     });
   };
