@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import type { SponsorConfig } from "./registry";
-import { trackLandmarkCardViewed, trackLandmarkCtaClicked } from "@/lib/himetrica";
+import { trackLandmarkCardViewed, trackLandmarkCtaClicked, trackLandmarkShare } from "@/lib/himetrica";
 import { trackAdEvent, appendClickId } from "@/lib/skyAds";
 import { getLandmarkAdId } from "./landmarkAdIds";
 
@@ -108,6 +108,49 @@ export default function SponsoredCard({ config, onClose }: SponsoredCardProps) {
                 style={{ backgroundColor: accent }}
               />
               <span className="text-[9px]" style={{ color: accent + "99" }}>Sponsored landmark</span>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="mx-4 h-px bg-border" />
+
+          {/* Share buttons */}
+          <div className="px-4 py-3">
+            <p className="mb-2 text-[9px] text-muted">Share this landmark:</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  const shareUrl = `https://twitter.com/intent/tweet?text=Check out ${config.name} on Web4City!&url=${encodeURIComponent(config.url)}`;
+                  window.open(shareUrl, "_blank", "noopener,noreferrer");
+                  trackLandmarkShare(config.slug, "x", config.url);
+                }}
+                className="flex-1 rounded-none border border-[#1a1a24] bg-[#161618] py-1.5 text-[9px] font-bold text-white transition-colors hover:bg-[#1c1c20]"
+                title="Share on X (Twitter)"
+              >
+                𝕏 Share
+              </button>
+              <button
+                onClick={() => {
+                  const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(config.url)}&text=Check out ${config.name} on Web4City!`;
+                  window.open(shareUrl, "_blank", "noopener,noreferrer");
+                  trackLandmarkShare(config.slug, "telegram", config.url);
+                }}
+                className="flex-1 rounded-none border border-[#1a1a24] bg-[#161618] py-1.5 text-[9px] font-bold text-white transition-colors hover:bg-[#1c1c20]"
+                title="Share on Telegram"
+              >
+                ✈ Share
+              </button>
+              <button
+                onClick={() => {
+                  const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(config.url)}`;
+                  window.open(shareUrl, "_blank", "noopener,noreferrer");
+                  trackLandmarkShare(config.slug, "linkedin", config.url);
+                }}
+                className="flex-1 rounded-none border border-[#1a1a24] bg-[#161618] py-1.5 text-[9px] font-bold text-white transition-colors hover:bg-[#1c1c20]"
+                title="Share on LinkedIn"
+              >
+                in Share
+              </button>
             </div>
           </div>
 

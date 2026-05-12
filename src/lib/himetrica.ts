@@ -164,18 +164,45 @@ export function trackEArcadeSurveyCompleted() {
 
 // ─── Sponsored Landmarks ────────────────────────────────────
 
-export function trackLandmarkImpression(slug: string) {
-  hm()?.track("landmark_impression", { slug });
+async function trackLandmarkEvent(event_type: string, slug: string, extra?: { url?: string; user_github_login?: string; user_developer_id?: number }) {
+  // Track in Himetrica (analytics platform)
+  hm()?.track(`landmark_${event_type}`, { slug, ...extra });
+  
+  // Also save to database for admin analytics
+  try {
+    await fetch("/api/analytics/landmark", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        landmark_slug: slug,
+        event_type,
+        user_github_login: extra?.user_github_login,
+        user_developer_id: extra?.user_developer_id,
+        url: extra?.url,
+        session_id: typeof window !== "undefined" ? window.sessionStorage.getItem("session_id") : null,
+      }),
+    });
+  } catch (err) {
+    console.error("Failed to save landmark event to DB:", err);
+  }
 }
 
-export function trackLandmarkClicked(slug: string) {
-  hm()?.track("landmark_clicked", { slug });
+export function trackLandmarkImpression(slug: string) {
+  trackLandmarkEvent("impression", slug);
+}
+
+export function trackLandmarkClicked(slug: string, user_github_login?: string, user_developer_id?: number) {
+  trackLandmarkEvent("click", slug, { user_github_login, user_developer_id });
 }
 
 export function trackLandmarkCardViewed(slug: string) {
-  hm()?.track("landmark_card_viewed", { slug });
+  trackLandmarkEvent("card_viewed", slug);
 }
 
 export function trackLandmarkCtaClicked(slug: string, url: string) {
-  hm()?.track("landmark_cta_clicked", { slug, url });
+  trackLandmarkEvent("cta_clicked", slug, { url });
+}
+
+export function trackLandmarkShare(slug: string, platform: "x" | "telegram" | "linkedin", url: string) {
+  trackLandmarkEvent(`share_${platform}`, slug, { url });
 }
