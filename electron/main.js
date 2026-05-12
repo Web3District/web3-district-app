@@ -9,12 +9,12 @@ let mainWindow;
 const APP_NAME = 'Web4City Admin';
 const ADMIN_URL = isDev 
   ? 'http://localhost:3000/admin/login' 
-  : `file://${path.join(process.resourcesPath, 'app.asar/out/admin/login/index.html')}`;
+  : `file://${path.join(process.resourcesPath, 'app.asar/.next/server/app/admin/login/page.html')}`;
 
 // Admin URL for navigation (module-level so menu can access it)
 const adminUrl = isDev 
   ? 'http://localhost:3002/admin/login'
-  : 'https://web4city.xyz/admin/login';
+  : `https://web4city.xyz/admin/login?t=${Date.now()}`; // Cache bust
 
 function createWindow() {
   // Create the browser window
@@ -23,7 +23,7 @@ function createWindow() {
     height: 900,
     minWidth: 1024,
     minHeight: 768,
-    titleBarStyle: 'hiddenInset', // Cool black top bar (macOS native)
+    titleBarStyle: 'default', // Standard macOS title bar (draggable!)
     backgroundColor: '#0a0a0f',
     trafficLightPosition: { x: 15, y: 12 }, // Position window controls
     webPreferences: {

@@ -35,4 +35,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
 });
 
 // Log that preload is loaded (for debugging)
-console.log('[Web4City Admin] Preload script loaded');
+console.log('[Web4City Admin] Preload script loaded - Draggable region enabled');
