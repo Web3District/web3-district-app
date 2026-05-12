@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       hitbox_radius,
       hitbox_height,
       active,
+      loadout,
     } = body;
 
     // Validate grid position
@@ -71,6 +72,7 @@ export async function POST(request: NextRequest) {
           hitbox_radius: hitbox_radius ?? 80,
           hitbox_height: hitbox_height ?? 550,
           active: active ?? true,
+          loadout: loadout ?? null,
         })
         .eq("id", id)
         .select()
@@ -93,6 +95,7 @@ export async function POST(request: NextRequest) {
           hitbox_radius: hitbox_radius ?? 80,
           hitbox_height: hitbox_height ?? 550,
           active: active ?? true,
+          loadout: loadout ?? null,
           lat: 0, // Keep for backward compat
           lng: 0, // Keep for backward compat
         })

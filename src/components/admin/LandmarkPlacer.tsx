@@ -7,7 +7,7 @@ import * as THREE from "three";
 import { gridToWorldPos } from "@/lib/sponsors/registry";
 
 interface LandmarkPlacerProps {
-  existingLandmarks?: Array<{ grid_x: number; grid_z: number; name: string }>;
+  existingLandmarks?: Array<{ grid_x: number; grid_z: number; name: string; accent_color?: string }>;
   onPositionSelect: (gridX: number, gridZ: number) => void;
   onCancel: () => void;
 }
@@ -79,20 +79,28 @@ function ClickableGround({ onGroundClick }: { onGroundClick: (x: number, z: numb
   );
 }
 
-function ExistingLandmarks({ landmarks }: { landmarks: Array<{ grid_x: number; grid_z: number; name: string }> }) {
+function ExistingLandmarks({ landmarks }: { landmarks: Array<{ grid_x: number; grid_z: number; name: string; accent_color?: string }> }) {
   return (
     <>
       {landmarks.map((lm, i) => {
         const pos = gridToWorldPos(lm.grid_x, lm.grid_z);
+        const color = lm.accent_color || "#8c8c9c";
         return (
           <group key={i} position={pos}>
+            {/* Ghost building with accent color */}
             <mesh position={[0, 30, 0]}>
               <boxGeometry args={[30, 60, 30]} />
-              <meshStandardMaterial color="#8c8c9c" transparent opacity={0.4} />
+              <meshStandardMaterial color={color} transparent opacity={0.5} />
             </mesh>
+            {/* Ground marker */}
             <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.5, 0]}>
               <ringGeometry args={[25, 30, 16]} />
-              <meshBasicMaterial color="#8c8c9c" transparent opacity={0.6} />
+              <meshBasicMaterial color={color} transparent opacity={0.7} />
+            </mesh>
+            {/* Name label (simple text billboard) */}
+            <mesh position={[0, 70, 0]}>
+              <boxGeometry args={[20, 8, 2]} />
+              <meshBasicMaterial color="#1a1a24" transparent opacity={0.9} />
             </mesh>
           </group>
         );

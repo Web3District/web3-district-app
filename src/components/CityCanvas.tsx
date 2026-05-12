@@ -2291,7 +2291,7 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
           key={sponsor.slug}
           config={sponsor}
           onClick={() => onSponsorClick?.(sponsor.slug)}
-          themeAccent={accentColor ?? "#ed0584"}
+          themeAccent={sponsor.accent ?? "#ed0584"}
           themeWindowLit={["#ffffaa", "#ffdd88", "#ffeebb"]}
           themeFace="#1a1a24"
           dimmed={!!activeSponsorSlug && activeSponsorSlug !== sponsor.slug}

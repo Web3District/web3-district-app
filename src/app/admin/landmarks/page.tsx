@@ -19,14 +19,23 @@ interface Landmark {
   building_type?: string;
   accent_color?: string;
   image_url?: string;
+  loadout?: { crown: string | null; roof: string | null; aura: string | null } | null;
   active: boolean;
   created_at: string;
+}
+
+interface ShopItem {
+  id: string;
+  name: string;
+  category: string;
+  zone: string | null;
 }
 
 export default function AdminLandmarksPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [landmarks, setLandmarks] = useState<Landmark[]>([]);
+  const [shopItems, setShopItems] = useState<ShopItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -42,6 +51,9 @@ export default function AdminLandmarksPage() {
     grid_z: "",
     building_type: "default",
     accent_color: "#ed0584",
+    crown: "",
+    roof: "",
+    aura: "",
   });
 
   useEffect(() => {
@@ -70,6 +82,23 @@ export default function AdminLandmarksPage() {
     }
 
     fetchLandmarks();
+    fetchShopItems();
+  }
+
+  async function fetchShopItems() {
+    try {
+      const supabase = createBrowserSupabase();
+      const { data, error } = await supabase
+        .from("items")
+        .select("id, name, category, zone")
+        .eq("is_active", true)
+        .order("name");
+
+      if (error) throw error;
+      setShopItems(data ?? []);
+    } catch (err: any) {
+      console.error("Failed to fetch shop items:", err);
+    }
   }
 
   async function fetchLandmarks() {
@@ -151,6 +180,11 @@ export default function AdminLandmarksPage() {
           building_type: formData.building_type,
           accent_color: formData.accent_color,
           model_url: formData.image_url || null,
+          loadout: {
+            crown: formData.crown || null,
+            roof: formData.roof || null,
+            aura: formData.aura || null,
+          },
           active: true,
         }),
       });
@@ -347,6 +381,49 @@ export default function AdminLandmarksPage() {
               />
             </div>
 
+            {/* Shop Items Customization */}
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Crown (Optional)</label>
+              <select
+                value={formData.crown}
+                onChange={(e) => setFormData({ ...formData, crown: e.target.value })}
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
+              >
+                <option value="">None</option>
+                {shopItems.filter(item => item.zone === "crown").map(item => (
+                  <option key={item.id} value={item.id}>{item.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Roof (Optional)</label>
+              <select
+                value={formData.roof}
+                onChange={(e) => setFormData({ ...formData, roof: e.target.value })}
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
+              >
+                <option value="">None</option>
+                {shopItems.filter(item => item.zone === "roof").map(item => (
+                  <option key={item.id} value={item.id}>{item.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Aura (Optional)</label>
+              <select
+                value={formData.aura}
+                onChange={(e) => setFormData({ ...formData, aura: e.target.value })}
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
+              >
+                <option value="">None</option>
+                {shopItems.filter(item => item.zone === "aura").map(item => (
+                  <option key={item.id} value={item.id}>{item.name}</option>
+                ))}
+              </select>
+            </div>
+
             <div className="md:col-span-2">
               <label className="mb-1 block text-sm text-[#8c8c9c]">Custom Model (GLB)</label>
               <div className="flex gap-2">
@@ -383,7 +460,7 @@ export default function AdminLandmarksPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
             <div className="w-full max-w-6xl">
               <LandmarkPlacer
-                existingLandmarks={landmarks.map(l => ({ grid_x: l.grid_x ?? 0, grid_z: l.grid_z ?? 0, name: l.name }))}
+                existingLandmarks={landmarks.map(l => ({ grid_x: l.grid_x ?? 0, grid_z: l.grid_z ?? 0, name: l.name, accent_color: l.accent_color }))}
                 onPositionSelect={(gridX, gridZ) => {
                   setFormData({ ...formData, grid_x: String(gridX), grid_z: String(gridZ) });
                   setShowPlacer(false);
