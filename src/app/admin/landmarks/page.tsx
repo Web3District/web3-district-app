@@ -97,11 +97,17 @@ export default function AdminLandmarksPage() {
 
     setUploading(true);
     try {
+      const supabase = createBrowserSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
+      
       const formDataUpload = new FormData();
       formDataUpload.append("file", file);
 
       const response = await fetch("/api/admin/landmarks/upload", {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${session?.access_token}`,
+        },
         body: formDataUpload,
       });
 
@@ -127,9 +133,16 @@ export default function AdminLandmarksPage() {
     const gridZ = parseInt(formData.grid_z) || 0;
 
     try {
+      // Get auth token
+      const supabase = createBrowserSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
+      
       const response = await fetch("/api/admin/landmarks", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`,
+        },
         body: JSON.stringify({
           name: formData.name,
           description: formData.description,
@@ -167,9 +180,15 @@ export default function AdminLandmarksPage() {
 
   async function handleToggle(id: number, current: boolean) {
     try {
+      const supabase = createBrowserSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
+      
       const response = await fetch(`/api/admin/landmarks?id=${id}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`,
+        },
         body: JSON.stringify({ id, active: !current }),
       });
 
@@ -187,8 +206,14 @@ export default function AdminLandmarksPage() {
     if (!confirm("Delete this landmark?")) return;
 
     try {
+      const supabase = createBrowserSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
+      
       const response = await fetch(`/api/admin/landmarks?id=${id}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${session?.access_token}`,
+        },
       });
 
       const result = await response.json();

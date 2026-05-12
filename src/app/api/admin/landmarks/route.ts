@@ -10,22 +10,30 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
  */
 export async function POST(request: NextRequest) {
   try {
+    // Get auth token from request headers
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized - Please login" }, { status: 401 });
+    }
+    
+    const accessToken = authHeader.substring(7);
     const supabase = createClient(supabaseUrl, supabaseKey);
-
-    // Verify admin access
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    
+    // Verify session with the provided token
+    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized - Invalid session" }, { status: 401 });
     }
 
-    const githubLogin = session.user.user_metadata?.user_name ?? 
-                        session.user.user_metadata?.full_name ?? 
-                        session.user.email?.split("@")[0] ?? "";
+    const githubLogin = user.user_metadata?.user_name ?? 
+                        user.user_metadata?.full_name ?? 
+                        user.email?.split("@")[0] ?? "";
     
     const adminLogins = (process.env.NEXT_PUBLIC_ADMIN_GITHUB_LOGINS ?? "eddiezebra").split(",").map(s => s.trim().toLowerCase());
     
     if (!adminLogins.includes(githubLogin.toLowerCase())) {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
+      return NextResponse.json({ error: `Admin access required - Your login: ${githubLogin}` }, { status: 403 });
     }
 
     const body = await request.json();
