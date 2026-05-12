@@ -18,7 +18,7 @@ import type { RaidPhase } from "@/lib/useRaidSequence";
 import type { RaidExecuteResponse } from "@/lib/raid";
 import FounderSpire from "./FounderSpire";
 import EArcadeLandmark from "./EArcadeLandmark";
-import { SPONSORS } from "@/lib/sponsors/registry";
+import { SPONSORS, loadDynamicSponsors } from "@/lib/sponsors/registry";
 import SponsoredLandmark from "@/lib/sponsors/SponsoredLandmark";
 import WhiteRabbit from "./WhiteRabbit";
 import CelebrationEffect from "./CelebrationEffect";
@@ -2147,6 +2147,12 @@ function CityExposure({ cityEnergy }: { cityEnergy: number }) {
 const RABBIT_PLAZA_INDICES = [1, 2, 4, 7, 10]; // plazas[1]=slot3, [2]=slot7, [4]=slot18, [7]=slot42, [10]=slot75
 
 export default function CityCanvas({ buildings, plazas, decorations, river, bridges, flyMode, flyVehicle, onExitFly, onCollect, themeIndex, onHud, onPause, focusedBuilding, focusedBuildingB, accentColor, onClearFocus, onBuildingClick, onFocusInfo, flyPauseSignal, flyHasOverlay, flyStartPaused, isMobile, onJoystickState, flyBoostActive, flyBrakeActive, skyAds, onAdClick, onAdViewed, introMode, onIntroEnd, raidPhase, raidData, raidAttacker, raidDefender, onRaidPhaseComplete, onLandmarkClick, onEArcadeClick, onDistrictLobbyClick, onDistrictSignIn, session, onSponsorClick, sponsorFocusPos, activeSponsorSlug, rabbitSighting, onRabbitCaught, rabbitCinematic, onRabbitCinematicEnd, rabbitCinematicTarget, ghostPreviewLogin, holdRise, celebrationActive, wallpaperMode, wallpaperSpeed, liveByLogin, cityEnergy }: Props) {
+  const [dynamicSponsors, setDynamicSponsors] = useState<typeof SPONSORS>([]);
+
+  // Load dynamic landmarks from API
+  useEffect(() => {
+    loadDynamicSponsors().then(setDynamicSponsors);
+  }, []);
   const t = THEMES[themeIndex] ?? THEMES[0];
   const showPerf = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("perf");
   const [dpr, setDpr] = useState(1);
@@ -2278,6 +2284,19 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
         cityEnergy={cityEnergy}
         dimAll={!!sponsorFocusPos}
       />
+
+      {/* Render dynamic landmarks */}
+      {dynamicSponsors.map((sponsor) => (
+        <SponsoredLandmark
+          key={sponsor.slug}
+          config={sponsor}
+          onClick={() => onSponsorClick?.(sponsor.slug)}
+          themeAccent={accentColor ?? "#ed0584"}
+          themeWindowLit={["#ffffaa", "#ffdd88", "#ffeebb"]}
+          themeFace="#1a1a24"
+          dimmed={!!activeSponsorSlug && activeSponsorSlug !== sponsor.slug}
+        />
+      ))}
 
       <ComparePath
         buildings={buildings}

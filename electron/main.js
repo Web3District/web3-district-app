@@ -11,6 +11,11 @@ const ADMIN_URL = isDev
   ? 'http://localhost:3000/admin/login' 
   : `file://${path.join(process.resourcesPath, 'app.asar/out/admin/login/index.html')}`;
 
+// Admin URL for navigation (module-level so menu can access it)
+const adminUrl = isDev 
+  ? 'http://localhost:3002/admin/login'
+  : 'https://web4city.xyz/admin/login';
+
 function createWindow() {
   // Create the browser window
   mainWindow = new BrowserWindow({
@@ -40,9 +45,6 @@ function createWindow() {
 
   // Load the admin dashboard
   // Production: load from web4city.xyz, Dev: load from localhost
-  const adminUrl = isDev 
-    ? 'http://localhost:3002/admin/login'
-    : 'https://web4city.xyz/admin/login';
   mainWindow.loadURL(adminUrl);
   
   // Open DevTools in development

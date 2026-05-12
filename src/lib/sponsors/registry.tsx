@@ -3,6 +3,7 @@ import AceleraDevBuilding from "./buildings/AceleraDevBuilding";
 import AbacatePayBuilding from "./buildings/AbacatePayBuilding";
 import ViralDayBuilding from "./buildings/ViralDayBuilding";
 import { PortugalPrideBuilding } from "./buildings/PortugalPrideBuilding";
+import DefaultLandmarkBuilding from "./buildings/DefaultLandmarkBuilding";
 
 // ─── Grid constants (must match github.ts) ──────────────────
 const BLOCK_FOOTPRINT_X = 161; // 4*38 + 3*3
@@ -49,7 +50,8 @@ export interface SponsorConfig {
 
 // ─── Registry ───────────────────────────────────────────────
 
-export const SPONSORS: SponsorConfig[] = [
+// Hardcoded sponsors (fallback + legacy)
+export const HARDCODED_SPONSORS: SponsorConfig[] = [
   {
     slug: "aceleradev",
     name: "Acelera Dev",
@@ -142,3 +144,43 @@ export const SPONSORS: SponsorConfig[] = [
     ),
   },
 ];
+
+// Dynamic sponsors loaded from API
+let dynamicSponsorsCache: SponsorConfig[] | null = null;
+let dynamicSponsorsLoading: Promise<SponsorConfig[]> | null = null;
+
+export async function loadDynamicSponsors(): Promise<SponsorConfig[]> {
+  if (dynamicSponsorsCache) return dynamicSponsorsCache;
+  if (dynamicSponsorsLoading) return dynamicSponsorsLoading;
+
+  dynamicSponsorsLoading = fetch("/api/sponsors")
+    .then((res) => (res.ok ? res.json() : { sponsors: [] }))
+    .then((data: { sponsors: any[] }) => {
+      const sponsors: SponsorConfig[] = data.sponsors.map((s) => ({
+        slug: s.slug,
+        name: s.name,
+        tagline: s.tagline,
+        description: s.description,
+        url: s.url,
+        accent: s.accent,
+        gridX: s.gridX,
+        gridZ: s.gridZ,
+        features: [],
+        Building: DefaultLandmarkBuilding,
+        hitboxRadius: s.hitboxRadius ?? 80,
+        hitboxHeight: s.hitboxHeight ?? 550,
+      }));
+      dynamicSponsorsCache = sponsors;
+      dynamicSponsorsLoading = null;
+      return sponsors;
+    })
+    .catch(() => {
+      dynamicSponsorsLoading = null;
+      return [];
+    });
+
+  return dynamicSponsorsLoading;
+}
+
+// Combined sponsors (hardcoded + dynamic)
+export const SPONSORS: SponsorConfig[] = HARDCODED_SPONSORS;

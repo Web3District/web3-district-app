@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 
 const ACCENT = "#ed0584";
+const LandmarkPlacer = dynamic(() => import("@/components/admin/LandmarkPlacer"), { ssr: false });
 
 interface Landmark {
   id: number;
@@ -12,6 +14,10 @@ interface Landmark {
   description: string;
   lat: number;
   lng: number;
+  grid_x?: number;
+  grid_z?: number;
+  building_type?: string;
+  accent_color?: string;
   image_url?: string;
   active: boolean;
   created_at: string;
@@ -24,12 +30,18 @@ export default function AdminLandmarksPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const [showPlacer, setShowPlacer] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     lat: "",
     lng: "",
     image_url: "",
+    grid_x: "",
+    grid_z: "",
+    building_type: "default",
+    accent_color: "#ed0584",
   });
 
   useEffect(() => {
@@ -79,26 +91,73 @@ export default function AdminLandmarksPage() {
     }
   }
 
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+
+      const response = await fetch("/api/admin/landmarks/upload", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error);
+
+      setFormData({ ...formData, image_url: result.url });
+      setSuccess(`Model uploaded: ${file.name}`);
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err: any) {
+      setError(err.message ?? "Upload failed");
+      setTimeout(() => setError(null), 3000);
+    } finally {
+      setUploading(false);
+    }
+  }
+
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
 
+    // Validate grid position
+    const gridX = parseInt(formData.grid_x) || 0;
+    const gridZ = parseInt(formData.grid_z) || 0;
+
     try {
-      const supabase = createBrowserSupabase();
-      
-      const { error } = await supabase.from("landmarks").insert({
-        name: formData.name,
-        description: formData.description,
-        lat: parseFloat(formData.lat),
-        lng: parseFloat(formData.lng),
-        image_url: formData.image_url || null,
-        active: true,
+      const response = await fetch("/api/admin/landmarks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.description,
+          grid_x: gridX,
+          grid_z: gridZ,
+          building_type: formData.building_type,
+          accent_color: formData.accent_color,
+          model_url: formData.image_url || null,
+          active: true,
+        }),
       });
 
-      if (error) throw error;
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error);
 
       setSuccess("Landmark created successfully");
       setTimeout(() => setSuccess(null), 3000);
-      setFormData({ name: "", description: "", lat: "", lng: "", image_url: "" });
+      setFormData({ 
+        name: "", 
+        description: "", 
+        lat: "", 
+        lng: "", 
+        image_url: "",
+        grid_x: "",
+        grid_z: "",
+        building_type: "default",
+        accent_color: "#ed0584",
+      });
       await fetchLandmarks();
     } catch (err: any) {
       setError(err.message ?? "Failed to create landmark");
@@ -108,14 +167,14 @@ export default function AdminLandmarksPage() {
 
   async function handleToggle(id: number, current: boolean) {
     try {
-      const supabase = createBrowserSupabase();
-      
-      const { error } = await supabase
-        .from("landmarks")
-        .update({ active: !current })
-        .eq("id", id);
+      const response = await fetch(`/api/admin/landmarks?id=${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, active: !current }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error);
 
       await fetchLandmarks();
     } catch (err: any) {
@@ -128,11 +187,12 @@ export default function AdminLandmarksPage() {
     if (!confirm("Delete this landmark?")) return;
 
     try {
-      const supabase = createBrowserSupabase();
-      
-      const { error } = await supabase.from("landmarks").delete().eq("id", id);
+      const response = await fetch(`/api/admin/landmarks?id=${id}`, {
+        method: "DELETE",
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error);
 
       await fetchLandmarks();
     } catch (err: any) {
@@ -175,7 +235,47 @@ export default function AdminLandmarksPage() {
 
         <section className="mb-6 rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
           <h3 className="mb-4 text-lg text-[#ed0584]">Create Landmark</h3>
+          
+          {/* Visual placement button */}
+          <div className="mb-4">
+            <button
+              type="button"
+              onClick={() => setShowPlacer(true)}
+              className="rounded-none border border-[#6090e0] bg-[#6090e0]/20 px-4 py-2 text-sm text-[#6090e0] hover:bg-[#6090e0]/30"
+            >
+              🗺️ Select Position on Map
+            </button>
+            {(formData.grid_x || formData.grid_z) && (
+              <span className="ml-4 text-sm text-[#8c8c9c]">
+                Selected: Grid({formData.grid_x || 0}, {formData.grid_z || 0})
+              </span>
+            )}
+          </div>
+
           <form onSubmit={handleSave} className="grid gap-4 md:grid-cols-2">
+            {/* Grid Position (Visual or Manual) */}
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Grid X</label>
+              <input
+                type="number"
+                value={formData.grid_x}
+                onChange={(e) => setFormData({ ...formData, grid_x: e.target.value })}
+                placeholder="0"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Grid Z</label>
+              <input
+                type="number"
+                value={formData.grid_z}
+                onChange={(e) => setFormData({ ...formData, grid_z: e.target.value })}
+                placeholder="0"
+                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
+              />
+            </div>
+
             <div className="md:col-span-2">
               <label className="mb-1 block text-sm text-[#8c8c9c]">Name</label>
               <input
@@ -199,39 +299,48 @@ export default function AdminLandmarksPage() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm text-[#8c8c9c]">Latitude</label>
-              <input
-                type="number"
-                step="any"
-                value={formData.lat}
-                onChange={(e) => setFormData({ ...formData, lat: e.target.value })}
-                placeholder="51.5055"
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Building Type</label>
+              <select
+                value={formData.building_type}
+                onChange={(e) => setFormData({ ...formData, building_type: e.target.value })}
                 className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
-                required
-              />
+              >
+                <option value="default">Default Tower</option>
+                <option value="corporate">Corporate HQ</option>
+                <option value="tech_hub">Tech Hub</option>
+                <option value="custom">Custom Model</option>
+              </select>
             </div>
 
             <div>
-              <label className="mb-1 block text-sm text-[#8c8c9c]">Longitude</label>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Accent Color</label>
               <input
-                type="number"
-                step="any"
-                value={formData.lng}
-                onChange={(e) => setFormData({ ...formData, lng: e.target.value })}
-                placeholder="-0.0754"
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
-                required
+                type="color"
+                value={formData.accent_color}
+                onChange={(e) => setFormData({ ...formData, accent_color: e.target.value })}
+                className="w-full h-10 rounded-none border border-[#2a2a30] bg-[#161618] font-pixel text-white focus:border-[#ed0584] focus:outline-none"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="mb-1 block text-sm text-[#8c8c9c]">Image URL</label>
-              <input
-                value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                placeholder="https://..."
-                className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
-              />
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Custom Model (GLB)</label>
+              <div className="flex gap-2">
+                <input
+                  type="file"
+                  accept=".glb"
+                  onChange={handleFileUpload}
+                  disabled={uploading}
+                  className="flex-1 rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-none file:border-0 file:bg-[#2a2a30] file:text-white hover:file:bg-[#3a3a40]"
+                />
+                {uploading && (
+                  <span className="text-sm text-[#8c8c9c]">Uploading...</span>
+                )}
+              </div>
+              {formData.image_url && (
+                <div className="mt-2 text-xs text-[#8c8c9c]">
+                  ✓ Uploaded: {formData.image_url}
+                </div>
+              )}
             </div>
 
             <button
@@ -243,6 +352,22 @@ export default function AdminLandmarksPage() {
             </button>
           </form>
         </section>
+
+        {/* Visual placement modal */}
+        {showPlacer && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+            <div className="w-full max-w-6xl">
+              <LandmarkPlacer
+                existingLandmarks={landmarks.map(l => ({ grid_x: l.grid_x ?? 0, grid_z: l.grid_z ?? 0, name: l.name }))}
+                onPositionSelect={(gridX, gridZ) => {
+                  setFormData({ ...formData, grid_x: String(gridX), grid_z: String(gridZ) });
+                  setShowPlacer(false);
+                }}
+                onCancel={() => setShowPlacer(false)}
+              />
+            </div>
+          </div>
+        )}
 
         <section className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
           <h3 className="mb-4 text-lg text-[#ed0584]">Landmarks List</h3>
