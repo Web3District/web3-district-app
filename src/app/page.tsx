@@ -45,6 +45,7 @@ import {
   trackBuildingClaimed,
   trackFreeItemClaimed,
   trackBuildingClicked,
+  trackBuildingShare,
   trackKudosSent,
   trackSearchUsed,
   trackSkyAdImpression,

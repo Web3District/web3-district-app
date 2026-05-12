@@ -18,7 +18,7 @@ interface ShopItem {
 
 interface Developer {
   id: number;
-  username: string;
+  login: string;
   email: string;
 }
 
@@ -43,7 +43,7 @@ export default function AdminGiftPage() {
   const [success, setSuccess] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    recipient_username: "",
+    recipient_login: "",
     item_id: "",
     message: "",
   });
@@ -102,8 +102,8 @@ export default function AdminGiftPage() {
     const supabase = createBrowserSupabase();
     const { data, error } = await supabase
       .from("developers")
-      .select("id, username, email")
-      .order("username");
+      .select("id, login, email")
+      .order("login");
 
     if (error) throw error;
     setDevelopers(data ?? []);
@@ -141,7 +141,11 @@ export default function AdminGiftPage() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${session?.access_token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          recipient_username: formData.recipient_login,
+          item_id: formData.item_id,
+          message: formData.message,
+        }),
       });
 
       const result = await response.json();
@@ -196,11 +200,11 @@ export default function AdminGiftPage() {
           <form onSubmit={handleSendGift} className="grid gap-4 md:grid-cols-2">
             {/* Recipient */}
             <div className="md:col-span-2">
-              <label className="mb-1 block text-sm text-[#8c8c9c]">Recipient Username</label>
+              <label className="mb-1 block text-sm text-[#8c8c9c]">Recipient GitHub Login</label>
               <input
                 type="text"
-                value={formData.recipient_username}
-                onChange={(e) => setFormData({ ...formData, recipient_username: e.target.value })}
+                value={formData.recipient_login}
+                onChange={(e) => setFormData({ ...formData, recipient_login: e.target.value })}
                 placeholder="eddiezebra"
                 className="w-full rounded-none border border-[#2a2a30] bg-[#161618] px-4 py-2 font-pixel text-white focus:border-[#ed0584] focus:outline-none"
                 list="developers-list"
@@ -208,7 +212,7 @@ export default function AdminGiftPage() {
               />
               <datalist id="developers-list">
                 {developers.map(dev => (
-                  <option key={dev.id} value={dev.username} />
+                  <option key={dev.id} value={dev.login} />
                 ))}
               </datalist>
               <p className="mt-1 text-xs text-[#8c8c9c]">Start typing to see suggestions</p>
@@ -272,7 +276,7 @@ export default function AdminGiftPage() {
                     <div>
                       <div className="text-[#ed0584]">🎁 {gift.items.name}</div>
                       <div className="text-sm text-[#8c8c9c]">
-                        To: <span className="text-white">{gift.developers.username}</span>
+                        To: <span className="text-white">@{(gift.developers as any)?.username || "Unknown"}</span>
                       </div>
                       {gift.message && (
                         <div className="mt-2 text-xs text-[#8c8c9c] italic">

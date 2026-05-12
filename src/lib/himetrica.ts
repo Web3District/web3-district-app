@@ -100,10 +100,6 @@ export function trackAdvertiseCtaClick() {
 
 // ─── Engagement ─────────────────────────────────────────────
 
-export function trackBuildingClicked(target_login: string) {
-  hm()?.track("building_clicked", { target_login });
-}
-
 export function trackKudosSent(target_login: string) {
   hm()?.track("kudos_sent", { target_login });
 }

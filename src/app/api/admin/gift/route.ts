@@ -44,16 +44,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Recipient username and item ID required" }, { status: 400 });
     }
 
-    // Find recipient by username
+    // Find recipient by login
     const { data: recipient, error: recipientError } = await supabase
       .from("developers")
-      .select("id, username, email")
-      .eq("username", recipient_username)
+      .select("id, login, email")
+      .eq("login", recipient_username)
       .single();
 
     if (recipientError || !recipient) {
       return NextResponse.json({ error: `User "${recipient_username}" not found` }, { status: 404 });
     }
+
+    const recipientLogin = recipient.login;
 
     // Verify item exists and is active
     const { data: item, error: itemError } = await supabase
@@ -110,7 +112,7 @@ export async function POST(request: NextRequest) {
       message: `Gift sent successfully!`,
       purchase,
       recipient: {
-        username: recipient.username,
+        username: recipientLogin,
         id: recipient.id,
       },
       item: {
@@ -167,7 +169,7 @@ export async function GET(request: NextRequest) {
         created_at,
         message,
         items ( name ),
-        developers ( username )
+        developers ( login )
       `)
       .eq("provider", "free")
       .not("gifted_by", "is", null)
@@ -176,7 +178,13 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error;
 
-    return NextResponse.json({ gifts });
+    // Map developers.login to username for frontend
+    const mappedGifts = gifts?.map(g => ({
+      ...g,
+      developers: { username: (g.developers as any)?.login }
+    })) ?? [];
+    
+    return NextResponse.json({ gifts: mappedGifts });
 
   } catch (error: any) {
     console.error("Error in /api/admin/gift GET:", error);
