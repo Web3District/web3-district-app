@@ -44,18 +44,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Recipient username and item ID required" }, { status: 400 });
     }
 
-    // Find recipient by login
+    // Find recipient by github_login
     const { data: recipient, error: recipientError } = await supabase
       .from("developers")
-      .select("id, login, email")
-      .eq("login", recipient_username)
+      .select("id, github_login, email")
+      .eq("github_login", recipient_username.toLowerCase())
       .single();
 
     if (recipientError || !recipient) {
       return NextResponse.json({ error: `User "${recipient_username}" not found` }, { status: 404 });
     }
 
-    const recipientLogin = recipient.login;
+    const recipientLogin = recipient.github_login;
 
     // Verify item exists and is active
     const { data: item, error: itemError } = await supabase
@@ -169,7 +169,7 @@ export async function GET(request: NextRequest) {
         created_at,
         message,
         items ( name ),
-        developers ( login )
+        developers ( github_login )
       `)
       .eq("provider", "free")
       .not("gifted_by", "is", null)
@@ -178,10 +178,10 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error;
 
-    // Map developers.login to username for frontend
+    // Map developers.github_login to username for frontend
     const mappedGifts = gifts?.map(g => ({
       ...g,
-      developers: { username: (g.developers as any)?.login }
+      developers: { username: (g.developers as any)?.github_login }
     })) ?? [];
     
     return NextResponse.json({ gifts: mappedGifts });

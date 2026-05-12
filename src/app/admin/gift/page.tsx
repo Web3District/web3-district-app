@@ -18,7 +18,7 @@ interface ShopItem {
 
 interface Developer {
   id: number;
-  login: string;
+  github_login: string;
   email: string;
 }
 
@@ -102,8 +102,8 @@ export default function AdminGiftPage() {
     const supabase = createBrowserSupabase();
     const { data, error } = await supabase
       .from("developers")
-      .select("id, login, email")
-      .order("login");
+      .select("id, github_login, email")
+      .order("github_login");
 
     if (error) throw error;
     setDevelopers(data ?? []);
@@ -212,7 +212,7 @@ export default function AdminGiftPage() {
               />
               <datalist id="developers-list">
                 {developers.map(dev => (
-                  <option key={dev.id} value={dev.login} />
+                  <option key={dev.id} value={dev.github_login} />
                 ))}
               </datalist>
               <p className="mt-1 text-xs text-[#8c8c9c]">Start typing to see suggestions</p>
