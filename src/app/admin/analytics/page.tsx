@@ -31,10 +31,11 @@ interface UserActivity {
 export default function AdminAnalyticsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [summary, setSummary] = useState<LandmarkSummary[]>([]);
-  const [userActivity, setUserActivity] = useState<UserActivity[]>([]);
+  const [summary, setSummary] = useState<any[]>([]);
+  const [userActivity, setUserActivity] = useState<any[]>([]);
+  const [topBuildings, setTopBuildings] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<"summary" | "users">("summary");
+  const [view, setView] = useState<"summary" | "users" | "top">("summary");
 
   useEffect(() => {
     checkAuth();
@@ -75,8 +76,8 @@ export default function AdminAnalyticsPage() {
       const supabase = createBrowserSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       
-      const type = view === "users" ? "users" : "summary";
-      const response = await fetch(`/api/analytics/landmark?type=${type}`, {
+      const type = view === "users" ? "users" : view === "top" ? "top" : "summary";
+      const response = await fetch(`/api/analytics/building?type=${type}`, {
         headers: {
           "Authorization": `Bearer ${session?.access_token}`,
         },
@@ -90,6 +91,8 @@ export default function AdminAnalyticsPage() {
 
       if (view === "users") {
         setUserActivity(result.activity ?? []);
+      } else if (view === "top") {
+        setTopBuildings(result.top ?? []);
       } else {
         setSummary(result.summary ?? []);
       }
@@ -102,7 +105,7 @@ export default function AdminAnalyticsPage() {
     if (!loading) {
       fetchAnalytics();
     }
-  }, [view]);
+  }, [view, loading]);
 
   if (loading) {
     return (
@@ -117,7 +120,7 @@ export default function AdminAnalyticsPage() {
       {/* Header */}
       <header className="border-b-4 border-[#1a1a24] bg-[#101018] px-6 py-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-lg text-[#ed0584]">📊 Landmark Analytics</h1>
+          <h1 className="text-lg text-[#ed0584]">📊 Building Analytics</h1>
           <div className="flex gap-2">
             <button
               onClick={() => setView("summary")}
@@ -127,7 +130,17 @@ export default function AdminAnalyticsPage() {
                   : "border-[#2a2a30] bg-[#161618] text-[#8c8c9c] hover:border-[#ed0584]"
               }`}
             >
-              📈 Summary
+              📈 All Buildings
+            </button>
+            <button
+              onClick={() => setView("top")}
+              className={`rounded-none border px-4 py-1.5 text-sm transition-colors ${
+                view === "top"
+                  ? "border-[#ed0584] bg-[#ed0584]/20 text-[#ed0584]"
+                  : "border-[#2a2a30] bg-[#161618] text-[#8c8c9c] hover:border-[#ed0584]"
+              }`}
+            >
+              🔥 Top Buildings
             </button>
             <button
               onClick={() => setView("users")}
@@ -150,7 +163,52 @@ export default function AdminAnalyticsPage() {
           </div>
         )}
 
-        {view === "summary" ? (
+        {view === "top" ? (
+          /* TOP BUILDINGS VIEW */
+          <section className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
+            <h3 className="mb-4 text-lg text-[#ed0584]">🔥 Top Buildings by Engagement</h3>
+            
+            {topBuildings.length === 0 ? (
+              <p className="text-[#8c8c9c]">No data yet. Building interactions will appear here.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b-2 border-[#2a2a30]">
+                      <th className="px-3 py-2 text-left text-[#8c8c9c]">Building</th>
+                      <th className="px-3 py-2 text-right text-[#ed0584]">🔥 Score</th>
+                      <th className="px-3 py-2 text-right text-[#8c8c9c]">🖱️ Clicks</th>
+                      <th className="px-3 py-2 text-right text-[#8c8c9c]">🚪 Visits</th>
+                      <th className="px-3 py-2 text-right text-[#ed0584]">📤 Shares</th>
+                      <th className="px-3 py-2 text-right text-[#8c8c9c]">👥 Unique</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topBuildings.map((building, i) => (
+                      <tr key={i} className="border-b border-[#2a2a30]">
+                        <td className="px-3 py-3 font-bold text-white">
+                          {building.building_login ? `@${building.building_login}` : building.building_slug}
+                          {building.building_login && (
+                            <span className="ml-2 text-xs text-[#8c8c9c]">(User Building)</span>
+                          )}
+                        </td>
+                        <td className="px-3 py-3 text-right">
+                          <span className="rounded bg-[#ed0584]/20 px-2 py-1 font-bold text-[#ed0584]">
+                            {building.engagement_score}
+                          </span>
+                        </td>
+                        <td className="px-3 py-3 text-right text-white">{building.clicks.toLocaleString()}</td>
+                        <td className="px-3 py-3 text-right text-[#6090e0]">{building.visits.toLocaleString()}</td>
+                        <td className="px-3 py-3 text-right text-[#ed0584]">{building.shares.toLocaleString()}</td>
+                        <td className="px-3 py-3 text-right text-[#8c8c9c]">{building.unique_visitors.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        ) : view === "summary" ? (
           /* SUMMARY VIEW */
           <section className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-6">
             <h3 className="mb-4 text-lg text-[#ed0584]">🏛️ Landmark Performance</h3>
@@ -162,7 +220,7 @@ export default function AdminAnalyticsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b-2 border-[#2a2a30]">
-                      <th className="px-3 py-2 text-left text-[#8c8c9c]">Landmark</th>
+                      <th className="px-3 py-2 text-left text-[#8c8c9c]">Building</th>
                       <th className="px-3 py-2 text-right text-[#8c8c9c]">👁️ Impressions</th>
                       <th className="px-3 py-2 text-right text-[#8c8c9c]">🖱️ Clicks</th>
                       <th className="px-3 py-2 text-right text-[#8c8c9c]">📄 Card Views</th>
@@ -173,36 +231,41 @@ export default function AdminAnalyticsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {summary.map((landmark) => (
-                      <tr key={landmark.landmark_slug} className="border-b border-[#2a2a30]">
-                        <td className="px-3 py-3 font-bold text-[#ed0584]">{landmark.landmark_slug}</td>
+                    {summary.map((building, i) => (
+                      <tr key={i} className="border-b border-[#2a2a30]">
+                        <td className="px-3 py-3 font-bold text-white">
+                          {building.building_login ? `@${building.building_login}` : building.building_slug}
+                          {building.building_login && (
+                            <span className="ml-2 text-xs text-[#8c8c9c]">(User Building)</span>
+                          )}
+                        </td>
                         <td className="px-3 py-3 text-right text-[#8c8c9c]">{landmark.total_impressions.toLocaleString()}</td>
                         <td className="px-3 py-3 text-right text-white">{landmark.total_clicks.toLocaleString()}</td>
-                        <td className="px-3 py-3 text-right text-[#8c8c9c]">{landmark.total_card_views.toLocaleString()}</td>
-                        <td className="px-3 py-3 text-right text-[#6090e0]">{landmark.total_cta_clicks.toLocaleString()}</td>
+                        <td className="px-3 py-3 text-right text-[#8c8c9c]">{building.total_card_views.toLocaleString()}</td>
+                        <td className="px-3 py-3 text-right text-[#6090e0]">{(building.total_cta_clicks || 0).toLocaleString()}</td>
                         <td className="px-3 py-3 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <span className="text-[#ed0584]">{landmark.total_shares.toLocaleString()}</span>
-                            {landmark.shares_x > 0 && (
+                            <span className="text-[#ed0584]">{building.total_shares.toLocaleString()}</span>
+                            {building.shares_x > 0 && (
                               <span className="rounded bg-[#1a1a24] px-1.5 py-0.5 text-xs text-white" title="X (Twitter)">
-                                𝕏 {landmark.shares_x}
+                                𝕏 {building.shares_x}
                               </span>
                             )}
-                            {landmark.shares_telegram > 0 && (
+                            {building.shares_telegram > 0 && (
                               <span className="rounded bg-[#1a1a24] px-1.5 py-0.5 text-xs text-white" title="Telegram">
-                                ✈ {landmark.shares_telegram}
+                                ✈ {building.shares_telegram}
                               </span>
                             )}
-                            {landmark.shares_linkedin > 0 && (
+                            {building.shares_linkedin > 0 && (
                               <span className="rounded bg-[#1a1a24] px-1.5 py-0.5 text-xs text-white" title="LinkedIn">
-                                in {landmark.shares_linkedin}
+                                in {building.shares_linkedin}
                               </span>
                             )}
                           </div>
                         </td>
-                        <td className="px-3 py-3 text-right text-[#8c8c9c]">{landmark.unique_users.toLocaleString()}</td>
+                        <td className="px-3 py-3 text-right text-[#8c8c9c]">{building.unique_users.toLocaleString()}</td>
                         <td className="px-3 py-3 text-right text-xs text-[#8c8c9c]">
-                          {landmark.last_activity ? new Date(landmark.last_activity).toLocaleDateString() : "N/A"}
+                          {building.last_activity ? new Date(building.last_activity).toLocaleDateString() : "N/A"}
                         </td>
                       </tr>
                     ))}
@@ -217,14 +280,14 @@ export default function AdminAnalyticsPage() {
             <h3 className="mb-4 text-lg text-[#ed0584]">👥 Who Shared What</h3>
             
             {userActivity.length === 0 ? (
-              <p className="text-[#8c8c9c]">No user activity yet. Shares and CTA clicks will appear here.</p>
+              <p className="text-[#8c8c9c]">No user activity yet. Shares and visits will appear here.</p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b-2 border-[#2a2a30]">
                       <th className="px-3 py-2 text-left text-[#8c8c9c]">User</th>
-                      <th className="px-3 py-2 text-left text-[#8c8c9c]">Landmark</th>
+                      <th className="px-3 py-2 text-left text-[#8c8c9c]">Building</th>
                       <th className="px-3 py-2 text-left text-[#8c8c9c]">Action</th>
                       <th className="px-3 py-2 text-left text-[#8c8c9c]">URL</th>
                       <th className="px-3 py-2 text-right text-[#8c8c9c]">When</th>
@@ -234,12 +297,18 @@ export default function AdminAnalyticsPage() {
                     {userActivity.map((activity, i) => (
                       <tr key={i} className="border-b border-[#2a2a30]">
                         <td className="px-3 py-3 font-bold text-white">@{activity.user_github_login}</td>
-                        <td className="px-3 py-3 text-[#ed0584]">{activity.landmark_slug}</td>
+                        <td className="px-3 py-3 text-white">
+                          {activity.building_login ? `@${activity.building_login}` : activity.building_slug}
+                          {activity.building_login && (
+                            <span className="ml-2 text-xs text-[#8c8c9c]">(User Building)</span>
+                          )}
+                        </td>
                         <td className="px-3 py-3">
                           {activity.event_type === "share_x" && <span className="text-[#ed0584]">📤 Shared on X</span>}
                           {activity.event_type === "share_telegram" && <span className="text-[#ed0584]">✈ Shared on Telegram</span>}
                           {activity.event_type === "share_linkedin" && <span className="text-[#ed0584]">💼 Shared on LinkedIn</span>}
-                          {activity.event_type === "cta_clicked" && <span className="text-[#6090e0]">🔗 Clicked CTA</span>}
+                          {activity.event_type === "visit" && <span className="text-[#6090e0]">🚪 Visited Profile</span>}
+                          {activity.event_type === "copy_link" && <span className="text-[#8c8c9c]">📋 Copied Link</span>}
                         </td>
                         <td className="px-3 py-3 text-xs text-[#8c8c9c]">
                           {activity.url ? (
@@ -261,33 +330,40 @@ export default function AdminAnalyticsPage() {
         )}
 
         {/* Stats Cards */}
-        {view === "summary" && summary.length > 0 && (
-          <div className="mt-6 grid gap-4 md:grid-cols-4">
+        {(view === "summary" || view === "top") && summary.length > 0 && (
+          <div className="mt-6 grid gap-4 md:grid-cols-5">
             <div className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-4 text-center">
               <div className="text-3xl text-[#8c8c9c]">👁️</div>
               <div className="mt-2 text-2xl font-bold text-white">
-                {summary.reduce((sum, l) => sum + l.total_impressions, 0).toLocaleString()}
+                {summary.reduce((sum, l) => sum + (l.total_impressions || 0), 0).toLocaleString()}
               </div>
-              <div className="text-xs text-[#8c8c9c]">Total Impressions</div>
+              <div className="text-xs text-[#8c8c9c]">Impressions</div>
             </div>
             <div className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-4 text-center">
               <div className="text-3xl text-[#8c8c9c]">🖱️</div>
               <div className="mt-2 text-2xl font-bold text-white">
-                {summary.reduce((sum, l) => sum + l.total_clicks, 0).toLocaleString()}
+                {summary.reduce((sum, l) => sum + (l.total_clicks || 0), 0).toLocaleString()}
               </div>
-              <div className="text-xs text-[#8c8c9c]">Total Clicks</div>
+              <div className="text-xs text-[#8c8c9c]">Clicks</div>
+            </div>
+            <div className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-4 text-center">
+              <div className="text-3xl text-[#8c8c9c]">🚪</div>
+              <div className="mt-2 text-2xl font-bold text-[#6090e0]">
+                {summary.reduce((sum, l) => sum + (l.total_visits || 0), 0).toLocaleString()}
+              </div>
+              <div className="text-xs text-[#8c8c9c]">Profile Visits</div>
             </div>
             <div className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-4 text-center">
               <div className="text-3xl text-[#8c8c9c]">📤</div>
               <div className="mt-2 text-2xl font-bold text-[#ed0584]">
-                {summary.reduce((sum, l) => sum + l.total_shares, 0).toLocaleString()}
+                {summary.reduce((sum, l) => sum + (l.total_shares || 0), 0).toLocaleString()}
               </div>
-              <div className="text-xs text-[#8c8c9c]">Total Shares</div>
+              <div className="text-xs text-[#8c8c9c]">Shares</div>
             </div>
             <div className="rounded-none border-4 border-[#1a1a24] bg-[#101018] p-4 text-center">
               <div className="text-3xl text-[#8c8c9c]">👥</div>
               <div className="mt-2 text-2xl font-bold text-white">
-                {summary.reduce((sum, l) => sum + l.unique_users, 0).toLocaleString()}
+                {summary.reduce((sum, l) => sum + (l.unique_users || 0), 0).toLocaleString()}
               </div>
               <div className="text-xs text-[#8c8c9c]">Unique Users</div>
             </div>

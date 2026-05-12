@@ -4644,6 +4644,49 @@ function HomeContent() {
                 </div>
               )}
 
+              {/* Share buttons */}
+              <div className="px-4 py-3">
+                <p className="mb-2 text-[9px] text-muted">Share this building:</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      const shareUrl = `https://twitter.com/intent/tweet?text=Check out @${selectedBuilding.login} on Web4City!&url=${encodeURIComponent(window.location.origin + "/dev/" + selectedBuilding.login)}`;
+                      window.open(shareUrl, "_blank", "noopener,noreferrer");
+                      trackBuildingShare(selectedBuilding.login, "x", window.location.origin + "/dev/" + selectedBuilding.login, session?.user?.user_metadata?.user_name);
+                    }}
+                    className="flex-1 rounded-none border border-[#1a1a24] bg-[#161618] py-1.5 text-[9px] font-bold text-white transition-colors hover:bg-[#1c1c20]"
+                    title="Share on X (Twitter)"
+                  >
+                    𝕏 Share
+                  </button>
+                  <button
+                    onClick={() => {
+                      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.origin + "/dev/" + selectedBuilding.login)}&text=Check out @${selectedBuilding.login} on Web4City!`;
+                      window.open(shareUrl, "_blank", "noopener,noreferrer");
+                      trackBuildingShare(selectedBuilding.login, "telegram", window.location.origin + "/dev/" + selectedBuilding.login, session?.user?.user_metadata?.user_name);
+                    }}
+                    className="flex-1 rounded-none border border-[#1a1a24] bg-[#161618] py-1.5 text-[9px] font-bold text-white transition-colors hover:bg-[#1c1c20]"
+                    title="Share on Telegram"
+                  >
+                    ✈ Share
+                  </button>
+                  <button
+                    onClick={() => {
+                      const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.origin + "/dev/" + selectedBuilding.login)}`;
+                      window.open(shareUrl, "_blank", "noopener,noreferrer");
+                      trackBuildingShare(selectedBuilding.login, "linkedin", window.location.origin + "/dev/" + selectedBuilding.login, session?.user?.user_metadata?.user_name);
+                    }}
+                    className="flex-1 rounded-none border border-[#1a1a24] bg-[#161618] py-1.5 text-[9px] font-bold text-white transition-colors hover:bg-[#1c1c20]"
+                    title="Share on LinkedIn"
+                  >
+                    in Share
+                  </button>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="mx-4 h-px bg-border" />
+
               {/* Actions */}
               <div className="flex gap-2 p-4 pt-0 pb-5 sm:pb-4">
                 {selectedBuilding.login.toLowerCase() === authLogin ? (

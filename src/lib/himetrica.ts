@@ -206,3 +206,53 @@ export function trackLandmarkCtaClicked(slug: string, url: string) {
 export function trackLandmarkShare(slug: string, platform: "x" | "telegram" | "linkedin", url: string) {
   trackLandmarkEvent(`share_${platform}`, slug, { url });
 }
+
+// ─── Regular Buildings (User Claimed) ────────────────────────
+
+async function trackBuildingEvent(event_type: string, building_login: string, extra?: { building_slug?: string; url?: string; user_github_login?: string; user_developer_id?: number }) {
+  // Track in Himetrica
+  hm()?.track(`building_${event_type}`, { building_login, ...extra });
+  
+  // Save to database
+  try {
+    await fetch("/api/analytics/building", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        building_login,
+        building_slug: extra?.building_slug,
+        event_type,
+        user_github_login: extra?.user_github_login,
+        user_developer_id: extra?.user_developer_id,
+        url: extra?.url,
+        session_id: typeof window !== "undefined" ? window.sessionStorage.getItem("session_id") : null,
+      }),
+    });
+  } catch (err) {
+    console.error("Failed to save building event to DB:", err);
+  }
+}
+
+export function trackBuildingImpression(building_login: string) {
+  trackBuildingEvent("impression", building_login);
+}
+
+export function trackBuildingClicked(building_login: string, user_github_login?: string, user_developer_id?: number) {
+  trackBuildingEvent("click", building_login, { user_github_login, user_developer_id });
+}
+
+export function trackBuildingCardViewed(building_login: string) {
+  trackBuildingEvent("card_viewed", building_login);
+}
+
+export function trackBuildingVisited(building_login: string, user_github_login?: string) {
+  trackBuildingEvent("visit", building_login, { user_github_login });
+}
+
+export function trackBuildingShare(building_login: string, platform: "x" | "telegram" | "linkedin", url: string, user_github_login?: string) {
+  trackBuildingEvent(`share_${platform}`, building_login, { url, user_github_login });
+}
+
+export function trackBuildingLinkCopied(building_login: string) {
+  trackBuildingEvent("copy_link", building_login);
+}
