@@ -4988,7 +4988,7 @@ function HomeContent() {
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement("a");
                       a.href = url;
-                      a.download = `web4city-${comparePair[0].login}-vs-${comparePair[1].login}.png`;
+                      a.download = `vibecoders-${comparePair[0].login}-vs-${comparePair[1].login}.png`;
                       document.body.appendChild(a);
                       a.click();
                       a.remove();
@@ -5006,7 +5006,7 @@ function HomeContent() {
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement("a");
                       a.href = url;
-                      a.download = `web4city-${comparePair[0].login}-vs-${comparePair[1].login}-stories.png`;
+                      a.download = `vibecoders-${comparePair[0].login}-vs-${comparePair[1].login}-stories.png`;
                       document.body.appendChild(a);
                       a.click();
                       a.remove();
