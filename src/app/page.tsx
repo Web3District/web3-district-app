@@ -3732,10 +3732,10 @@ function HomeContent() {
                     <span className="block text-[8px] opacity-60 normal-case">Browse Buildings</span>
                   </button>
                   
-                  {/* Hover menu - 3 smaller buttons */}
+                  {/* Hover menu - 3 smaller buttons horizontal */}
                   {exploreMenuOpen && (
                     <div
-                      className="absolute bottom-full left-1/2 mb-2 flex -translate-x-1/2 flex-col gap-1"
+                      className="absolute bottom-full left-0 mb-2 flex gap-1"
                       onMouseEnter={() => setExploreMenuOpen(true)}
                       onMouseLeave={() => setExploreMenuOpen(false)}
                     >
@@ -3749,14 +3749,14 @@ function HomeContent() {
                           flyPausedAt.current = 0;
                           flyTotalPauseMs.current = 0;
                         }}
-                        className="btn-press whitespace-nowrap border-2 px-4 py-2 text-[9px] text-cream transition-colors hover:border-[#ed0584]"
+                        className="btn-press flex-1 px-3 py-2 text-[8px] sm:text-[9px] text-bg"
                         style={{
-                          backgroundColor: theme.cardBg,
-                          borderColor: theme.border,
-                          boxShadow: `2px 2px 0 0 ${theme.shadow}`,
+                          backgroundColor: theme.accent,
+                          boxShadow: `3px 3px 0 0 ${theme.shadow}`,
+                          whiteSpace: 'nowrap',
                         }}
                       >
-                        🚁 FREE CAM
+                        FREE CAM
                       </button>
                       <button
                         onClick={() => {
@@ -3767,28 +3767,28 @@ function HomeContent() {
                           flyPausedAt.current = 0;
                           flyTotalPauseMs.current = 0;
                         }}
-                        className="btn-press whitespace-nowrap border-2 px-4 py-2 text-[9px] text-cream transition-colors hover:border-[#ed0584]"
+                        className="btn-press flex-1 px-3 py-2 text-[8px] sm:text-[9px] text-bg"
                         style={{
-                          backgroundColor: theme.cardBg,
-                          borderColor: theme.border,
-                          boxShadow: `2px 2px 0 0 ${theme.shadow}`,
+                          backgroundColor: theme.accent,
+                          boxShadow: `3px 3px 0 0 ${theme.shadow}`,
+                          whiteSpace: 'nowrap',
                         }}
                       >
-                        ✈️ FLY
+                        FLY
                       </button>
                       <button
                         onClick={() => {
                           setExploreMenuOpen(false);
                           setFlyMode(false);
                         }}
-                        className="btn-press whitespace-nowrap border-2 px-4 py-2 text-[9px] text-cream transition-colors hover:border-[#ed0584]"
+                        className="btn-press flex-1 px-3 py-2 text-[8px] sm:text-[9px] text-bg"
                         style={{
-                          backgroundColor: theme.cardBg,
-                          borderColor: theme.border,
-                          boxShadow: `2px 2px 0 0 ${theme.shadow}`,
+                          backgroundColor: theme.accent,
+                          boxShadow: `3px 3px 0 0 ${theme.shadow}`,
+                          whiteSpace: 'nowrap',
                         }}
                       >
-                        🚶 WALK
+                        WALK
                       </button>
                     </div>
                   )}
