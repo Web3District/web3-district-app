@@ -3749,17 +3749,7 @@ function HomeContent() {
                       <button
                         onClick={() => {
                           setExploreMenuOpen(false);
-                          setFocusedBuilding(null);
-                          setFlyMode(true);
-                          setFlyScore({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
-                          flyStartTime.current = Date.now();
-                          flyPausedAt.current = 0;
-                          flyTotalPauseMs.current = 0;
-                          setFlyElapsedSec(0);
-                          try { setFlyPersonalBest(parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
-                          if (!localStorage.getItem("web4city_fly_controls_seen")) {
-                            setShowFlyControls(true);
-                          }
+                          setExploreMode(true);
                         }}
                         className="btn-press flex-1 px-1 py-2 text-[7px] sm:text-[8px] text-bg"
                         style={{
