@@ -418,6 +418,21 @@ function HomeContent() {
   const [introPhase, setIntroPhase] = useState(-1); // -1 = not started, 0-3 = text phases, 4 = done
   const [exploreMode, setExploreMode] = useState(false);
   const [exploreMenuOpen, setExploreMenuOpen] = useState(false);
+  const exploreMenuTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const handleExploreMenuEnter = () => {
+    if (exploreMenuTimeout.current) {
+      clearTimeout(exploreMenuTimeout.current);
+      exploreMenuTimeout.current = null;
+    }
+    setExploreMenuOpen(true);
+  };
+
+  const handleExploreMenuLeave = () => {
+    exploreMenuTimeout.current = setTimeout(() => {
+      setExploreMenuOpen(false);
+    }, 300); // 300ms delay before closing
+  };
   const [themeIndex, setThemeIndex] = useState(2); // 2 = Neon (forced)
   
   // Force cache bust on load to show new developers
@@ -3735,9 +3750,9 @@ function HomeContent() {
                   {/* Hover menu - 3 smaller buttons horizontal */}
                   {exploreMenuOpen && (
                     <div
-                      className="absolute bottom-full left-0 mb-2 flex gap-1"
-                      onMouseEnter={() => setExploreMenuOpen(true)}
-                      onMouseLeave={() => setExploreMenuOpen(false)}
+                      className="absolute bottom-full left-0 mb-2 flex w-[280px] gap-1"
+                      onMouseEnter={handleExploreMenuEnter}
+                      onMouseLeave={handleExploreMenuLeave}
                     >
                       <button
                         onClick={() => {
@@ -3748,8 +3763,13 @@ function HomeContent() {
                           flyStartTime.current = Date.now();
                           flyPausedAt.current = 0;
                           flyTotalPauseMs.current = 0;
+                          setFlyElapsedSec(0);
+                          try { setFlyPersonalBest(parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
+                          if (!localStorage.getItem("web4city_fly_controls_seen")) {
+                            setShowFlyControls(true);
+                          }
                         }}
-                        className="btn-press flex-1 px-3 py-2 text-[8px] sm:text-[9px] text-bg"
+                        className="btn-press flex-1 px-2 py-2 text-[8px] sm:text-[9px] text-bg"
                         style={{
                           backgroundColor: theme.accent,
                           boxShadow: `3px 3px 0 0 ${theme.shadow}`,
@@ -3761,13 +3781,19 @@ function HomeContent() {
                       <button
                         onClick={() => {
                           setExploreMenuOpen(false);
+                          setFocusedBuilding(null);
                           setFlyMode(true);
                           setFlyScore({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
                           flyStartTime.current = Date.now();
                           flyPausedAt.current = 0;
                           flyTotalPauseMs.current = 0;
+                          setFlyElapsedSec(0);
+                          try { setFlyPersonalBest(parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
+                          if (!localStorage.getItem("web4city_fly_controls_seen")) {
+                            setShowFlyControls(true);
+                          }
                         }}
-                        className="btn-press flex-1 px-3 py-2 text-[8px] sm:text-[9px] text-bg"
+                        className="btn-press flex-1 px-2 py-2 text-[8px] sm:text-[9px] text-bg"
                         style={{
                           backgroundColor: theme.accent,
                           boxShadow: `3px 3px 0 0 ${theme.shadow}`,
@@ -3781,7 +3807,7 @@ function HomeContent() {
                           setExploreMenuOpen(false);
                           setFlyMode(false);
                         }}
-                        className="btn-press flex-1 px-3 py-2 text-[8px] sm:text-[9px] text-bg"
+                        className="btn-press flex-1 px-2 py-2 text-[8px] sm:text-[9px] text-bg"
                         style={{
                           backgroundColor: theme.accent,
                           boxShadow: `3px 3px 0 0 ${theme.shadow}`,
@@ -3813,64 +3839,6 @@ function HomeContent() {
                     {arcadeOnline > 0 ? `${arcadeOnline} online` : "Meet other devs"}
                   </span>
                 </button>
-
-                {(
-                  <div className="relative">
-                    <button
-                      onClick={() => {
-                        setFocusedBuilding(null);
-                        setFlyMode(true);
-                        setFlyScore({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
-                        flyStartTime.current = Date.now();
-                        flyPausedAt.current = 0;
-                        flyTotalPauseMs.current = 0;
-                        setFlyElapsedSec(0);
-                        try { setFlyPersonalBest(parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
-                        // Feature 3: show controls overlay on first flight
-                        if (!localStorage.getItem("web4city_fly_controls_seen")) {
-                          setShowFlyControls(true);
-                        }
-                      }}
-                      className="btn-press px-7 py-3 text-xs sm:py-3.5 sm:text-sm text-bg"
-                      style={{
-                        backgroundColor: theme.accent,
-                        boxShadow: `4px 4px 0 0 ${theme.shadow}`,
-                      }}
-                    >
-                      Fly
-                      <span className="block text-[8px] opacity-60 normal-case">Collect PX</span>
-                    </button>
-                    {/* Feature 2: First-Fly Tooltip */}
-                    {showFlyHint && (
-                      <div className="absolute bottom-full left-1/2 z-30 mb-3 -translate-x-1/2 animate-[fade-in_0.3s_ease-out]">
-                        <div
-                          className="relative w-64 border-2 border-border bg-bg-raised px-4 py-3 text-center backdrop-blur-sm"
-                          style={{ borderColor: theme.accent + "60" }}
-                        >
-                          <p className="text-[10px] leading-relaxed text-cream normal-case">
-                            Fly over your city. Collect coins. Compete on the daily leaderboard.
-                          </p>
-                          <button
-                            onClick={() => {
-                              setShowFlyHint(false);
-                              clearTimeout(flyHintTimerRef.current);
-                              try { localStorage.setItem("web4city_fly_hint_seen", "1"); } catch { }
-                            }}
-                            className="mt-2 px-3 py-1 text-[9px] text-bg"
-                            style={{ backgroundColor: theme.accent }}
-                          >
-                            Got it
-                          </button>
-                          {/* Downward arrow */}
-                          <div
-                            className="absolute top-full left-1/2 -translate-x-1/2 border-x-[6px] border-t-[6px] border-x-transparent"
-                            style={{ borderTopColor: theme.accent + "60" }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
 
               {/* Feature 1: Daily Challenge Nudge */}
