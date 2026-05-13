@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   ),
   title: "The Vibecoders City",
   description:
-    "The Vibecoders City. Claim Your land, build and play.",
+    "Web4City. The Vibecoders City.",
   keywords: [
     "github",
     "3d city",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "The Vibecoders City",
     description:
-      "The Vibecoders City. Claim Your land, build and play.",
+      "Web4City. The Vibecoders City.",
     siteName: "The Vibecoders City",
     type: "website",
     locale: "en_US",
@@ -61,7 +61,7 @@ const jsonLd = {
   "@type": "WebApplication",
   name: "The Vibecoders City",
   description:
-    "The Vibecoders City. Claim Your land, build and play.",
+    "Web4City. The Vibecoders City.",
   url: BASE_URL,
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Web",
