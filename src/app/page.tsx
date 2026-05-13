@@ -3718,11 +3718,18 @@ function HomeContent() {
               <div className="flex items-center gap-3 sm:gap-4">
                 {/* Explore City with hover menu - wrapper handles hover for both button and menu */}
                 <div className="relative inline-block">
+                  {/* Invisible bridge filling the gap between button and menu */}
+                  <div
+                    className="absolute bottom-full left-0 h-4 w-full"
+                    onMouseEnter={() => setExploreMenuOpen(true)}
+                    onMouseLeave={() => setExploreMenuOpen(false)}
+                  />
+                  
                   <button
                     onClick={() => setExploreMode(true)}
                     onMouseEnter={() => setExploreMenuOpen(true)}
                     onMouseLeave={() => setExploreMenuOpen(false)}
-                    className="btn-press px-7 py-3 text-xs sm:py-3.5 sm:text-sm text-bg block"
+                    className="btn-press px-7 py-3 text-xs sm:py-3.5 sm:text-sm text-bg block relative z-10"
                     style={{
                       backgroundColor: theme.accent,
                       boxShadow: `4px 4px 0 0 ${theme.shadow}`,
@@ -3735,7 +3742,7 @@ function HomeContent() {
                   {/* Hover menu - 3 smaller buttons horizontal, same total width */}
                   {exploreMenuOpen && (
                     <div
-                      className="absolute bottom-full left-0 mb-1 flex w-full gap-[2px]"
+                      className="absolute bottom-full left-0 mb-0 flex w-full gap-[2px]"
                       onMouseEnter={() => setExploreMenuOpen(true)}
                       onMouseLeave={() => setExploreMenuOpen(false)}
                     >
