@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-export const alt = "The Vibecoders City - Claim Your land, build and play";
+export const alt = "Web4City. The Vibecoders City.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3001")
   ),
-  title: "The Vibecoders City",
+  title: "Web4City. The Vibecoders City.",
   description:
     "Web4City. The Vibecoders City.",
   keywords: [
@@ -27,10 +27,10 @@ export const metadata: Metadata = {
     "web4city",
   ],
   openGraph: {
-    title: "The Vibecoders City",
+    title: "Web4City. The Vibecoders City.",
     description:
       "Web4City. The Vibecoders City.",
-    siteName: "The Vibecoders City",
+    siteName: "Web4City. The Vibecoders City.",
     type: "website",
     locale: "en_US",
   },
@@ -59,7 +59,7 @@ const BASE_URL =
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "The Vibecoders City",
+  name: "Web4City. The Vibecoders City.",
   description:
     "Web4City. The Vibecoders City.",
   url: BASE_URL,
@@ -67,7 +67,7 @@ const jsonLd = {
   operatingSystem: "Web",
   author: {
     "@type": "Person",
-    name: "The Vibecoders City",
+    name: "Web4City. The Vibecoders City.",
   },
   offers: {
     "@type": "Offer",
