@@ -417,6 +417,7 @@ function HomeContent() {
   const [introMode, setIntroMode] = useState(false);
   const [introPhase, setIntroPhase] = useState(-1); // -1 = not started, 0-3 = text phases, 4 = done
   const [exploreMode, setExploreMode] = useState(false);
+  const [exploreMenuOpen, setExploreMenuOpen] = useState(false);
   const [themeIndex, setThemeIndex] = useState(2); // 2 = Neon (forced)
   
   // Force cache bust on load to show new developers
@@ -3715,11 +3716,13 @@ function HomeContent() {
 
               {/* Primary actions */}
               <div className="flex items-center gap-3 sm:gap-4">
-                {/* Explore City with hover menu */}
-                <div className="relative group">
+                {/* Explore City with hover menu - wrapper handles hover for both button and menu */}
+                <div className="relative inline-block">
                   <button
                     onClick={() => setExploreMode(true)}
-                    className="btn-press px-7 py-3 text-xs sm:py-3.5 sm:text-sm text-bg"
+                    onMouseEnter={() => setExploreMenuOpen(true)}
+                    onMouseLeave={() => setExploreMenuOpen(false)}
+                    className="btn-press px-7 py-3 text-xs sm:py-3.5 sm:text-sm text-bg block"
                     style={{
                       backgroundColor: theme.accent,
                       boxShadow: `4px 4px 0 0 ${theme.shadow}`,
@@ -3730,67 +3733,76 @@ function HomeContent() {
                   </button>
                   
                   {/* Hover menu - 3 smaller buttons horizontal, same total width */}
-                  <div className="absolute bottom-full left-0 mb-2 hidden w-full gap-[2px] group-hover:flex">
-                    <button
-                      onClick={() => {
-                        setFocusedBuilding(null);
-                        setFlyMode(true);
-                        setFlyScore({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
-                        flyStartTime.current = Date.now();
-                        flyPausedAt.current = 0;
-                        flyTotalPauseMs.current = 0;
-                        setFlyElapsedSec(0);
-                        try { setFlyPersonalBest(parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
-                        if (!localStorage.getItem("web4city_fly_controls_seen")) {
-                          setShowFlyControls(true);
-                        }
-                      }}
-                      className="btn-press flex-1 px-1 py-2 text-[7px] sm:text-[8px] text-bg"
-                      style={{
-                        backgroundColor: theme.accent,
-                        boxShadow: `3px 3px 0 0 ${theme.shadow}`,
-                        whiteSpace: 'nowrap',
-                      }}
+                  {exploreMenuOpen && (
+                    <div
+                      className="absolute bottom-full left-0 mb-1 flex w-full gap-[2px]"
+                      onMouseEnter={() => setExploreMenuOpen(true)}
+                      onMouseLeave={() => setExploreMenuOpen(false)}
                     >
-                      FREE CAM
-                    </button>
-                    <button
-                      onClick={() => {
-                        setFocusedBuilding(null);
-                        setFlyMode(true);
-                        setFlyScore({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
-                        flyStartTime.current = Date.now();
-                        flyPausedAt.current = 0;
-                        flyTotalPauseMs.current = 0;
-                        setFlyElapsedSec(0);
-                        try { setFlyPersonalBest(parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
-                        if (!localStorage.getItem("web4city_fly_controls_seen")) {
-                          setShowFlyControls(true);
-                        }
-                      }}
-                      className="btn-press flex-1 px-1 py-2 text-[7px] sm:text-[8px] text-bg"
-                      style={{
-                        backgroundColor: theme.accent,
-                        boxShadow: `3px 3px 0 0 ${theme.shadow}`,
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      FLY
-                    </button>
-                    <button
-                      onClick={() => {
-                        setFlyMode(false);
-                      }}
-                      className="btn-press flex-1 px-1 py-2 text-[7px] sm:text-[8px] text-bg"
-                      style={{
-                        backgroundColor: theme.accent,
-                        boxShadow: `3px 3px 0 0 ${theme.shadow}`,
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      WALK
-                    </button>
-                  </div>
+                      <button
+                        onClick={() => {
+                          setExploreMenuOpen(false);
+                          setFocusedBuilding(null);
+                          setFlyMode(true);
+                          setFlyScore({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
+                          flyStartTime.current = Date.now();
+                          flyPausedAt.current = 0;
+                          flyTotalPauseMs.current = 0;
+                          setFlyElapsedSec(0);
+                          try { setFlyPersonalBest(parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
+                          if (!localStorage.getItem("web4city_fly_controls_seen")) {
+                            setShowFlyControls(true);
+                          }
+                        }}
+                        className="btn-press flex-1 px-1 py-2 text-[7px] sm:text-[8px] text-bg"
+                        style={{
+                          backgroundColor: theme.accent,
+                          boxShadow: `3px 3px 0 0 ${theme.shadow}`,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        FREE CAM
+                      </button>
+                      <button
+                        onClick={() => {
+                          setExploreMenuOpen(false);
+                          setFocusedBuilding(null);
+                          setFlyMode(true);
+                          setFlyScore({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
+                          flyStartTime.current = Date.now();
+                          flyPausedAt.current = 0;
+                          flyTotalPauseMs.current = 0;
+                          setFlyElapsedSec(0);
+                          try { setFlyPersonalBest(parseInt(localStorage.getItem("web4city_fly_pb") || "0", 10) || 0); } catch { setFlyPersonalBest(0); }
+                          if (!localStorage.getItem("web4city_fly_controls_seen")) {
+                            setShowFlyControls(true);
+                          }
+                        }}
+                        className="btn-press flex-1 px-1 py-2 text-[7px] sm:text-[8px] text-bg"
+                        style={{
+                          backgroundColor: theme.accent,
+                          boxShadow: `3px 3px 0 0 ${theme.shadow}`,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        FLY
+                      </button>
+                      <button
+                        onClick={() => {
+                          setExploreMenuOpen(false);
+                          setFlyMode(false);
+                        }}
+                        className="btn-press flex-1 px-1 py-2 text-[7px] sm:text-[8px] text-bg"
+                        style={{
+                          backgroundColor: theme.accent,
+                          boxShadow: `3px 3px 0 0 ${theme.shadow}`,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        WALK
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <button
                   onClick={() => {
