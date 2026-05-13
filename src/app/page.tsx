@@ -417,6 +417,7 @@ function HomeContent() {
   const [introMode, setIntroMode] = useState(false);
   const [introPhase, setIntroPhase] = useState(-1); // -1 = not started, 0-3 = text phases, 4 = done
   const [exploreMode, setExploreMode] = useState(false);
+  const [exploreMenuOpen, setExploreMenuOpen] = useState(false);
   const [themeIndex, setThemeIndex] = useState(2); // 2 = Neon (forced)
   
   // Force cache bust on load to show new developers
@@ -3422,7 +3423,7 @@ function HomeContent() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-between px-5 py-4 active:bg-white/5"
               >
-                <span className="text-sm text-cream">💼 Jobs</span>
+                <span className="text-sm text-cream">Jobs</span>
                 <span className="text-xs" style={{ color: theme.accent }}>&#8594;</span>
               </Link>
               <Link
@@ -3715,17 +3716,83 @@ function HomeContent() {
 
               {/* Primary actions */}
               <div className="flex items-center gap-3 sm:gap-4">
-                <button
-                  onClick={() => setExploreMode(true)}
-                  className="btn-press px-7 py-3 text-xs sm:py-3.5 sm:text-sm text-bg"
-                  style={{
-                    backgroundColor: theme.accent,
-                    boxShadow: `4px 4px 0 0 ${theme.shadow}`,
-                  }}
-                >
-                  Explore City
-                  <span className="block text-[8px] opacity-60 normal-case">Browse Buildings</span>
-                </button>
+                {/* Explore City with hover menu */}
+                <div className="relative">
+                  <button
+                    onClick={() => setExploreMode(true)}
+                    onMouseEnter={() => setExploreMenuOpen(true)}
+                    onMouseLeave={() => setExploreMenuOpen(false)}
+                    className="btn-press px-7 py-3 text-xs sm:py-3.5 sm:text-sm text-bg"
+                    style={{
+                      backgroundColor: theme.accent,
+                      boxShadow: `4px 4px 0 0 ${theme.shadow}`,
+                    }}
+                  >
+                    Explore City
+                    <span className="block text-[8px] opacity-60 normal-case">Browse Buildings</span>
+                  </button>
+                  
+                  {/* Hover menu - 3 smaller buttons */}
+                  {exploreMenuOpen && (
+                    <div
+                      className="absolute bottom-full left-1/2 mb-2 flex -translate-x-1/2 flex-col gap-1"
+                      onMouseEnter={() => setExploreMenuOpen(true)}
+                      onMouseLeave={() => setExploreMenuOpen(false)}
+                    >
+                      <button
+                        onClick={() => {
+                          setExploreMenuOpen(false);
+                          setFocusedBuilding(null);
+                          setFlyMode(true);
+                          setFlyScore({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
+                          flyStartTime.current = Date.now();
+                          flyPausedAt.current = 0;
+                          flyTotalPauseMs.current = 0;
+                        }}
+                        className="btn-press whitespace-nowrap border-2 px-4 py-2 text-[9px] text-cream transition-colors hover:border-[#ed0584]"
+                        style={{
+                          backgroundColor: theme.cardBg,
+                          borderColor: theme.border,
+                          boxShadow: `2px 2px 0 0 ${theme.shadow}`,
+                        }}
+                      >
+                        🚁 FREE CAM
+                      </button>
+                      <button
+                        onClick={() => {
+                          setExploreMenuOpen(false);
+                          setFlyMode(true);
+                          setFlyScore({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
+                          flyStartTime.current = Date.now();
+                          flyPausedAt.current = 0;
+                          flyTotalPauseMs.current = 0;
+                        }}
+                        className="btn-press whitespace-nowrap border-2 px-4 py-2 text-[9px] text-cream transition-colors hover:border-[#ed0584]"
+                        style={{
+                          backgroundColor: theme.cardBg,
+                          borderColor: theme.border,
+                          boxShadow: `2px 2px 0 0 ${theme.shadow}`,
+                        }}
+                      >
+                        ✈️ FLY
+                      </button>
+                      <button
+                        onClick={() => {
+                          setExploreMenuOpen(false);
+                          setFlyMode(false);
+                        }}
+                        className="btn-press whitespace-nowrap border-2 px-4 py-2 text-[9px] text-cream transition-colors hover:border-[#ed0584]"
+                        style={{
+                          backgroundColor: theme.cardBg,
+                          borderColor: theme.border,
+                          boxShadow: `2px 2px 0 0 ${theme.shadow}`,
+                        }}
+                      >
+                        🚶 WALK
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={() => {
                     if (session) {
@@ -3874,7 +3941,7 @@ function HomeContent() {
                   className="btn-press border-[3px] border-border bg-bg/80 px-4 py-1.5 text-[10px] backdrop-blur-sm transition-colors hover:border-border-light"
                   style={{ color: theme.accent }}
                 >
-                  💼 Jobs
+                  Jobs
                 </Link>
               </div>
               <div className="hidden sm:flex items-center justify-center gap-2">
