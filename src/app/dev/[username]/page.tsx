@@ -446,11 +446,13 @@ export default async function DevPage({ params }: Props) {
           <p className="text-[9px] text-muted normal-case">
             built by{" "}
             <a
+              href="https://web4city.xyz"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-cream"
               style={{ color: accent }}
             >
+              Web4City
             </a>
           </p>
         </div>
