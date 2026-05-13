@@ -2566,7 +2566,7 @@ function HomeContent() {
               </p>
             ))}
 
-            {/* Welcome to The Vibecoders City (phase 3) */}
+            {/* Welcome to Web4City (phase 3) */}
             <div
               className="absolute flex flex-col items-center gap-1"
               style={{
@@ -2580,7 +2580,7 @@ function HomeContent() {
                 style={{ fontSize: "clamp(1.2rem, 5vw, 2.8rem)" }}
               >
                 Welcome to{" "}
-                <span style={{ color: theme.accent }}>The Vibecoders City</span>
+                <span style={{ color: theme.accent }}>Web4City</span>
               </p>
             </div>
           </div>
