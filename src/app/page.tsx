@@ -3418,6 +3418,14 @@ function HomeContent() {
                 <span className="text-xs" style={{ color: theme.accent }}>&#8594;</span>
               </Link>
               <Link
+                href="/jobs"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between px-5 py-4 active:bg-white/5"
+              >
+                <span className="text-sm text-cream">💼 Jobs</span>
+                <span className="text-xs" style={{ color: theme.accent }}>&#8594;</span>
+              </Link>
+              <Link
                 href="/advertise"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-between px-5 py-4 active:bg-white/5"
@@ -3860,6 +3868,13 @@ function HomeContent() {
                   style={{ color: theme.accent }}
                 >
                   &#9819; Leaderboard
+                </Link>
+                <Link
+                  href="/jobs"
+                  className="btn-press border-[3px] border-border bg-bg/80 px-4 py-1.5 text-[10px] backdrop-blur-sm transition-colors hover:border-border-light"
+                  style={{ color: theme.accent }}
+                >
+                  💼 Jobs
                 </Link>
               </div>
               <div className="hidden sm:flex items-center justify-center gap-2">
