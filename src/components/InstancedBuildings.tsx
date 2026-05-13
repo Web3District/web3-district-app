@@ -22,6 +22,8 @@ const vertexShader = /* glsl */ `
   attribute float aRise;
   attribute vec4 aTint;
   attribute float aLive;
+  attribute vec3 aCrownColor;
+  attribute float aHasCrown;
 
   varying vec2 vUv;
   varying vec3 vNormal;
@@ -31,6 +33,8 @@ const vertexShader = /* glsl */ `
   varying float vInstanceId;
   varying vec4 vTint;
   varying float vLive;
+  varying vec3 vCrownColor;
+  varying float vHasCrown;
 
   void main() {
     vUv = uv;
@@ -39,6 +43,8 @@ const vertexShader = /* glsl */ `
     vUvSide = aUvSide;
     vTint = aTint;
     vLive = aLive;
+    vCrownColor = aCrownColor;
+    vHasCrown = aHasCrown;
 
     // Rise animation: modulate Y position by aRise (0 = underground, 1 = full height)
     vec3 localPos = position;
@@ -73,6 +79,8 @@ const fragmentShader = /* glsl */ `
   varying float vInstanceId;
   varying vec4 vTint;
   varying float vLive;
+  varying vec3 vCrownColor;
+  varying float vHasCrown;
 
   void main() {
     // Early discard: skip fragments fully inside fog (invisible anyway)
@@ -118,6 +126,12 @@ const fragmentShader = /* glsl */ `
 
     // Roof: solid color with emissive, also scaled by city energy
     vec3 roofFinal = uRoofColor * (0.4 + 1.4 * uCityEnergy);
+
+    // ROOFTOP CROWN: Add district color glow to top portion of walls
+    // Crown appears on upper 15% of building walls, blends with wall color
+    float crownHeight = smoothstep(0.70, 0.85, vUv.y); // Gradient from 70% to 85% height
+    vec3 crownGlow = vCrownColor * crownHeight * vHasCrown;
+    wallFinal = mix(wallFinal, crownGlow, 0.6 * crownHeight * vHasCrown);
 
     vec3 color = mix(wallFinal, roofFinal, isRoof);
 
@@ -267,11 +281,13 @@ export default memo(function InstancedBuildings({
   }, [material, atlasTexture, colors.roof, colors.face]);
 
   // Per-instance attribute buffers
-  const { uvFrontData, uvSideData, riseData, tintData } = useMemo(() => {
+  const { uvFrontData, uvSideData, riseData, tintData, crownColorData, hasCrownData } = useMemo(() => {
     const uvF = new Float32Array(count * 4);
     const uvS = new Float32Array(count * 4);
     const rise = new Float32Array(count);
     const tint = new Float32Array(count * 4);
+    const crownColor = new Float32Array(count * 3);
+    const hasCrown = new Float32Array(count);
     const _c = new THREE.Color();
 
     for (let i = 0; i < count; i++) {
@@ -298,8 +314,7 @@ export default memo(function InstancedBuildings({
       // Rise starts at 0 (will animate to 1)
       rise[i] = 0;
 
-      // STEP 1: Enable custom_color only (for debugging)
-      // District colors still disabled
+      // Custom color tint
       if (b.custom_color) {
         _c.set(b.custom_color);
         tint[i * 4 + 0] = _c.r;
@@ -307,7 +322,6 @@ export default memo(function InstancedBuildings({
         tint[i * 4 + 2] = _c.b;
         tint[i * 4 + 3] = 1.0;
       } else {
-        // All other buildings stay BLACK for now
         const DEBUG_DEFAULT_COLOR = "#000000";
         _c.set(DEBUG_DEFAULT_COLOR);
         tint[i * 4 + 0] = _c.r;
@@ -315,9 +329,18 @@ export default memo(function InstancedBuildings({
         tint[i * 4 + 2] = _c.b;
         tint[i * 4 + 3] = 1.0;
       }
+
+      // ROOFTOP CROWN: District color for top glow
+      const district = b.home_district || b.district || 'growth';
+      const districtColor = DISTRICT_COLORS[district] || DISTRICT_COLORS['growth'];
+      _c.set(districtColor);
+      crownColor[i * 3 + 0] = _c.r;
+      crownColor[i * 3 + 1] = _c.g;
+      crownColor[i * 3 + 2] = _c.b;
+      hasCrown[i] = 1.0; // Enable crown for all buildings
     }
 
-    return { uvFrontData: uvF, uvSideData: uvS, riseData: rise, tintData: tint };
+    return { uvFrontData: uvF, uvSideData: uvS, riseData: rise, tintData: tint, crownColorData: crownColor, hasCrownData: hasCrown };
   }, [buildings, count]);
 
   // Live presence attribute (updated dynamically)
@@ -366,6 +389,8 @@ export default memo(function InstancedBuildings({
     const riseAttr = new THREE.InstancedBufferAttribute(riseData, 1);
     riseAttr.setUsage(THREE.DynamicDrawUsage);
     const tintAttr = new THREE.InstancedBufferAttribute(tintData, 4);
+    const crownColorAttr = new THREE.InstancedBufferAttribute(crownColorData, 3);
+    const hasCrownAttr = new THREE.InstancedBufferAttribute(hasCrownData, 1);
 
     const liveAttr = new THREE.InstancedBufferAttribute(liveData, 1);
     liveAttr.setUsage(THREE.DynamicDrawUsage);
@@ -374,6 +399,8 @@ export default memo(function InstancedBuildings({
     mesh.geometry.setAttribute("aUvSide", uvSideAttr);
     mesh.geometry.setAttribute("aRise", riseAttr);
     mesh.geometry.setAttribute("aTint", tintAttr);
+    mesh.geometry.setAttribute("aCrownColor", crownColorAttr);
+    mesh.geometry.setAttribute("aHasCrown", hasCrownAttr);
     mesh.geometry.setAttribute("aLive", liveAttr);
 
     if (hasPlayedRiseGlobal) {
