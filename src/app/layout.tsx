@@ -12,9 +12,9 @@ export const metadata: Metadata = {
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3001")
   ),
-  title: "Web4City - Your GitHub as a 3D City",
+  title: "The Vibecoders City",
   description:
-    "Web4City – your GitHub profile as a 3D building. Explore developers as buildings in a living 3D city.",
+    "The Vibecoders City. Claim Your land, build and play.",
   keywords: [
     "github",
     "3d city",
@@ -23,13 +23,14 @@ export const metadata: Metadata = {
     "pixel art",
     "open source",
     "git visualization",
+    "vibecoders",
     "web4city",
   ],
   openGraph: {
-    title: "Web4City - Your GitHub as a 3D City",
+    title: "The Vibecoders City",
     description:
-      "Web4City – your GitHub profile as a 3D building. Explore developers as buildings in a living 3D city.",
-    siteName: "Web4 City",
+      "The Vibecoders City. Claim Your land, build and play.",
+    siteName: "The Vibecoders City",
     type: "website",
     locale: "en_US",
   },
@@ -58,15 +59,15 @@ const BASE_URL =
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "Web4 City",
+  name: "The Vibecoders City",
   description:
-    "Web4 City – your GitHub profile as a 3D building in an interactive city",
+    "The Vibecoders City. Claim Your land, build and play.",
   url: BASE_URL,
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Web",
   author: {
     "@type": "Person",
-    name: "Web4 City",
+    name: "The Vibecoders City",
   },
   offers: {
     "@type": "Offer",

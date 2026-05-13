@@ -2566,7 +2566,7 @@ function HomeContent() {
               </p>
             ))}
 
-            {/* Welcome to Web4City (phase 3) */}
+            {/* Welcome to The Vibecoders City (phase 3) */}
             <div
               className="absolute flex flex-col items-center gap-1"
               style={{
@@ -2580,7 +2580,7 @@ function HomeContent() {
                 style={{ fontSize: "clamp(1.2rem, 5vw, 2.8rem)" }}
               >
                 Welcome to{" "}
-                <span style={{ color: theme.accent }}>Web4City</span>
+                <span style={{ color: theme.accent }}>The Vibecoders City</span>
               </p>
             </div>
           </div>
@@ -3338,7 +3338,7 @@ function HomeContent() {
                   <X size={14} />
                 </button>
               </div>
-              <p className="mb-3 text-xs text-muted normal-case leading-relaxed">Your GitHub commits build a real 3D city. Sign in to claim your building.</p>
+              <p className="mb-3 text-xs text-muted normal-case leading-relaxed">The Vibecoders City. Claim Your land, build and play.</p>
               <button
                 onClick={() => { handleSignIn(); setMobileMenuOpen(false); }}
                 className="btn-press w-full py-3 text-xs text-bg"
