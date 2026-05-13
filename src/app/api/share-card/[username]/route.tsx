@@ -460,18 +460,52 @@ function renderLandscape(
               textTransform: "uppercase",
             }}
           >
-            <span style={{ fontSize: 24, color: cream }}>GIT</span>
-            <span style={{ fontSize: 24, color: accent }}>CITY</span>
+            <span style={{ fontSize: 24, color: cream }}>WEB</span>
+            <span style={{ fontSize: 24, color: accent }}>4CITY</span>
           </div>
           <div
             style={{
               display: "flex",
-              fontSize: 16,
+              fontSize: 14,
               color: muted,
               textTransform: "uppercase",
             }}
           >
-            thegitcity.com/dev/{dev.github_login as string}
+            web4city.xyz/dev/{dev.github_login as string}
+          </div>
+        </div>
+        
+        {/* Built by badge */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 50,
+            right: 40,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              fontSize: 10,
+              color: muted,
+              textTransform: "uppercase",
+              letterSpacing: 1,
+            }}
+          >
+            BUILT BY
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              gap: 4,
+            }}
+          >
+            <span style={{ fontSize: 12, color: cream }}>WEB</span>
+            <span style={{ fontSize: 12, color: accent }}>4CITY</span>
           </div>
         </div>
       </div>
@@ -836,7 +870,7 @@ function renderStories(
               textTransform: "uppercase",
             }}
           >
-            {t.cta} → thegitcity.com
+            {t.cta} → web4city.xyz
           </div>
           <div
             style={{
@@ -846,8 +880,20 @@ function renderStories(
               textTransform: "uppercase",
             }}
           >
-            <span style={{ fontSize: 20, color: cream }}>GIT</span>
-            <span style={{ fontSize: 20, color: accent }}>CITY</span>
+            <span style={{ fontSize: 20, color: cream }}>WEB</span>
+            <span style={{ fontSize: 20, color: accent }}>4CITY</span>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              fontSize: 10,
+              color: muted,
+              textTransform: "uppercase",
+              letterSpacing: 1,
+              marginTop: 4,
+            }}
+          >
+            BUILT BY WEB4CITY
           </div>
         </div>
       </div>
