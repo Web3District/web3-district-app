@@ -28,6 +28,7 @@ import ThemeSkyFX from "./ThemeSkyFX";
 import QuantumCore from "./QuantumCore";
 import DistrictTowers from "./DistrictTowers";
 import PlazaAvatar from "./PlazaAvatar";
+import WalkingPlayer from "./WalkingPlayer";
 
 // ─── Theme Definitions ───────────────────────────────────────
 
@@ -2075,6 +2076,7 @@ interface Props {
   river?: CityRiver | null;
   bridges?: CityBridge[];
   flyMode: boolean;
+  walkMode?: boolean;
   flyVehicle?: string;
   onExitFly: () => void;
   onCollect?: (score: number, earned: number, combo: number, collected: number, maxCombo: number) => void;
@@ -2146,7 +2148,7 @@ function CityExposure({ cityEnergy }: { cityEnergy: number }) {
 // Plaza indices for rabbit sightings (progressively further from center)
 const RABBIT_PLAZA_INDICES = [1, 2, 4, 7, 10]; // plazas[1]=slot3, [2]=slot7, [4]=slot18, [7]=slot42, [10]=slot75
 
-export default function CityCanvas({ buildings, plazas, decorations, river, bridges, flyMode, flyVehicle, onExitFly, onCollect, themeIndex, onHud, onPause, focusedBuilding, focusedBuildingB, accentColor, onClearFocus, onBuildingClick, onFocusInfo, flyPauseSignal, flyHasOverlay, flyStartPaused, isMobile, onJoystickState, flyBoostActive, flyBrakeActive, skyAds, onAdClick, onAdViewed, introMode, onIntroEnd, raidPhase, raidData, raidAttacker, raidDefender, onRaidPhaseComplete, onLandmarkClick, onEArcadeClick, onDistrictLobbyClick, onDistrictSignIn, session, onSponsorClick, sponsorFocusPos, activeSponsorSlug, rabbitSighting, onRabbitCaught, rabbitCinematic, onRabbitCinematicEnd, rabbitCinematicTarget, ghostPreviewLogin, holdRise, celebrationActive, wallpaperMode, wallpaperSpeed, liveByLogin, cityEnergy }: Props) {
+export default function CityCanvas({ buildings, plazas, decorations, river, bridges, flyMode, walkMode, flyVehicle, onExitFly, onCollect, themeIndex, onHud, onPause, focusedBuilding, focusedBuildingB, accentColor, onClearFocus, onBuildingClick, onFocusInfo, flyPauseSignal, flyHasOverlay, flyStartPaused, isMobile, onJoystickState, flyBoostActive, flyBrakeActive, skyAds, onAdClick, onAdViewed, introMode, onIntroEnd, raidPhase, raidData, raidAttacker, raidDefender, onRaidPhaseComplete, onLandmarkClick, onEArcadeClick, onDistrictLobbyClick, onDistrictSignIn, session, onSponsorClick, sponsorFocusPos, activeSponsorSlug, rabbitSighting, onRabbitCaught, rabbitCinematic, onRabbitCinematicEnd, rabbitCinematicTarget, ghostPreviewLogin, holdRise, celebrationActive, wallpaperMode, wallpaperSpeed, liveByLogin, cityEnergy }: Props) {
   const [dynamicSponsors, setDynamicSponsors] = useState<typeof SPONSORS>([]);
 
   // Load dynamic landmarks from API
@@ -2224,6 +2226,10 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
               <AirplaneFlight onExit={onExitFly} onHud={onHud ?? (() => { })} onPause={onPause ?? (() => { })} pauseSignal={flyPauseSignal} hasOverlay={flyHasOverlay} startPaused={flyStartPaused} vehicleType={flyVehicle} posRef={flyPosRef} cityRadius={cityRadius} isMobile={isMobile} onJoystickState={onJoystickState} boostActive={flyBoostActive} brakeActive={flyBrakeActive} />
               <SkyCollectibles playerPosRef={flyPosRef} accentColor={accentColor ?? "#6090e0"} onCollect={onCollect ?? (() => { })} cityRadius={cityRadius} />
             </>
+          )}
+
+          {!introMode && walkMode && (
+            <WalkingPlayer />
           )}
         </>
       )}

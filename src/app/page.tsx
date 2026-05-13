@@ -413,6 +413,7 @@ function HomeContent() {
     raw?: string;
   } | null>(null);
   const [flyMode, setFlyMode] = useState(false);
+  const [walkMode, setWalkMode] = useState(false);
   const [flyVehicle, setFlyVehicle] = useState<string>("airplane");
   const [introMode, setIntroMode] = useState(false);
   const [introPhase, setIntroPhase] = useState(-1); // -1 = not started, 0-3 = text phases, 4 = done
@@ -2261,6 +2262,7 @@ function HomeContent() {
         river={river}
         bridges={bridges}
         flyMode={flyMode}
+        walkMode={walkMode}
         flyVehicle={flyVehicle}
         onExitFly={exitFlyRef.current = () => {
           const wallMs = Date.now() - flyStartTime.current;
@@ -3788,6 +3790,7 @@ function HomeContent() {
                         onClick={() => {
                           setExploreMenuOpen(false);
                           setFlyMode(false);
+                          setWalkMode(true);
                         }}
                         className="btn-press flex-1 px-1 py-2 text-[7px] sm:text-[8px] text-bg"
                         style={{
