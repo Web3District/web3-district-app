@@ -437,14 +437,12 @@ export default function AdvertiseLanding() {
         </div>
       </section>
 
-      {/* ── Case Study ── */}
+      {/* ── Case Study ── HIDDEN FOR NOW */}
       {/* <section className="pb-16 sm:pb-20">
         <h2 className="mb-8 text-2xl text-cream sm:text-3xl">Results</h2>
 
         <div className="border-[3px] border-border bg-bg-raised p-5 sm:p-8">
-          {/* Quote */}
           <div className="flex items-start gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://github.com/BonaVictor.png?size=64"
               alt="Victor Bona"
@@ -463,7 +461,6 @@ export default function AdvertiseLanding() {
             &ldquo;Ads on Git City really impressed me. 1,400 impressions and dozens of clicks in less than 24 hours. We converted 6 users to our Hobby trial.&rdquo;
           </p>
 
-          {/* Stats row */}
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="border-2 border-border p-3 text-center">
               <p className="text-lg sm:text-2xl" style={{ color: ACCENT }}>3,900</p>
@@ -488,7 +485,6 @@ export default function AdvertiseLanding() {
           </p>
         </div>
 
-        {/* Industry benchmark */}
         <div
           className="mt-4 border-l-[3px] py-2 pl-5"
           style={{ borderColor: ACCENT }}
