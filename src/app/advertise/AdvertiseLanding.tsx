@@ -560,23 +560,23 @@ export default function AdvertiseLanding() {
         <p className="text-xs text-muted normal-case">
           Questions?{" "}
           <a
-            href="mailto:samuel@thegitcity.com"
+            href="mailto:hello@web4city.xyz"
             className="transition-colors hover:text-cream"
             style={{ color: ACCENT }}
           >
-            samuel@thegitcity.com
+            hello@web4city.xyz
           </a>
         </p>
         <p className="mt-4 text-xs text-muted normal-case">
           Built by{" "}
           <a
-            href="https://x.com/samuelrizzondev"
+            href="https://web4city.xyz"
             target="_blank"
             rel="noopener noreferrer"
             className="transition-colors hover:text-cream"
             style={{ color: ACCENT }}
           >
-            @samuelrizzondev
+            Web4City
           </a>
         </p>
       </footer>
@@ -761,7 +761,7 @@ export default function AdvertiseLanding() {
                   Got it.
                 </p>
                 <p className="mt-3 text-xs leading-relaxed text-muted normal-case">
-                  Samuel will reply to{" "}
+                  The Web4City team will reply to{" "}
                   <span className="text-cream">{cEmail}</span> with pricing and
                   next steps for your custom 3D building.
                 </p>
@@ -896,11 +896,11 @@ export default function AdvertiseLanding() {
                   <p className="text-center text-[9px] text-muted normal-case">
                     Or email{" "}
                     <a
-                      href="mailto:samuel@thegitcity.com"
+                      href="mailto:hello@web4city.xyz"
                       className="hover:text-cream"
                       style={{ color: ACCENT }}
                     >
-                      samuel@thegitcity.com
+                      hello@web4city.xyz
                     </a>{" "}
                     directly.
                   </p>
