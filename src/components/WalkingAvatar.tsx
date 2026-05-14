@@ -1,28 +1,33 @@
 "use client";
 
-import { useRef, useEffect, useMemo, useState } from "react";
+import { useRef, useEffect, useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 
 /**
  * Walking avatar with animated legs for walk mode.
  * Uses character-b.glb which has walk/run animations.
+ * Reads speed from ref for instant response (no React render delay).
  */
 
 export default function WalkingAvatar({ 
   position = [0, 0, 0] as [number, number, number],
-  speed = 0,
+  speedRef,
 }: { 
   position?: [number, number, number];
-  speed?: number;
+  speedRef?: React.MutableRefObject<number>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene, animations } = useGLTF("/models/characters/character-b.glb");
   const { actions } = useAnimations(animations, groupRef);
-  const [currentAction, setCurrentAction] = useState<string | null>(null);
-
+  
   // Clone the scene to avoid shared state issues
   const clonedScene = useMemo(() => scene.clone(true), [scene]);
+  
+  // Track current animation for smooth transitions
+  const currentActionRef = useRef<string | null>(null);
+  const lastSpeedRef = useRef(0);
 
   // Debug: log available animations on first load
   useEffect(() => {
@@ -34,56 +39,47 @@ export default function WalkingAvatar({
     }
   }, [scene, animations]);
 
-  // Handle animation switching based on speed
-  useEffect(() => {
-    if (!actions) return;
+  // Check speed every frame for instant animation switching
+  useFrame(() => {
+    if (!actions || !speedRef) return;
+    
+    const speed = speedRef.current;
+    
+    // Only check if speed changed significantly (avoid constant checks)
+    if (Math.abs(speed - lastSpeedRef.current) < 0.1) return;
+    lastSpeedRef.current = speed;
 
     // Determine which animation should play
     let targetAnim = "idle";
     if (speed > 15) {
-      targetAnim = "run";
+      targetAnim = "sprint";
     } else if (speed > 5) {
       targetAnim = "walk";
     }
 
-    // Find the animation action (try multiple name variations)
-    const findAction = (name: string) => {
-      // Try exact match first
-      if (actions[name]) return { name, action: actions[name] };
+    // Switch immediately if different
+    if (targetAnim !== currentActionRef.current && actions[targetAnim]) {
+      console.log(`🎭 Switching: ${currentActionRef.current ?? "none"} → ${targetAnim} (speed: ${speed.toFixed(1)})`);
       
-      // Try case variations
-      const keys = Object.keys(actions);
-      const lower = name.toLowerCase();
-      const match = keys.find(k => 
-        k.toLowerCase() === lower || 
-        k.toLowerCase().includes(lower) ||
-        lower.includes(k.toLowerCase())
-      );
-      if (match) return { name: match, action: actions[match] };
-      
-      return null;
-    };
-
-    const found = findAction(targetAnim);
-    
-    if (found && found.name !== currentAction) {
-      console.log(`🎭 Switching animation: ${currentAction ?? "none"} → ${found.name} (speed: ${speed})`);
+      // Cross-fade with minimal delay for instant response
+      const fadeDuration = 0.05; // Super fast fade (was 0.2)
       
       // Fade out current action
-      if (currentAction && actions[currentAction]) {
-        actions[currentAction].fadeOut(0.2);
+      if (currentActionRef.current && actions[currentActionRef.current]) {
+        actions[currentActionRef.current].fadeOut(fadeDuration);
       }
       
-      // Fade in new action
-      found.action.reset();
-      found.action.setEffectiveWeight(1);
-      found.action.setEffectiveTimeScale(1);
-      found.action.fadeIn(0.2);
-      found.action.play();
+      // Fade in new action immediately
+      const action = actions[targetAnim];
+      action.reset();
+      action.setEffectiveWeight(1);
+      action.setEffectiveTimeScale(1);
+      action.fadeIn(fadeDuration);
+      action.play();
       
-      setCurrentAction(found.name);
+      currentActionRef.current = targetAnim;
     }
-  }, [actions, speed, currentAction]);
+  });
 
   return (
     <group ref={groupRef} position={position}>

@@ -108,6 +108,7 @@ function WalkingPlayer({
       
       speed.current = MAX_SPEED;
     } else {
+      // Instant stop when no input
       speed.current = 0;
     }
 
@@ -161,8 +162,8 @@ function WalkingPlayer({
 
   return (
     <group ref={groupRef} position={[0, 0, 0]} rotation={[0, rotation.current, 0]}>
-      {/* Animated walking avatar - smaller scale */}
-      <WalkingAvatar position={[0, 0, 0]} speed={speed.current} />
+      {/* Animated walking avatar - speed ref for instant updates */}
+      <WalkingAvatar position={[0, 0, 0]} speedRef={speed} />
     </group>
   );
 }
