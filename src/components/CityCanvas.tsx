@@ -2441,8 +2441,8 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
 
           {!introMode && walkMode && (
             <>
-              <WalkingPlayer key="walk" posRef={walkPosRef} />
-              <GroundCollectibles playerPosRef={walkPosRef} accentColor={accentColor ?? "#6090e0"} onCollect={onCollect ?? (() => { })} cityRadius={cityRadius} />
+              <WalkingPlayer key="walking-player" posRef={walkPosRef} />
+              <GroundCollectibles key="ground-coins" playerPosRef={walkPosRef} accentColor={accentColor ?? "#6090e0"} onCollect={onCollect ?? (() => { })} cityRadius={cityRadius} />
             </>
           )}
         </>
@@ -2452,10 +2452,10 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
 
       {/* ─── Web4City Zone 0: Central Plaza ─── */}
       <QuantumCore />
-      <DistrictTowers onDistrictClick={onDistrictLobbyClick} session={session} onSignIn={onDistrictSignIn} />
+      <DistrictTowers onDistrictClick={onDistrictLobbyClick} session={session} onSignIn={onDistrictSignIn} walkMode={walkMode} />
 
       {/* ─── Plaza Avatars (from Agentshire Kenney collection) ─── */}
-      {!walkMode && <PlazaAvatar position={[30, 0, 30]} />}
+      {!walkMode && <PlazaAvatar key="plaza-avatar" position={[30, 0, 30]} />}
 
       {!wallpaperMode && celebrationActive && <CelebrationEffect cityRadius={cityRadius} />}
 

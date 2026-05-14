@@ -589,9 +589,10 @@ interface DistrictTowersProps {
   onDistrictClick?: (slug: string) => void;
   session?: unknown;
   onSignIn?: () => void;
+  walkMode?: boolean;
 }
 
-export default function DistrictTowers({ onDistrictClick, session, onSignIn }: DistrictTowersProps) {
+export default function DistrictTowers({ onDistrictClick, session, onSignIn, walkMode }: DistrictTowersProps) {
   const handleClick = (slug: string) => {
     if (!session && onSignIn) {
       onSignIn();
@@ -607,7 +608,7 @@ export default function DistrictTowers({ onDistrictClick, session, onSignIn }: D
       <BuildingQuantum name="Quantum" position={[94, 0, 130]} height={420} accentColor="#06b6d4" windowColors={["#06b6d4", "#22d3ee", "#0891b2", "#67e8f9", "#0e7490"]} onClick={() => handleClick("quantum-lobby")} />
       <BuildingGrowth name="Growth" position={[-94, 0, 130]} height={340} accentColor="#22c55e" windowColors={["#22c55e", "#4ade80", "#16a34a", "#86efac", "#15803d"]} onClick={() => handleClick("growth-lobby")} />
       <BuildingVC name="VC" position={[-152, 0, -50]} height={360} accentColor="#eab308" windowColors={["#eab308", "#facc15", "#ca8a04", "#fde047", "#a16207"]} onClick={() => handleClick("vc-lobby")} />
-      <WalkingAvatar />
+      {!walkMode && <WalkingAvatar />}
     </>
   );
 }
