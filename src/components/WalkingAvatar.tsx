@@ -30,6 +30,7 @@ export default function WalkingAvatar({
   // Track current animation for smooth transitions
   const currentActionRef = useRef<string | null>(null);
   const lastSpeedRef = useRef(0);
+  const lastIsJumpingRef = useRef(false);
 
   // Debug: log available animations on first load
   useEffect(() => {
@@ -48,12 +49,17 @@ export default function WalkingAvatar({
     const speed = speedRef.current;
     const isJumping = isJumpingRef?.current ?? false;
     
-    // Only check if speed changed significantly (avoid constant checks)
-    if (Math.abs(speed - lastSpeedRef.current) < 0.1 && !isJumping) return;
+    // Check if jumping state changed (for instant landing response)
+    const jumpingChanged = (isJumpingRef && lastIsJumpingRef.current !== isJumping);
+    lastIsJumpingRef.current = isJumping;
+    
+    // Only check if speed changed significantly OR jumping state changed
+    if (!jumpingChanged && Math.abs(speed - lastSpeedRef.current) < 0.1) return;
     lastSpeedRef.current = speed;
 
     // Determine which animation should play
     // During jump: keep sprint pose (legs extended)
+    // On landing: immediately switch based on speed
     let targetAnim = "idle";
     if (isJumping) {
       targetAnim = "sprint"; // Keep legs extended during jump
