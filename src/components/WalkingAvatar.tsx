@@ -36,20 +36,19 @@ export default function WalkingAvatar({
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         if (mesh.material) {
-          // If it's an array of materials
+          // Create new material with ninja texture
+          const ninjaMaterial = new THREE.MeshStandardMaterial({
+            map: ninjaTexture,
+            color: 0xffffff,
+            roughness: 0.5,
+            metalness: 0.1,
+          });
+          
+          // Replace material
           if (Array.isArray(mesh.material)) {
-            mesh.material.forEach((mat) => {
-              if (mat.map) {
-                mat.map = ninjaTexture;
-                mat.needsUpdate = true;
-              }
-            });
+            mesh.material = mesh.material.map(() => ninjaMaterial);
           } else {
-            // Single material
-            if (mesh.material.map) {
-              mesh.material.map = ninjaTexture;
-              mesh.material.needsUpdate = true;
-            }
+            mesh.material = ninjaMaterial;
           }
         }
       }
