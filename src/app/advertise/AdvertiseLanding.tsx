@@ -7,8 +7,11 @@ import { MAX_TEXT_LENGTH } from "@/lib/skyAds";
 
 const AdPreview = dynamic(() => import("@/components/AdPreview"), { ssr: false });
 
-const ACCENT = "#c8e64a";
+const ACCENT = "#ed0584"; // Web4City neon pink
+const ACCENT_DARK = "#a0045a"; // Darker pink for shadows
 const CREAM = "#e8dcc8";
+const CYAN = "#06b6d4"; // Secondary accent for stats
+const PURPLE = "#a855f7"; // Tertiary accent
 
 type Currency = "usd" | "brl";
 type PreviewVehicle = "rooftop_sign" | "blimp" | "plane" | "led_wrap" | "billboard" | null;
@@ -220,7 +223,7 @@ export default function AdvertiseLanding() {
           className="btn-press mt-10 px-8 py-4 text-sm text-bg sm:text-base"
           style={{
             backgroundColor: ACCENT,
-            boxShadow: "4px 4px 0 0 #5a7a00",
+            boxShadow: `4px 4px 0 0 ${ACCENT_DARK}`,
           }}
         >
           See Packages
@@ -650,7 +653,7 @@ export default function AdvertiseLanding() {
                   value={link}
                   onChange={(e) => setLink(e.target.value)}
                   placeholder="https://yoursite.com"
-                  className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-lime"
+                  className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#ed0584]"
                 />
               </div>
 
@@ -670,7 +673,7 @@ export default function AdvertiseLanding() {
                       value={color}
                       onChange={(e) => setColor(e.target.value)}
                       maxLength={7}
-                      className="w-full border-2 border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-lime"
+                      className="w-full border-2 border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#ed0584]"
                     />
                   </div>
                 </div>
@@ -688,7 +691,7 @@ export default function AdvertiseLanding() {
                       value={bgColor}
                       onChange={(e) => setBgColor(e.target.value)}
                       maxLength={7}
-                      className="w-full border-2 border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-lime"
+                      className="w-full border-2 border-border bg-transparent px-2 py-1.5 font-pixel text-[10px] text-cream outline-none transition-colors focus:border-[#ed0584]"
                     />
                   </div>
                 </div>
@@ -712,7 +715,7 @@ export default function AdvertiseLanding() {
                 className="btn-press w-full py-3.5 text-sm text-bg transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
                 style={{
                   backgroundColor: ACCENT,
-                  boxShadow: "4px 4px 0 0 #5a7a00",
+                  boxShadow: `4px 4px 0 0 ${ACCENT_DARK}`,
                 }}
               >
                 {loading
@@ -776,7 +779,7 @@ export default function AdvertiseLanding() {
                   className="btn-press mt-6 w-full py-3.5 text-sm text-bg"
                   style={{
                     backgroundColor: ACCENT,
-                    boxShadow: "4px 4px 0 0 #5a7a00",
+                    boxShadow: `4px 4px 0 0 ${ACCENT_DARK}`,
                   }}
                 >
                   Close
@@ -800,7 +803,7 @@ export default function AdvertiseLanding() {
                       onChange={(e) => setCName(e.target.value)}
                       maxLength={100}
                       placeholder="Jane Doe"
-                      className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-lime"
+                      className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#ed0584]"
                     />
                   </div>
 
@@ -814,7 +817,7 @@ export default function AdvertiseLanding() {
                       onChange={(e) => setCEmail(e.target.value)}
                       maxLength={200}
                       placeholder="you@company.com"
-                      className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-lime"
+                      className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#ed0584]"
                     />
                   </div>
 
@@ -828,7 +831,7 @@ export default function AdvertiseLanding() {
                       onChange={(e) => setCCompany(e.target.value)}
                       maxLength={200}
                       placeholder="Acme Inc."
-                      className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-lime"
+                      className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#ed0584]"
                     />
                   </div>
 
@@ -842,7 +845,7 @@ export default function AdvertiseLanding() {
                       onChange={(e) => setCWebsite(e.target.value)}
                       maxLength={300}
                       placeholder="https://yoursite.com"
-                      className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-lime"
+                      className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream outline-none transition-colors focus:border-[#ed0584]"
                     />
                   </div>
 
@@ -861,7 +864,7 @@ export default function AdvertiseLanding() {
                       maxLength={2000}
                       rows={4}
                       placeholder="Brand colors, style references, goals, timing, budget range..."
-                      className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream normal-case outline-none transition-colors focus:border-lime"
+                      className="mt-1 w-full border-[3px] border-border bg-transparent px-3 py-2 font-pixel text-xs text-cream normal-case outline-none transition-colors focus:border-[#ed0584]"
                     />
                   </div>
 
@@ -885,7 +888,7 @@ export default function AdvertiseLanding() {
                     className="btn-press w-full py-3.5 text-sm text-bg transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
                     style={{
                       backgroundColor: ACCENT,
-                      boxShadow: "4px 4px 0 0 #5a7a00",
+                      boxShadow: `4px 4px 0 0 ${ACCENT_DARK}`,
                     }}
                   >
                     {cLoading ? "Sending..." : "Send inquiry"}
@@ -1031,12 +1034,12 @@ function PackageCard({
           featured
             ? {
                 backgroundColor: ACCENT,
-                boxShadow: "4px 4px 0 0 #5a7a00",
+                boxShadow: `4px 4px 0 0 ${ACCENT_DARK}`,
               }
             : {
                 backgroundColor: "transparent",
                 border: `2px solid ${ACCENT}`,
-                boxShadow: "4px 4px 0 0 #5a7a00",
+                boxShadow: `4px 4px 0 0 ${ACCENT_DARK}`,
               }
         }
       >
@@ -1065,8 +1068,8 @@ function FormatCard({
           onClick={onPreview}
           className="cursor-pointer border-2 px-3 py-1 text-[10px] transition-colors hover:text-bg"
           style={{ borderColor: ACCENT, color: ACCENT }}
-          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = ACCENT; }}
-          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = ACCENT; }}
+          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = ACCENT; e.currentTarget.style.boxShadow = `3px 3px 0 0 ${ACCENT_DARK}`; }}
+          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = ACCENT; e.currentTarget.style.boxShadow = "none"; }}
         >
           Preview
         </button>
