@@ -24,10 +24,10 @@ const SKY_RADIUS = 1800;
 // Per-theme disc config (elevation degrees, distance, scale)
 // Kept separate from old STAR_COUNTS so old constants are not lost.
 const DISC_CFG = [
-    { elevDeg: 14, dist: 900, scale: 110 },  // 0: Midnight — crisp small moon
+    { elevDeg: 14, dist: 900, scale: 110 },  // 0: Midnight - crisp small moon
     { elevDeg: 7, dist: 850, scale: 200 },  // 1: Sunset
-    { elevDeg: 5, dist: 800, scale: 300 },  // 2: Neon — synthwave disc
-    { elevDeg: 14, dist: 800, scale: 110 },  // 3: Emerald — small orb
+    { elevDeg: 5, dist: 800, scale: 300 },  // 2: Neon - synthwave disc
+    { elevDeg: 14, dist: 800, scale: 110 },  // 3: Emerald - small orb
 ] as const;
 
 // Per-theme particle counts (conservative)
@@ -48,7 +48,7 @@ const prefersReducedMotion =
 
 const MAX_STREAKS = 3;
 const STREAK_SEGMENTS = 10;
-const UPDATE_EVERY_N_FRAMES = 3; // ~20fps updates on 60fps scene — saves CPU
+const UPDATE_EVERY_N_FRAMES = 3; // ~20fps updates on 60fps scene - saves CPU
 
 // ─── Helpers ──────────────────────────────────────────────────
 
@@ -78,7 +78,7 @@ function sampleUpperHemisphereDir(
     return new THREE.Vector3(h * Math.cos(az), y, h * Math.sin(az)).normalize();
 }
 
-/** Crisp moon disc texture — 512px, narrow alpha edge, subtle crater noise.
+/** Crisp moon disc texture - 512px, narrow alpha edge, subtle crater noise.
  *  Replaces the old soft radial blob for a more realistic moon look. */
 function makeCrispMoonTexture(size = 512): THREE.CanvasTexture {
     const c = document.createElement("canvas");
@@ -166,7 +166,7 @@ function makeRadialTexture(
     return tex;
 }
 
-/** Emerald orb texture — smooth green gradient with clean alpha edge.
+/** Emerald orb texture - smooth green gradient with clean alpha edge.
  *  Fixed: larger canvas, proper alpha falloff, no green dots/artifacts. */
 function makeEmeraldOrbTexture(size = 256): THREE.CanvasTexture {
     const c = document.createElement("canvas");
@@ -286,7 +286,7 @@ function makeSynthwaveMoonTexture(size = 256): THREE.CanvasTexture {
     return tex;
 }
 
-/** Sunset horizon scattering band — thin 4-wide canvas mapped onto a sphere.
+/** Sunset horizon scattering band - thin 4-wide canvas mapped onto a sphere.
  *  Only the horizon latitude band is opaque; sky and below fade to 0. */
 function makeHorizonBandTexture(h = 256): THREE.CanvasTexture {
     const c = document.createElement("canvas");
@@ -330,25 +330,26 @@ function makeSunsetDiscTexture(size = 512): THREE.CanvasTexture {
     ctx.clip();
 
     // Warm disc with gentle gradient + slight limb darkening
-    const g = ctx.createRadialGradient(cx - r * 0.10, cy - r * 0.12, r * 0.08, cx, cy, r);
-    g.addColorStop(0.00, "rgba(255,252,244,1)");
-    g.addColorStop(0.30, "rgba(255,233,198,1)");
-    g.addColorStop(0.62, "rgba(255,190,135,1)");
-    g.addColorStop(0.90, "rgba(255,150,98,1)");
-    g.addColorStop(1.00, "rgba(255,132,86,1)");
+    const g = ctx.createRadialGradient(cx, cy, r * 0.15, cx, cy, r);
+    g.addColorStop(0.00, "rgba(255,250,240,1)");  // Bright center
+    g.addColorStop(0.25, "rgba(255,230,190,1)");  // Warm middle
+    g.addColorStop(0.55, "rgba(255,200,150,1)");  // Orange transition
+    g.addColorStop(0.85, "rgba(255,160,100,1)");  // Deep orange edge
+    g.addColorStop(1.00, "rgba(255,140,80,1)");   // Rim
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, size, size);
 
-    // VERY subtle grain so it doesn’t look like a flat blob
+    // VERY subtle warm grain (no green/cold colors)
     const rng = mulberry32(424242);
-    ctx.globalAlpha = 0.05;
-    for (let i = 0; i < 130; i++) {
+    ctx.globalAlpha = 0.03;
+    for (let i = 0; i < 80; i++) {
         const ang = rng() * Math.PI * 2;
-        const rad = Math.sqrt(rng()) * r * 0.90;
+        const rad = Math.sqrt(rng()) * r * 0.85;
         const x = cx + Math.cos(ang) * rad;
         const y = cy + Math.sin(ang) * rad;
-        const rr = (1 + rng() * 4) * (size / 512);
-        ctx.fillStyle = rng() < 0.5 ? "#fff7e6" : "#ffd2b8";
+        const rr = (1 + rng() * 3) * (size / 512);
+        // Only warm colors - no green!
+        ctx.fillStyle = rng() < 0.5 ? "#fff0e0" : "#ffd5b0";
         ctx.beginPath();
         ctx.arc(x, y, rr, 0, Math.PI * 2);
         ctx.fill();
@@ -463,7 +464,7 @@ function makeSunsetCirrusDomeTexture(seed = 1, w = 1024, h = 512): THREE.CanvasT
 }
 
 
-/** Patchy aurora curtain texture — two 1D noise layers create
+/** Patchy aurora curtain texture - two 1D noise layers create
  *  gaps where aurora fades out, giving a realistic non-uniform look.
  *  Blur pass smooths column edges. wrapS=Repeat enables UV drift. */
 function makeAuroraCurtainTexture(seed = 1, w = 1024, h = 256): THREE.CanvasTexture {
@@ -517,7 +518,7 @@ function makeAuroraCurtainTexture(seed = 1, w = 1024, h = 256): THREE.CanvasText
         ctx.fillRect(x, top, colW, height);
     }
 
-    // Blur pass — removes harsh column edges
+    // Blur pass - removes harsh column edges
     const tmp = document.createElement("canvas");
     tmp.width = w; tmp.height = h;
     const tctx = tmp.getContext("2d")!;
@@ -561,7 +562,7 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
     const { camera } = useThree();
     const rootRef = useRef<THREE.Group>(null);
 
-    // ── Sky depth helpers — push sky FX near camera.far so they're
+    // ── Sky depth helpers - push sky FX near camera.far so they're
     // always behind opaque city geometry (Three.js renders opaque first,
     // then transparent in depth order).
     // Design-time distances in DISC_CFG/STAR_DIST are treated as ratios;
@@ -610,14 +611,14 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
             blending: themeIndex === 1 || themeIndex === 3 ? THREE.AdditiveBlending : THREE.NormalBlending
         });
         m.toneMapped = false;
-        // Crisp alpha edge for Midnight moon — trims near-transparent halo pixels
+        // Crisp alpha edge for Midnight moon - trims near-transparent halo pixels
         if (themeIndex === 0) m.alphaTest = 0.02;
         if (themeIndex === 1) m.alphaTest = 0.015;
-        if (themeIndex === 3) m.alphaTest = 0.02; // Emerald orb — clean edge
+        if (themeIndex === 3) m.alphaTest = 0.02; // Emerald orb - clean edge
         return m;
     }, [discTex, discOpacity, discColor, themeIndex]);
 
-    // Ref for opacity pulses (safe to hold in ref — SpriteMaterial is mutable)
+    // Ref for opacity pulses (safe to hold in ref - SpriteMaterial is mutable)
     const discMatRef = useRef(discMat);
     discMatRef.current = discMat;
 
@@ -655,7 +656,7 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
         const scaledDist = skyD(dist);
 
         for (let i = 0; i < count; i++) {
-            // Upper hemisphere only — no underground stars
+            // Upper hemisphere only - no underground stars
             const dir = sampleUpperHemisphereDir(rng, minElev, 78);
             pos[i * 3] = dir.x * scaledDist;
             pos[i * 3 + 1] = dir.y * scaledDist;
@@ -683,7 +684,7 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
         if (!STAR_COUNTS[themeIndex]) return null;
         const m = new THREE.PointsMaterial({
             size: themeIndex === 2 ? 2.0 : themeIndex === 3 ? 1.6 : 1.8,
-            sizeAttenuation: false, // stable screen-space size — stars don't shrink away
+            sizeAttenuation: false, // stable screen-space size - stars don't shrink away
             vertexColors: true, transparent: true,
             opacity: themeIndex === 2 ? 0.85 : themeIndex === 3 ? 0.55 : 0.75,
             depthWrite: false,
@@ -763,7 +764,7 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
             pos[i * 3 + 2] = dir.z * r;
 
             const c = palette[Math.floor(randRange(rng, 0, palette.length))];
-            // Boost brightness 4× — the GitHub green hex values are perceptually dark;
+            // Boost brightness 4× - the GitHub green hex values are perceptually dark;
             // with toneMapped=false + AdditiveBlending multiplied values glow visibly.
             const a = randRange(rng, 3.5, 5.0);
             col[i * 3] = c.r * a;
@@ -782,7 +783,7 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
         const m = new THREE.PointsMaterial({
             size: 3.5, vertexColors: true, transparent: true, opacity: 1.0,
             depthWrite: false,
-            depthTest: true, // fixed: was false — fireflies were drawing through ground
+            depthTest: true, // fixed: was false - fireflies were drawing through ground
             fog: false,
             blending: THREE.AdditiveBlending,
         });
@@ -790,12 +791,12 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
         return m;
     }, [themeIndex]);
 
-    // ── Aurora Ring (Emerald) — CylinderGeometry so it wraps
+    // ── Aurora Ring (Emerald) - CylinderGeometry so it wraps
     // the full horizon with no billboard sprite edges.
     const auroraGeo = useMemo(() => {
         if (themeIndex !== 3) return null;
         const radius = skyD(940);
-        const height = skyD(260);   // reduced from 420 — ring is less dominating
+        const height = skyD(260);   // reduced from 420 - ring is less dominating
         // 160 segments = smoother ring, openEnded
         return new THREE.CylinderGeometry(radius, radius, height, 160, 1, true);
     }, [themeIndex, skyScale]);
@@ -944,7 +945,7 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
         auroraPulse.current = { active: false, t: 0, dur: 1.5, nextIn: 12 };
     }, [themeIndex, streakGeo]);
 
-    // ── Disc placement — elevation + azimuth, pushed to sky depth zone ─
+    // ── Disc placement - elevation + azimuth, pushed to sky depth zone ─
     const discPos = useMemo(() => {
         const cfg = DISC_CFG[themeIndex];
         const elevRad = (cfg.elevDeg * Math.PI) / 180;
@@ -1008,7 +1009,7 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
 
         // ── Aurora ring scroll + pulse (Emerald) ─────────────────
         if (themeIndex === 3 && auroraRingMat0 && auroraRingMat1) {
-            // Slower drift — patchy texture already has visual complexity
+            // Slower drift - patchy texture already has visual complexity
             if (auroraRingMat0.map && auroraRingMat1.map) {
                 auroraRingMat0.map.offset.x = (auroraRingMat0.map.offset.x + dt * 0.010) % 1;
                 auroraRingMat1.map.offset.x = (auroraRingMat1.map.offset.x - dt * 0.006) % 1;
@@ -1186,7 +1187,7 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
                 material={discMat}
             />
 
-            {/* Stars — Midnight + Neon + Emerald faint (upper hemisphere, depthTest: true) */}
+            {/* Stars - Midnight + Neon + Emerald faint (upper hemisphere, depthTest: true) */}
             {starGeo && starMat && (
                 <points
                     ref={starPointsRef}
@@ -1219,7 +1220,7 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
                 />
             )}
 
-            {/* Aurora Ring layers (Emerald) — lifted so bottom stays near horizon line */}
+            {/* Aurora Ring layers (Emerald) - lifted so bottom stays near horizon line */}
             {auroraGeo && auroraRingMat0 && (
                 <mesh
                     geometry={auroraGeo}
@@ -1271,7 +1272,7 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
                 />
             )}
 
-            {/* Shooting-star streak pool — active for all 4 themes */}
+            {/* Shooting-star streak pool - active for all 4 themes */}
             <points
                 ref={streakRef}
                 geometry={streakGeo}
