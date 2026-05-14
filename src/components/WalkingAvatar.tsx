@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useEffect, useMemo } from "react";
-import { useFrame } from "@react-three/fiber";
-import { useGLTF, useAnimations } from "@react-three/drei";
+import { useFrame, useThree } from "@react-three/fiber";
+import { useGLTF, useAnimations, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
 /**
@@ -24,8 +24,39 @@ export default function WalkingAvatar({
   const { scene, animations } = useGLTF("/models/characters/character-b.glb");
   const { actions } = useAnimations(animations, groupRef);
   
+  // Load custom ninja texture
+  const ninjaTexture = useTexture("/models/characters/Textures/ninja_web4_eyes_2.png");
+  
   // Clone the scene to avoid shared state issues
-  const clonedScene = useMemo(() => scene.clone(true), [scene]);
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone(true);
+    
+    // Apply ninja texture to all meshes in the clone
+    clone.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        if (mesh.material) {
+          // If it's an array of materials
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach((mat) => {
+              if (mat.map) {
+                mat.map = ninjaTexture;
+                mat.needsUpdate = true;
+              }
+            });
+          } else {
+            // Single material
+            if (mesh.material.map) {
+              mesh.material.map = ninjaTexture;
+              mesh.material.needsUpdate = true;
+            }
+          }
+        }
+      }
+    });
+    
+    return clone;
+  }, [scene, ninjaTexture]);
   
   // Track current animation for smooth transitions
   const currentActionRef = useRef<string | null>(null);
