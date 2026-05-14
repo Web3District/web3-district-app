@@ -206,7 +206,7 @@ export default function AdvertiseLanding() {
       <section className="pt-16 pb-20 text-center sm:pt-24 sm:pb-28">
         <h1 className="text-4xl text-cream sm:text-6xl lg:text-7xl">
           Your brand.{" "}
-          <span style={{ color: ACCENT }}>In the skyline.</span>
+          <span style={{ color: ACCENT }}>In the web4city.</span>
         </h1>
         <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-muted normal-case sm:text-base">
           Planes, blimps, and rooftop signs inside a 3D city with 172K+ developers. 1%+ CTR — 3x the industry average.
@@ -229,7 +229,6 @@ export default function AdvertiseLanding() {
           {[
             { n: "172K+", l: "Unique Visitors", accent: true },
             { n: "3.3M+", l: "Ad Impressions", accent: true },
-            { n: "64+", l: "Ads Sold", accent: false },
             { n: "71K+", l: "Devs in the City", accent: false },
           ].map((m) => (
             <div
@@ -299,28 +298,6 @@ export default function AdvertiseLanding() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <p className="mb-3 text-xs text-dim normal-case">
-            Linus Torvalds has a building here. So do 71,000+ other developers, including:
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            {NOTABLE_DEVS.map((dev) => (
-              <div key={dev.login} className="flex items-center gap-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`https://github.com/${dev.login}.png?size=48`}
-                  alt={dev.name}
-                  width={24}
-                  height={24}
-                  className="rounded-sm border border-border"
-                  loading="lazy"
-                />
-                <span className="text-xs text-muted normal-case">{dev.name}</span>
-              </div>
-            ))}
           </div>
         </div>
       </section>
