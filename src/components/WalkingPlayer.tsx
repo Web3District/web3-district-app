@@ -93,18 +93,38 @@ function WalkingPlayer({
     if (len > 0) {
       moveDir.normalize();
       
-      // Smooth turning towards movement direction
+      // Calculate target rotation based on movement direction
       const targetRotation = Math.atan2(moveDir.x, moveDir.z);
-      let diff = targetRotation - rotation.current;
-      // Normalize angle to -PI to PI
-      while (diff > Math.PI) diff -= Math.PI * 2;
-      while (diff < -Math.PI) diff += Math.PI * 2;
-      rotation.current += diff * 0.15; // Smooth turn (15% per frame)
       
-      // Move player in rotation direction
-      const moveSpeed = MAX_SPEED * dt;
-      pos.current.x += Math.sin(rotation.current) * moveSpeed;
-      pos.current.z += Math.cos(rotation.current) * moveSpeed;
+      // Check if moving backward (S or Down arrow is primary input)
+      const isMovingBackward = (k["ArrowDown"] || k["KeyS"]) && !(k["ArrowUp"] || k["KeyW"]);
+      
+      if (isMovingBackward) {
+        // For backward movement: rotate body 180° but move in camera-back direction
+        const backwardRotation = targetRotation + Math.PI;
+        let diff = backwardRotation - rotation.current;
+        // Normalize angle to -PI to PI
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        rotation.current += diff * 0.15; // Smooth turn (15% per frame)
+        
+        // Move backward (opposite to facing direction)
+        const moveSpeed = MAX_SPEED * dt;
+        pos.current.x -= Math.sin(rotation.current) * moveSpeed;
+        pos.current.z -= Math.cos(rotation.current) * moveSpeed;
+      } else {
+        // Forward/sideways movement: face movement direction
+        let diff = targetRotation - rotation.current;
+        // Normalize angle to -PI to PI
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        rotation.current += diff * 0.15; // Smooth turn (15% per frame)
+        
+        // Move forward in facing direction
+        const moveSpeed = MAX_SPEED * dt;
+        pos.current.x += Math.sin(rotation.current) * moveSpeed;
+        pos.current.z += Math.cos(rotation.current) * moveSpeed;
+      }
       
       speed.current = MAX_SPEED;
     } else {
@@ -163,7 +183,7 @@ function WalkingPlayer({
   return (
     <group ref={groupRef} position={[0, 0, 0]} rotation={[0, rotation.current, 0]}>
       {/* Animated walking avatar - speed ref for instant updates */}
-      <WalkingAvatar position={[0, 0, 0]} speedRef={speed} />
+      <WalkingAvatar position={[0, 0, 0]} speedRef={speed} isJumpingRef={isJumping} />
     </group>
   );
 }

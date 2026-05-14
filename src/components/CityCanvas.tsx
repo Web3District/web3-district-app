@@ -1069,7 +1069,7 @@ function AirplaneFlight({ onExit, onHud, onPause, pauseSignal = 0, hasOverlay = 
 const COLLECTIBLE_COUNT = 40;
 const COMBO_WINDOW = 3; // seconds
 // Hitbox radius per type — generous for good UX at flight speed
-const COLLECT_RADIUS: Record<string, number> = { common: 20, rare: 28, epic: 35 };
+const COLLECT_RADIUS: Record<string, number> = { common: 35, rare: 45, epic: 55 }; // Larger hitbox - any touch collects!
 
 interface CollectibleDef {
   x: number; y: number; z: number;

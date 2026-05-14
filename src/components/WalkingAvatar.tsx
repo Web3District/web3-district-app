@@ -14,9 +14,11 @@ import * as THREE from "three";
 export default function WalkingAvatar({ 
   position = [0, 0, 0] as [number, number, number],
   speedRef,
+  isJumpingRef,
 }: { 
   position?: [number, number, number];
   speedRef?: React.MutableRefObject<number>;
+  isJumpingRef?: React.MutableRefObject<boolean>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene, animations } = useGLTF("/models/characters/character-b.glb");
@@ -44,14 +46,18 @@ export default function WalkingAvatar({
     if (!actions || !speedRef) return;
     
     const speed = speedRef.current;
+    const isJumping = isJumpingRef?.current ?? false;
     
     // Only check if speed changed significantly (avoid constant checks)
-    if (Math.abs(speed - lastSpeedRef.current) < 0.1) return;
+    if (Math.abs(speed - lastSpeedRef.current) < 0.1 && !isJumping) return;
     lastSpeedRef.current = speed;
 
     // Determine which animation should play
+    // During jump: keep sprint pose (legs extended)
     let targetAnim = "idle";
-    if (speed > 15) {
+    if (isJumping) {
+      targetAnim = "sprint"; // Keep legs extended during jump
+    } else if (speed > 15) {
       targetAnim = "sprint";
     } else if (speed > 5) {
       targetAnim = "walk";
@@ -59,7 +65,7 @@ export default function WalkingAvatar({
 
     // Switch immediately if different
     if (targetAnim !== currentActionRef.current && actions[targetAnim]) {
-      console.log(`🎭 Switching: ${currentActionRef.current ?? "none"} → ${targetAnim} (speed: ${speed.toFixed(1)})`);
+      console.log(`🎭 Switching: ${currentActionRef.current ?? "none"} → ${targetAnim} (speed: ${speed.toFixed(1)}, jumping: ${isJumping})`);
       
       // Cross-fade with minimal delay for instant response
       const fadeDuration = 0.05; // Super fast fade (was 0.2)
