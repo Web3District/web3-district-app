@@ -286,7 +286,7 @@ function makeSynthwaveMoonTexture(size = 256): THREE.CanvasTexture {
     return tex;
 }
 
-/** Sunset horizon scattering band - thin 4-wide canvas mapped onto a sphere.
+/** Sunset horizon scattering band — thin 4-wide canvas mapped onto a sphere.
  *  Only the horizon latitude band is opaque; sky and below fade to 0. */
 function makeHorizonBandTexture(h = 256): THREE.CanvasTexture {
     const c = document.createElement("canvas");
@@ -297,9 +297,9 @@ function makeHorizonBandTexture(h = 256): THREE.CanvasTexture {
     // v=0 top, v=1 bottom; horizon lives near v=0.5
     g.addColorStop(0.00, "rgba(255,255,255,0)");
     g.addColorStop(0.35, "rgba(255,255,255,0)");
-    g.addColorStop(0.46, "rgba(255,255,255,0.10)");
-    g.addColorStop(0.485, "rgba(255,255,255,0.30)");  // bright band just above horizon
-    g.addColorStop(0.505, "rgba(255,255,255,0.12)");  // tiny bleed below horizon
+    g.addColorStop(0.46, "rgba(255,200,150,0.08)");  // Warm orange tint (no green)
+    g.addColorStop(0.485, "rgba(255,180,130,0.20)");  // Bright band just above horizon
+    g.addColorStop(0.505, "rgba(255,170,120,0.10)");  // tiny bleed below horizon
     g.addColorStop(0.54, "rgba(255,255,255,0)");
     g.addColorStop(1.00, "rgba(255,255,255,0)");
     ctx.fillStyle = g;
@@ -329,32 +329,15 @@ function makeSunsetDiscTexture(size = 512): THREE.CanvasTexture {
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.clip();
 
-    // Warm disc with gentle gradient + slight limb darkening
+    // Warm disc with gentle gradient - NO grain to avoid green dots
     const g = ctx.createRadialGradient(cx, cy, r * 0.15, cx, cy, r);
     g.addColorStop(0.00, "rgba(255,250,240,1)");  // Bright center
-    g.addColorStop(0.25, "rgba(255,230,190,1)");  // Warm middle
-    g.addColorStop(0.55, "rgba(255,200,150,1)");  // Orange transition
-    g.addColorStop(0.85, "rgba(255,160,100,1)");  // Deep orange edge
-    g.addColorStop(1.00, "rgba(255,140,80,1)");   // Rim
+    g.addColorStop(0.30, "rgba(255,235,200,1)");  // Warm middle
+    g.addColorStop(0.60, "rgba(255,210,160,1)");  // Orange transition
+    g.addColorStop(0.90, "rgba(255,170,110,1)");  // Deep orange edge
+    g.addColorStop(1.00, "rgba(255,150,90,1)");   // Rim
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, size, size);
-
-    // VERY subtle warm grain (no green/cold colors)
-    const rng = mulberry32(424242);
-    ctx.globalAlpha = 0.03;
-    for (let i = 0; i < 80; i++) {
-        const ang = rng() * Math.PI * 2;
-        const rad = Math.sqrt(rng()) * r * 0.85;
-        const x = cx + Math.cos(ang) * rad;
-        const y = cy + Math.sin(ang) * rad;
-        const rr = (1 + rng() * 3) * (size / 512);
-        // Only warm colors - no green!
-        ctx.fillStyle = rng() < 0.5 ? "#fff0e0" : "#ffd5b0";
-        ctx.beginPath();
-        ctx.arc(x, y, rr, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    ctx.globalAlpha = 1;
 
     ctx.restore();
 
