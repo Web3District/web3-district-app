@@ -455,12 +455,17 @@ function HomeContent() {
   const [flyBoostActive, setFlyBoostActive] = useState(false);
   const [flyBrakeActive, setFlyBrakeActive] = useState(false);
   const [flyScore, setFlyScore] = useState({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
+  const [walkScore, setWalkScore] = useState({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
   const [flyPersonalBest, setFlyPersonalBest] = useState(0);
+  const [walkPersonalBest, setWalkPersonalBest] = useState(0);
   const flyStartTime = useRef(0);
   const flyPausedAt = useRef(0);
   const flyTotalPauseMs = useRef(0);
   const exitFlyRef = useRef<(() => void) | null>(null);
+  const walkStartTime = useRef(0);
+  const exitWalkRef = useRef<(() => void) | null>(null);
   const [flyElapsedSec, setFlyElapsedSec] = useState(0);
+  const [walkElapsedSec, setWalkElapsedSec] = useState(0);
   const [stats, setStats] = useState<CityStats>({ total_developers: 0, total_contributions: 0 });
   const [milestoneCelebrations, setMilestoneCelebrations] = useState<{ milestone: number; reached_at: string }[]>([]);
   const [focusedBuilding, setFocusedBuilding] = useState<string | null>(null);
@@ -637,13 +642,19 @@ function HomeContent() {
   const [showDailyNudge, setShowDailyNudge] = useState(false);
   const [showFlyHint, setShowFlyHint] = useState(false);
   const [showFlyControls, setShowFlyControls] = useState(false);
+  const [showWalkControls, setShowWalkControls] = useState(true); // Show instructions on first enter
   const [showFlyResults, setShowFlyResults] = useState<{
     score: number; collected: number; maxCombo: number; timeBonus: number;
     isNewPB: boolean; rank: number; totalPilots: number;
   } | null>(null);
+  const [showWalkResults, setShowWalkResults] = useState<{
+    score: number; collected: number; maxCombo: number; timeBonus: number;
+    isNewPB: boolean; rank: number; totalPilots: number;
+  } | null>(null);
+  const flyResultsTimerRef = useRef(0);
+  const walkResultsTimerRef = useRef(0);
   const dailyNudgeTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const flyHintTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const flyResultsTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // A8: Ghost preview for own building
   const ghostPreviewShownRef = useRef(false);
@@ -862,6 +873,17 @@ function HomeContent() {
     return () => clearInterval(id);
   }, [flyMode, flyPaused]);
 
+  // Walk timer — ticks every second while walking
+  useEffect(() => {
+    if (!walkMode) return;
+    if (walkStartTime.current === 0) walkStartTime.current = Date.now();
+    const id = setInterval(() => {
+      const elapsed = Date.now() - walkStartTime.current;
+      setWalkElapsedSec(Math.floor(elapsed / 1000));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [walkMode]);
+
   // Dismiss fly onboarding overlays when entering fly mode
   useEffect(() => {
     if (flyMode) {
@@ -869,6 +891,40 @@ function HomeContent() {
       clearTimeout(dailyNudgeTimerRef.current); clearTimeout(flyHintTimerRef.current); clearTimeout(flyResultsTimerRef.current);
     }
   }, [flyMode]);
+
+  // Dismiss walk overlays when entering walk mode
+  useEffect(() => {
+    if (walkMode) {
+      setShowWalkControls(true);
+      clearTimeout(walkResultsTimerRef.current);
+    }
+  }, [walkMode]);
+
+  // Exit walk handler (with results modal)
+  exitWalkRef.current = () => {
+    const flightMs = Date.now() - walkStartTime.current;
+    const WALK_TIME_LIMIT = 90;
+    const timeFraction = walkScore.collected > 0 ? Math.max(0, (WALK_TIME_LIMIT - flightMs / 1000) / WALK_TIME_LIMIT) : 0;
+    const timeBonus = Math.floor(walkScore.score * 0.5 * timeFraction);
+    const finalScore = walkScore.score + timeBonus;
+    
+    let currentPB = walkPersonalBest;
+    try { currentPB = Math.max(currentPB, parseInt(localStorage.getItem("web4city_walk_pb") || "0", 10) || 0); } catch { }
+    const isNewPB = currentPB > 0 && finalScore > currentPB;
+    
+    if (isNewPB) {
+      setWalkPersonalBest(finalScore);
+      try { localStorage.setItem("web4city_walk_pb", String(finalScore)); } catch { }
+    }
+    
+    setWalkMode(false);
+    
+    if (finalScore > 0) {
+      const captured = { score: finalScore, collected: walkScore.collected, maxCombo: walkScore.maxCombo, timeBonus, isNewPB };
+      setShowWalkResults({ ...captured, rank: 0, totalPilots: 0 });
+      walkResultsTimerRef.current = setTimeout(() => setShowWalkResults(null), 12000) as any;
+    }
+  };
 
   // Fetch fly vehicle from raid loadout (on login)
   const sessionUserId = session?.user?.id;
@@ -1132,12 +1188,15 @@ function HomeContent() {
 
   // ESC: layered dismissal
   // During fly mode: only close overlays (profile card) — AirplaneFlight handles pause/exit
-  // Outside fly mode: compare → share modal → profile card → focus → explore mode
+  // During walk mode: exit walk mode
+  // Outside fly/walk mode: compare → share modal → profile card → focus → explore mode
   useEffect(() => {
     if (flyMode && !selectedBuilding && !pillModalOpen && !founderMessageOpen && !eArcadeOpen && !activeSponsor) return;
-    if (!flyMode && !exploreMode && !focusedBuilding && !shareData && !selectedBuilding && !giftClaimed && !giftModalOpen && !comparePair && !compareBuilding && !founderMessageOpen && !pillModalOpen && !eArcadeOpen && !activeSponsor && !rabbitCinematic && !invitePreview && raidState.phase === "idle") return;
+    if (!flyMode && !walkMode && !exploreMode && !focusedBuilding && !shareData && !selectedBuilding && !giftClaimed && !giftModalOpen && !comparePair && !compareBuilding && !founderMessageOpen && !pillModalOpen && !eArcadeOpen && !activeSponsor && !rabbitCinematic && !invitePreview && raidState.phase === "idle") return;
     const onKey = (e: KeyboardEvent) => {
       if (e.code === "Escape") {
+        // Walk mode exit (highest priority when active)
+        if (walkMode) { exitWalkRef.current?.(); return; }
         // Founder modals take highest priority
         if (founderMessageOpen) { setFounderMessageOpen(false); return; }
         if (pillModalOpen) { setPillModalOpen(false); return; }
@@ -1186,7 +1245,7 @@ function HomeContent() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [flyMode, exploreMode, focusedBuilding, shareData, selectedBuilding, giftClaimed, giftModalOpen, comparePair, compareBuilding, founderMessageOpen, pillModalOpen, eArcadeOpen, activeSponsor, rabbitCinematic, endRabbitCinematic, raidState.phase, raidActions, invitePreview]);
+  }, [walkMode, flyMode, exploreMode, focusedBuilding, shareData, selectedBuilding, giftClaimed, giftModalOpen, comparePair, compareBuilding, founderMessageOpen, pillModalOpen, eArcadeOpen, activeSponsor, rabbitCinematic, endRabbitCinematic, raidState.phase, raidActions, invitePreview]);
 
   // SHOP CHANGES - Listen for unequip/equip actions and refresh city
   useEffect(() => {
@@ -2381,7 +2440,13 @@ function HomeContent() {
           }
           setFlyPaused(p);
         }}
-        onCollect={(score, earned, combo, collected, maxCombo) => setFlyScore({ score, earned, combo, collected, maxCombo })}
+        onCollect={(score, earned, combo, collected, maxCombo) => {
+          if (walkMode) {
+            setWalkScore({ score, earned, combo, collected, maxCombo });
+          } else {
+            setFlyScore({ score, earned, combo, collected, maxCombo });
+          }
+        }}
         focusedBuilding={focusedBuilding}
         focusedBuildingB={focusedBuildingB}
         accentColor={theme.accent}
@@ -2728,7 +2793,7 @@ function HomeContent() {
           )}
 
           {/* Flight data (above lo-fi radio) — hidden on mobile */}
-          {!isMobile && (
+          {!isMobile && flyMode && (
             <div className="absolute bottom-14 left-3 text-[9px] leading-loose text-muted sm:left-4 sm:text-[10px]">
               <div className="flex items-center gap-2">
                 <span>SPD</span>
@@ -2766,7 +2831,7 @@ function HomeContent() {
           )}
 
           {/* Controls hint */}
-          {!isMobile && (
+          {!isMobile && flyMode && (
             <div className="absolute bottom-35 right-3 text-right text-[8px] leading-loose text-muted sm:right-4 sm:text-[9px]">
               {flyPaused ? (
                 <>
@@ -2873,6 +2938,150 @@ function HomeContent() {
         </>
       )}
 
+      {/* ─── Walk Mode HUD ─── */}
+      {walkMode && (
+        <div className="pointer-events-none fixed inset-0 z-30">
+          {isMobile ? (
+            <div className="pointer-events-auto absolute left-2 right-2 flex items-center gap-1.5 border-[3px] border-border bg-bg/80 px-2 py-1.5 backdrop-blur-sm" style={{ top: "max(8px, env(safe-area-inset-top, 8px))" }}>
+              {/* Exit */}
+              <button
+                onClick={(e) => { e.stopPropagation(); e.preventDefault(); exitWalkRef.current?.(); }}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => e.stopPropagation()}
+                className="btn-press shrink-0 text-[10px] tracking-wider uppercase"
+                style={{ color: theme.accent }}
+              >
+                Exit
+              </button>
+              <span className="text-border">|</span>
+              {/* Status dot + WALK + score */}
+              <span className="h-1.5 w-1.5 shrink-0 blink-dot" style={{ backgroundColor: theme.accent }} />
+              <span className="text-[9px]" style={{ color: theme.accent }}>{walkScore.score}</span>
+              <span className="text-[9px] text-muted">PX</span>
+              {walkScore.combo >= 2 && (
+                <span className="animate-pulse text-[9px] font-bold" style={{ color: "#ffd700" }}>
+                  &times;{walkScore.combo >= 4 ? 3 : walkScore.combo >= 3 ? 2 : 1.5}
+                </span>
+              )}
+              <span className="text-border">|</span>
+              <span className="text-[9px] text-muted">{walkScore.collected}<span style={{ color: theme.accent }}>/40</span></span>
+              <span className="text-[9px]" style={{ color: walkElapsedSec < 90 ? theme.accent : "#f85149" }}>
+                {Math.floor(walkElapsedSec / 60)}:{String(walkElapsedSec % 60).padStart(2, "0")}
+              </span>
+            </div>
+          ) : (
+            <>
+              {/* ── Desktop: centered top bar ── */}
+              <div className="absolute top-4 left-1/2 -translate-x-1/2">
+                <div className="inline-flex items-center gap-3 border-[3px] border-border bg-bg/70 px-5 py-2.5 backdrop-blur-sm">
+                  <span className="h-2 w-2 shrink-0 blink-dot" style={{ backgroundColor: theme.accent }} />
+                  <span className="text-[10px] text-cream">Walk</span>
+                  <span className="mx-1 text-border">|</span>
+                  <span className="text-[10px]" style={{ color: theme.accent }}>{walkScore.score}</span>
+                  <span className="text-[10px] text-muted">PX</span>
+                  {walkScore.combo >= 2 && (
+                    <span className="animate-pulse text-[10px] font-bold" style={{ color: "#ffd700" }}>
+                      &times;{walkScore.combo >= 4 ? 3 : walkScore.combo >= 3 ? 2 : 1.5}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* ── Desktop: score HUD (top right) ── */}
+              <div className="absolute top-4 right-4 text-right text-[10px] text-muted">
+                <div>{walkScore.collected}/40 collected</div>
+                <div className="mt-1 flex h-1 w-24 items-center border border-border/40 bg-bg/50 ml-auto">
+                  <div className="h-full transition-all duration-150" style={{ width: `${(walkScore.collected / 40) * 100}%`, backgroundColor: theme.accent }} />
+                </div>
+                <div className="mt-1.5 text-[8px]">
+                  <span className="text-muted">TIME </span>
+                  <span style={{ color: walkElapsedSec < 90 ? theme.accent : "#f85149" }}>
+                    {Math.floor(walkElapsedSec / 60)}:{String(walkElapsedSec % 60).padStart(2, "0")}
+                  </span>
+                </div>
+                {walkPersonalBest > 0 && (
+                  <div className="mt-0.5 text-[8px] text-muted">BEST: <span style={{ color: theme.accent }}>{walkPersonalBest}</span></div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Controls hint (bottom-right) */}
+          {!isMobile && (
+            <div className="absolute bottom-35 right-3 text-right text-[8px] leading-loose text-muted sm:right-4 sm:text-[9px]">
+              <div>
+                <span className="text-cream">WASD</span> Move (camera-relative)
+              </div>
+              <div>
+                <span className="text-cream">SPACE</span> Jump
+              </div>
+              <div>
+                <span className="text-cream">Arrows</span> Move (camera-relative)
+              </div>
+              <div>
+                <span style={{ color: theme.accent }}>ESC</span> Exit
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ─── Walk Controls Overlay (first time) ─── */}
+      {showWalkControls && walkMode && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-bg/50 backdrop-blur-[2px]">
+          <div
+            className="border-[3px] border-border bg-bg-raised px-8 py-6 text-center animate-[fade-in_0.3s_ease-out]"
+            style={{ borderColor: theme.accent + "60" }}
+          >
+            <p className="mb-4 text-xs tracking-widest text-muted">WALK MODE CONTROLS</p>
+            <div className="flex flex-col gap-2.5 text-[11px]">
+              {isMobile ? (
+                <>
+                  <div className="flex items-center justify-between gap-6">
+                    <span className="text-cream">Touch &amp; Drag</span>
+                    <span className="text-muted">Move Camera</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-6">
+                    <span className="text-cream">WASD</span>
+                    <span className="text-muted">Move</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between gap-6">
+                    <span className="text-cream">WASD / Arrows</span>
+                    <span className="text-muted">Move</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-6">
+                    <span className="text-cream">SPACE</span>
+                    <span className="text-muted">Jump</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-6">
+                    <span className="text-cream">Mouse</span>
+                    <span className="text-muted">Look Around</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-6">
+                    <span className="text-cream">ESC</span>
+                    <span className="text-muted">Exit</span>
+                  </div>
+                </>
+              )}
+              <div className="mt-4 pt-4 border-t border-border/40">
+                <p className="text-[10px] text-muted">Collect all 40 coins as fast as possible!</p>
+                <p className="text-[10px]" style={{ color: theme.accent }}>🪙 40 coins hidden across the city</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowWalkControls(false)}
+              className="btn-press mt-6 px-6 py-2 text-[11px] uppercase tracking-widest"
+              style={{ backgroundColor: theme.accent, boxShadow: `3px 3px 0 0 ${theme.shadow}`, color: theme.bg }}
+            >
+              Got it!
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ─── Feature 3: First-Flight Controls Overlay ─── */}
       {showFlyControls && flyMode && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-bg/50 backdrop-blur-[2px]">
@@ -2940,7 +3149,7 @@ function HomeContent() {
       />
 
       {/* ─── Explore Mode: minimal UI ─── */}
-      {exploreMode && !flyMode && (
+      {exploreMode && !flyMode && !walkMode && (
         <div className="pointer-events-none fixed inset-0 z-20">
           {/* Back button */}
           <div className="pointer-events-auto absolute top-3 left-3 sm:top-4 sm:left-4">
@@ -3001,7 +3210,7 @@ function HomeContent() {
       {/* Shop & Auth moved to center buttons area */}
 
       {/* ─── GitHub Badge (mobile: top-center, desktop: top-right) ─── */}
-      {!flyMode && !introMode && !rabbitCinematic && (
+      {!flyMode && !walkMode && !introMode && !rabbitCinematic && (
         <div className={`pointer-events-auto fixed top-3 left-3 z-30 items-center gap-1.5 sm:gap-2 sm:left-auto sm:right-4 sm:top-4 ${exploreMode ? "hidden lg:flex" : "flex"}`}>
           {/* GitHub stars — HIDDEN */}
           {/* starCount != null && (
@@ -3268,7 +3477,7 @@ function HomeContent() {
       )}
 
       {/* ─── Mobile Hamburger Button ─── */}
-      {!flyMode && !introMode && !rabbitCinematic && !exploreMode && (
+      {!flyMode && !walkMode && !introMode && !rabbitCinematic && !exploreMode && (
         <button
           onClick={() => setMobileMenuOpen(true)}
           className="pointer-events-auto fixed top-3 right-3 z-40 flex h-8 w-8 items-center justify-center border-2 border-border bg-bg/80 backdrop-blur-sm sm:hidden"
@@ -3490,7 +3699,7 @@ function HomeContent() {
       )}
 
       {/* ─── Main UI Overlay ─── */}
-      {!flyMode && !exploreMode && !introMode && !rabbitCinematic && (
+      {!flyMode && !walkMode && !exploreMode && !introMode && !rabbitCinematic && (
         <div
           className="pointer-events-none fixed inset-0 z-20 flex flex-col items-center justify-between pt-16 pb-4 px-3 sm:py-8 sm:px-4"
           style={{
@@ -3789,8 +3998,14 @@ function HomeContent() {
                       <button
                         onClick={() => {
                           setExploreMenuOpen(false);
+                          setExploreMode(false);
                           setFlyMode(false);
                           setWalkMode(true);
+                          setWalkScore({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
+                          setWalkElapsedSec(0);
+                          walkStartTime.current = Date.now();
+                          setShowWalkControls(true); // Show controls on enter
+                          try { setWalkPersonalBest(parseInt(localStorage.getItem("web4city_walk_pb") || "0", 10) || 0); } catch { setWalkPersonalBest(0); }
                         }}
                         className="btn-press flex-1 px-1 py-2 text-[7px] sm:text-[8px] text-bg"
                         style={{
@@ -3964,7 +4179,7 @@ function HomeContent() {
       )}
 
       {/* ─── Mobile Bottom Bar (game-style nav) ─── */}
-      {!flyMode && !exploreMode && !introMode && !rabbitCinematic && buildings.length > 0 && (
+      {!flyMode && !walkMode && !exploreMode && !introMode && !rabbitCinematic && buildings.length > 0 && (
         <nav className="pointer-events-auto fixed inset-x-0 bottom-0 z-35 hidden items-center justify-around border-t-2 border-border bg-bg/95 px-1 py-2 backdrop-blur-md sm:hidden">
           <Link
             href={shopHref}
@@ -5291,7 +5506,7 @@ function HomeContent() {
       )}
 
       {/* ─── Bottom-left controls: Radio (portal slot) + Intro (Theme removed - always Neon) ─── */}
-      {!flyMode && !introMode && !rabbitCinematic && !exploreMode && (
+      {!flyMode && !walkMode && !introMode && !rabbitCinematic && !exploreMode && (
         <div className="pointer-events-auto fixed bottom-8 left-3 z-25 flex flex-col-reverse items-start gap-2 sm:bottom-10 sm:left-4 sm:flex-row sm:items-center">
           <RadioSlot />
           <button
@@ -5307,7 +5522,7 @@ function HomeContent() {
 
 
       {/* ─── Daily Missions (quest tracker, right side) ─── */}
-      {session && myBuilding?.claimed && !flyMode && !introMode && !exploreMode && !rabbitCinematic && (
+      {session && myBuilding?.claimed && !flyMode && !walkMode && !introMode && !exploreMode && !rabbitCinematic && (
         <DailiesWidget
           data={dailiesData}
           accent={theme.accent}
@@ -5363,7 +5578,7 @@ function HomeContent() {
       )}
 
       {/* ─── Activity Ticker ─── */}
-      {!flyMode && !introMode && !rabbitCinematic && feedEvents.length >= 1 && (
+      {!flyMode && !walkMode && !introMode && !rabbitCinematic && feedEvents.length >= 1 && (
         <ActivityTicker
           events={feedEvents}
           hasBottomBar={false}
@@ -5555,6 +5770,110 @@ function HomeContent() {
               </Link>
               <button
                 onClick={() => { setShowFlyResults(null); clearTimeout(flyResultsTimerRef.current); }}
+                className="text-[9px] text-muted transition-colors hover:text-cream"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Walk Results Modal ─── */}
+      {showWalkResults && !walkMode && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-bg/70 backdrop-blur-sm"
+            onClick={() => { setShowWalkResults(null); clearTimeout(walkResultsTimerRef.current); }}
+          />
+          {/* Modal */}
+          <div
+            className="relative mx-3 border-[3px] border-border bg-bg-raised p-5 text-center sm:mx-0 sm:p-7 animate-[gift-bounce_0.5s_ease-out]"
+            style={{ borderColor: theme.accent + "60", minWidth: 280 }}
+          >
+            {/* Close */}
+            <button
+              onClick={() => { setShowWalkResults(null); clearTimeout(walkResultsTimerRef.current); }}
+              className="absolute top-2 right-3 text-[10px] text-muted transition-colors hover:text-cream"
+            >
+              ESC
+            </button>
+
+            <p className="text-[9px] tracking-widest text-muted mb-1">WALK COMPLETE</p>
+
+            {/* Score */}
+            <div className="text-3xl sm:text-4xl font-bold" style={{ color: theme.accent }}>
+              {showWalkResults.score}
+            </div>
+            <p className="text-[9px] text-muted mt-0.5">points</p>
+
+            {/* New PB badge */}
+            {showWalkResults.isNewPB && (
+              <div
+                className="mt-2 inline-block rounded-sm px-2.5 py-0.5 text-[9px] font-bold text-bg animate-pulse"
+                style={{ backgroundColor: theme.accent }}
+              >
+                NEW PERSONAL BEST!
+              </div>
+            )}
+
+            {/* Stats grid */}
+            <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+              <div>
+                <div className="text-sm font-bold text-cream">{showWalkResults.collected}</div>
+                <div className="text-[8px] text-muted">Collected</div>
+              </div>
+              <div>
+                <div className="text-sm font-bold text-cream">{showWalkResults.maxCombo}x</div>
+                <div className="text-[8px] text-muted">Max Combo</div>
+              </div>
+              <div>
+                <div className="text-sm font-bold text-cream">+{showWalkResults.timeBonus}</div>
+                <div className="text-[8px] text-muted">Time Bonus</div>
+              </div>
+            </div>
+
+            {/* Rank */}
+            {showWalkResults.rank > 0 && (
+              <div className="mt-3 border-t border-border/40 pt-3">
+                <span className="text-[9px] text-muted">Rank </span>
+                <span className="text-sm font-bold" style={{ color: theme.accent }}>
+                  #{showWalkResults.rank}
+                </span>
+                {showWalkResults.totalPilots > 0 && (
+                  <span className="text-[9px] text-muted"> of {showWalkResults.totalPilots}</span>
+                )}
+              </div>
+            )}
+
+            {/* CTAs */}
+            <div className="mt-4 flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-3">
+              <button
+                onClick={() => {
+                  setShowWalkResults(null); clearTimeout(walkResultsTimerRef.current);
+                  setFocusedBuilding(null);
+                  setWalkMode(true);
+                  setWalkScore({ score: 0, earned: 0, combo: 0, collected: 0, maxCombo: 1 });
+                  walkStartTime.current = Date.now();
+                  setWalkElapsedSec(0);
+                  try { setWalkPersonalBest(parseInt(localStorage.getItem("web4city_walk_pb") || "0", 10) || 0); } catch { setWalkPersonalBest(0); }
+                }}
+                className="btn-press px-5 py-2 text-[10px] text-bg"
+                style={{ backgroundColor: theme.accent, boxShadow: `3px 3px 0 0 ${theme.shadow}` }}
+              >
+                Walk Again
+              </button>
+              <Link
+                href="/leaderboard?mode=game&tab=walk"
+                onClick={() => { setShowWalkResults(null); clearTimeout(walkResultsTimerRef.current); }}
+                className="btn-press border-2 border-border px-5 py-2 text-[10px] transition-colors hover:border-border-light"
+                style={{ color: theme.accent }}
+              >
+                See Leaderboard
+              </Link>
+              <button
+                onClick={() => { setShowWalkResults(null); clearTimeout(walkResultsTimerRef.current); }}
                 className="text-[9px] text-muted transition-colors hover:text-cream"
               >
                 Close

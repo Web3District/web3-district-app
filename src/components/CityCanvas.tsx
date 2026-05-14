@@ -1084,6 +1084,216 @@ const _cPos = new THREE.Vector3();
 const _cQuat = new THREE.Quaternion();
 const _cEuler = new THREE.Euler();
 
+// ─── Ground Collectibles (floor-level coins for walk mode) ─────────────
+
+function GroundCollectibles({ playerPosRef, accentColor, onCollect, cityRadius }: {
+  playerPosRef: React.MutableRefObject<THREE.Vector3>;
+  accentColor: string;
+  onCollect: (score: number, earned: number, combo: number, collected: number, maxCombo: number) => void;
+  cityRadius: number;
+}) {
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const flashRef = useRef<THREE.PointLight>(null);
+
+  // Generate collectible positions at ground level (same distribution as sky but y=3-8)
+  const items = useMemo<CollectibleDef[]>(() => {
+    const spread = cityRadius * 0.6;
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((now.getTime() - start.getTime()) / 86400000);
+    let seed = dayOfYear * 7919 + now.getFullYear();
+
+    const rng = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+
+    const MIN_SPACING = 80;
+    const result: CollectibleDef[] = [];
+
+    const tooClose = (x: number, y: number, z: number) =>
+      result.some(p => (p.x - x) ** 2 + (p.y - y) ** 2 + (p.z - z) ** 2 < MIN_SPACING ** 2);
+
+    const placeInZone = (
+      count: number,
+      minR: number, maxR: number,
+      minAlt: number, maxAlt: number,
+      type: "common" | "rare" | "epic",
+      points: number, size: number,
+    ) => {
+      const angularOffset = rng() * Math.PI * 2;
+      for (let i = 0; i < count; i++) {
+        const baseAngle = angularOffset + (i / count) * Math.PI * 2;
+        let placed = false;
+        for (let attempt = 0; attempt < 10 && !placed; attempt++) {
+          const angle = baseAngle + (rng() - 0.5) * (Math.PI * 2 / count) * 0.7;
+          const dist = minR + rng() * (maxR - minR);
+          const x = Math.cos(angle) * dist;
+          const z = Math.sin(angle) * dist;
+          const y = minAlt + rng() * (maxAlt - minAlt);
+          if (!tooClose(x, y, z)) {
+            result.push({ x, y, z, type, points, size });
+            placed = true;
+          }
+        }
+        if (!placed) {
+          const angle = baseAngle + (rng() - 0.5) * 0.3;
+          const dist = minR + rng() * (maxR - minR);
+          result.push({
+            x: Math.cos(angle) * dist,
+            y: minAlt + rng() * (maxAlt - minAlt),
+            z: Math.sin(angle) * dist,
+            type, points, size,
+          });
+        }
+      }
+    };
+
+    // GROUND LEVEL: y = 5-10 (above floor, not sunk) - smaller coin sizes
+    placeInZone(10, spread * 0.2, spread * 0.4, 5, 10, "common", 1, 4);  // 50% smaller (was 8)
+    placeInZone(12, spread * 0.4, spread * 0.7, 5, 10, "common", 1, 4);
+    placeInZone(4, spread * 0.4, spread * 0.7, 5, 10, "rare", 5, 6);    // 50% smaller (was 12)
+    placeInZone(8, spread * 0.7, spread, 5, 10, "common", 1, 4);
+    placeInZone(4, spread * 0.7, spread, 5, 10, "rare", 5, 6);
+    placeInZone(2, spread * 0.7, spread, 5, 10, "epic", 25, 9);         // 50% smaller (was 18)
+
+    return result;
+  }, [cityRadius]);
+
+  const collected = useRef(new Uint8Array(COLLECTIBLE_COUNT));
+  const collectedCount = useRef(0);
+  const totalScore = useRef(0);
+  const lastCollectTime = useRef(0);
+  const comboCount = useRef(0);
+  const maxCombo = useRef(1);
+  const flashTimer = useRef(0);
+
+  const colors = useMemo(() => ({
+    common: new THREE.Color(0, 2.5, 2.5),   // bright cyan
+    rare: new THREE.Color(2.5, 0.5, 3),     // vivid purple
+    epic: new THREE.Color(3, 2.2, 0),        // bright gold
+  }), []);
+
+  // Coin geometry: thin disc standing upright (like a Mario coin) - slightly bigger for ground
+  const coinGeo = useMemo(() => {
+    const geo = new THREE.CylinderGeometry(1.3, 1.3, 0.2, 16); // Bigger: 1.3 radius, 0.2 thick
+    geo.rotateZ(Math.PI / 2); // stand upright — flat faces now face left/right
+    return geo;
+  }, []);
+
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
+    const dummy = new THREE.Object3D();
+    
+    // Initialize positions and colors
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      dummy.position.set(item.x, item.y, item.z);
+      dummy.scale.setScalar(item.size); // Use item size for scale
+      dummy.rotation.y = 0;
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+      mesh.setColorAt(i, colors[items[i].type]);
+    }
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    mesh.instanceMatrix.needsUpdate = true;
+  }, [items, colors]);
+
+  useFrame((state, delta) => {
+    const mesh = meshRef.current;
+    const flash = flashRef.current;
+    if (!mesh || !playerPosRef.current) return;
+
+    const playerPos = playerPosRef.current;
+    const now = performance.now();
+    const t = now * 0.001; // Time in seconds
+
+    // Spin animation (same as SkyCollectibles - absolute rotation)
+    for (let i = 0; i < items.length; i++) {
+      if (collected.current[i]) continue;
+      
+      // Spin around Y axis + gentle pulse
+      const pulse = 1 + Math.sin(t * 2.5 + i) * 0.2;
+      const s = items[i].size * pulse;
+      
+      mesh.getMatrixAt(i, _cMatrix);
+      _cMatrix.decompose(_cPos, _cQuat, _cScale);
+      
+      // Absolute rotation based on time (not incremental)
+      _cEuler.set(0, t * 2.0 + i * 0.7, 0);
+      _cQuat.setFromEuler(_cEuler);
+      _cScale.set(s, s, s);
+      
+      _cMatrix.compose(_cPos, _cQuat, _cScale);
+      mesh.setMatrixAt(i, _cMatrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+
+    // Collection detection
+    for (let i = 0; i < items.length; i++) {
+      if (collected.current[i]) continue;
+      const item = items[i];
+      const dx = playerPos.x - item.x;
+      const dz = playerPos.z - item.z;
+      const dy = (playerPos.y || 0) - item.y;
+      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      if (dist < 8) {
+        collected.current[i] = 1;
+        collectedCount.current++;
+        const points = item.type === "common" ? 1 : item.type === "rare" ? 5 : 25;
+        totalScore.current += points;
+
+        // Combo system
+        if (now - lastCollectTime.current < 3000) {
+          comboCount.current++;
+          if (comboCount.current > maxCombo.current) maxCombo.current = comboCount.current;
+        } else {
+          comboCount.current = 1;
+        }
+        lastCollectTime.current = now;
+
+        const multiplier = comboCount.current >= 4 ? 3 : comboCount.current >= 3 ? 2 : comboCount.current >= 2 ? 1.5 : 1;
+        const earned = Math.floor(points * multiplier);
+
+        onCollect(totalScore.current, earned, comboCount.current, collectedCount.current, maxCombo.current);
+
+        // Flash effect
+        if (flash) {
+          flash.position.set(item.x, item.y, item.z);
+          flash.intensity = 3;
+          flashTimer.current = 0.15;
+        }
+      }
+    }
+
+    // Hide collected
+    for (let i = 0; i < items.length; i++) {
+      if (!collected.current[i]) continue;
+      mesh.getMatrixAt(i, _cMatrix);
+      _cMatrix.decompose(_cPos, _cQuat, _cScale);
+      _cScale.setScalar(0.001);
+      _cMatrix.compose(_cPos, _cQuat, _cScale);
+      mesh.setMatrixAt(i, _cMatrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+
+    // Flash fade
+    if (flashTimer.current > 0) {
+      flashTimer.current -= delta;
+      if (flash) flash.intensity = flashTimer.current * 20;
+    }
+  });
+
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+
+  return (
+    <>
+      <instancedMesh ref={meshRef} args={[coinGeo, undefined, COLLECTIBLE_COUNT]} castShadow receiveShadow>
+        <meshBasicMaterial color="#ffffff" toneMapped={false} />
+      </instancedMesh>
+      <pointLight ref={flashRef} distance={40} intensity={0} color={accentColor} />
+    </>
+  );
+}
+
 function SkyCollectibles({ playerPosRef, accentColor, onCollect, cityRadius }: {
   playerPosRef: React.MutableRefObject<THREE.Vector3>;
   accentColor: string;
@@ -2160,6 +2370,7 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
   const [dpr, setDpr] = useState(1);
   const [bloomEnabled, setBloomEnabled] = useState(false);
   const flyPosRef = useRef(new THREE.Vector3());
+  const walkPosRef = useRef(new THREE.Vector3());
 
   const cityRadius = useMemo(() => {
     let max = 200;
@@ -2207,8 +2418,8 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
         <WallpaperOrbitScene speed={wallpaperSpeed ?? 0.08} />
       ) : (
         <>
-          {!introMode && !rabbitCinematic && !flyMode && (!raidPhase || raidPhase === "idle" || raidPhase === "preview") && (
-            <OrbitScene buildings={buildings} focusedBuilding={focusedBuilding ?? null} focusedBuildingB={focusedBuildingB} focusPosition={sponsorFocusPos} />
+          {!introMode && !rabbitCinematic && !flyMode && !walkMode && (!raidPhase || raidPhase === "idle" || raidPhase === "preview") && (
+            <OrbitScene key="orbit" buildings={buildings} focusedBuilding={focusedBuilding ?? null} focusedBuildingB={focusedBuildingB} focusPosition={sponsorFocusPos} />
           )}
 
           {raidPhase && raidPhase !== "idle" && raidPhase !== "preview" && (
@@ -2229,7 +2440,10 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
           )}
 
           {!introMode && walkMode && (
-            <WalkingPlayer />
+            <>
+              <WalkingPlayer key="walk" posRef={walkPosRef} />
+              <GroundCollectibles playerPosRef={walkPosRef} accentColor={accentColor ?? "#6090e0"} onCollect={onCollect ?? (() => { })} cityRadius={cityRadius} />
+            </>
           )}
         </>
       )}
@@ -2241,7 +2455,7 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
       <DistrictTowers onDistrictClick={onDistrictLobbyClick} session={session} onSignIn={onDistrictSignIn} />
 
       {/* ─── Plaza Avatars (from Agentshire Kenney collection) ─── */}
-      <PlazaAvatar position={[30, 0, 30]} />
+      {!walkMode && <PlazaAvatar position={[30, 0, 30]} />}
 
       {!wallpaperMode && celebrationActive && <CelebrationEffect cityRadius={cityRadius} />}
 
