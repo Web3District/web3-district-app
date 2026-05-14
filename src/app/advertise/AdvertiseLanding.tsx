@@ -470,7 +470,7 @@ export default function AdvertiseLanding() {
       </section>
 
       {/* ── Case Study ── */}
-      <section className="pb-16 sm:pb-20">
+      {/* <section className="pb-16 sm:pb-20">
         <h2 className="mb-8 text-2xl text-cream sm:text-3xl">Results</h2>
 
         <div className="border-[3px] border-border bg-bg-raised p-5 sm:p-8">
@@ -530,7 +530,7 @@ export default function AdvertiseLanding() {
             <span className="text-cream">0.34%</span>
           </p>
         </div>
-      </section>
+      </section> */}
 
       {/* ── FAQ ── */}
       <section className="pb-16 sm:pb-20">
