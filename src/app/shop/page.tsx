@@ -6,8 +6,8 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import SignInButton from "./sign-in-button";
 
 export const metadata: Metadata = {
-  title: "Shop - Web3 District",
-  description: "Customize your building in Web3 District with effects, structures and more",
+  title: "Shop - Web4City",
+  description: "Customize your building in Web4City with effects, structures and more",
 };
 
 const ACCENT = "#ed0584";
@@ -53,7 +53,7 @@ export default async function ShopLanding() {
 
         <div className="border-[3px] border-border bg-bg-raised p-6 sm:p-10">
           <h1 className="text-center text-xl text-cream sm:text-2xl">
-            Web3 District <span style={{ color: ACCENT }}>Shop</span>
+            Web4City <span style={{ color: ACCENT }}>Shop</span>
           </h1>
 
           <p className="mt-4 text-center text-[10px] leading-relaxed text-muted normal-case">
