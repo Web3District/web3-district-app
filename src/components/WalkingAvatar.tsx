@@ -21,41 +21,8 @@ export default function WalkingAvatar({
   isJumpingRef?: React.MutableRefObject<boolean>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
-  const { scene, animations } = useGLTF("/models/characters/character-b.glb");
+  const { scene, animations } = useGLTF("/models/characters/character-b-ninja.glb");
   const { actions } = useAnimations(animations, groupRef);
-  
-  // Load custom ninja texture
-  const ninjaTexture = useTexture("/models/characters/Textures/ninja_web4_eyes_2.png");
-  
-  // Clone the scene to avoid shared state issues
-  const clonedScene = useMemo(() => {
-    const clone = scene.clone(true);
-    
-    // Apply ninja texture to all meshes in the clone
-    clone.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        if (mesh.material) {
-          // Create new material with ninja texture
-          const ninjaMaterial = new THREE.MeshStandardMaterial({
-            map: ninjaTexture,
-            color: 0xffffff,
-            roughness: 0.5,
-            metalness: 0.1,
-          });
-          
-          // Replace material
-          if (Array.isArray(mesh.material)) {
-            mesh.material = mesh.material.map(() => ninjaMaterial);
-          } else {
-            mesh.material = ninjaMaterial;
-          }
-        }
-      }
-    });
-    
-    return clone;
-  }, [scene, ninjaTexture]);
   
   // Track current animation for smooth transitions
   const currentActionRef = useRef<string | null>(null);
@@ -131,4 +98,4 @@ export default function WalkingAvatar({
   );
 }
 
-useGLTF.preload("/models/characters/character-b.glb");
+useGLTF.preload("/models/characters/character-b-ninja.glb");
