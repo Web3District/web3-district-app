@@ -83,13 +83,6 @@ export default function AdvertiseLanding() {
 
   const packagesRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (typeof navigator !== "undefined") {
-      const lang = navigator.language || "";
-      if (lang.startsWith("pt")) setCurrency("brl");
-    }
-  }, []);
-
   function scrollToPackages() {
     packagesRef.current?.scrollIntoView({ behavior: "smooth" });
   }
@@ -200,11 +193,11 @@ export default function AdvertiseLanding() {
   }
 
   function getPriceLabel(pkg: string): string {
-    const prices: Record<string, Record<Currency, string>> = {
-      foundation: { usd: "$97", brl: "R$497" },
-      skyline: { usd: "$197", brl: "R$997" },
+    const prices: Record<string, string> = {
+      foundation: "$97",
+      skyline: "$197",
     };
-    return prices[pkg]?.[currency] ?? "";
+    return prices[pkg] ?? "";
   }
 
   return (
@@ -279,10 +272,10 @@ export default function AdvertiseLanding() {
             <p className="mb-3 text-xs text-dim">Where they come from</p>
             <div className="space-y-2">
               {[
-                { source: "GitHub", value: "41K" },
-                { source: "Google", value: "40K" },
-                { source: "X / Twitter", value: "12K" },
-                { source: "LinkedIn", value: "3.3K" },
+                { source: "GitHub", value: "43%" },
+                { source: "Google", value: "42%" },
+                { source: "X / Twitter", value: "13%" },
+                { source: "LinkedIn", value: "3%" },
               ].map((s) => (
                 <div key={s.source} className="flex items-center justify-between text-sm">
                   <span className="text-muted">{s.source}</span>
@@ -295,10 +288,10 @@ export default function AdvertiseLanding() {
             <p className="mb-3 text-xs text-dim">What they code</p>
             <div className="space-y-2">
               {[
-                { lang: "JavaScript", count: "14.2K" },
-                { lang: "Python", count: "9.0K" },
-                { lang: "TypeScript", count: "8.7K" },
-                { lang: "Java", count: "2.8K" },
+                { lang: "JavaScript", count: "41%" },
+                { lang: "Python", count: "26%" },
+                { lang: "TypeScript", count: "25%" },
+                { lang: "Java", count: "8%" },
               ].map((l) => (
                 <div key={l.lang} className="flex items-center justify-between text-sm">
                   <span className="text-muted">{l.lang}</span>
@@ -334,30 +327,12 @@ export default function AdvertiseLanding() {
 
       {/* ── Packages ── */}
       <section ref={packagesRef} className="pb-16 sm:pb-20">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-2xl text-cream sm:text-3xl">Packages</h2>
-          <div className="flex border-2 border-border text-xs">
-            {(["usd", "brl"] as const).map((c) => (
-              <button
-                key={c}
-                type="button"
-                onClick={() => setCurrency(c)}
-                className="px-4 py-1.5 transition-colors"
-                style={{
-                  backgroundColor: currency === c ? ACCENT : "transparent",
-                  color: currency === c ? "#1a1018" : "var(--color-muted)",
-                }}
-              >
-                {c.toUpperCase()}
-              </button>
-            ))}
-          </div>
-        </div>
+        <h2 className="mb-6 text-2xl text-cream sm:text-3xl">Packages</h2>
 
         <div className="grid gap-4 sm:gap-5 lg:grid-cols-3">
           <PackageCard
             name="Foundation"
-            price={currency === "usd" ? "$97" : "R$497"}
+            price="$97"
             period="/mo"
             cta="Go Foundation"
             features={[
@@ -369,7 +344,7 @@ export default function AdvertiseLanding() {
           />
           <PackageCard
             name="Skyline"
-            price={currency === "usd" ? "$197" : "R$997"}
+            price="$197"
             period="/mo"
             cta="Go Skyline"
             features={[
