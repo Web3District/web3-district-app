@@ -419,13 +419,6 @@ export default function AdvertiseLanding() {
                 Your company becomes a building in the city. Custom 3D model with
                 your brand colors and logo. Developers click on it every day.
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {["AbacatePay", "Viral Day", "Acelera Dev"].map((name) => (
-                  <span key={name} className="border-2 border-border px-3 py-1.5 text-xs text-muted">
-                    {name}
-                  </span>
-                ))}
-              </div>
             </div>
             <div className="shrink-0 text-center sm:text-right">
               <p className="text-3xl sm:text-5xl" style={{ color: ACCENT }}>
