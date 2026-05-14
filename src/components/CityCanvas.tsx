@@ -2452,10 +2452,9 @@ export default function CityCanvas({ buildings, plazas, decorations, river, brid
 
       {/* ─── Web4City Zone 0: Central Plaza ─── */}
       <QuantumCore />
-      <DistrictTowers onDistrictClick={onDistrictLobbyClick} session={session} onSignIn={onDistrictSignIn} walkMode={walkMode} />
+      <DistrictTowers onDistrictClick={onDistrictLobbyClick} session={session} onSignIn={onDistrictSignIn} />
 
-      {/* ─── Plaza Avatars (from Agentshire Kenney collection) ─── */}
-      {!walkMode && <PlazaAvatar key="plaza-avatar" position={[30, 0, 30]} />}
+      {/* ─── Plaza Avatars REMOVED - Only WalkingPlayer has avatar during walk mode ─── */}
 
       {!wallpaperMode && celebrationActive && <CelebrationEffect cityRadius={cityRadius} />}
 
