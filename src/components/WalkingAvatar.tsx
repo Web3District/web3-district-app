@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useEffect, useMemo } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
-import { useGLTF, useAnimations, useTexture } from "@react-three/drei";
+import { useRef, useEffect } from "react";
+import { useFrame } from "@react-three/fiber";
+import { useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 
 /**
@@ -93,7 +93,7 @@ export default function WalkingAvatar({
   return (
     <group ref={groupRef} position={position}>
       {/* 50% smaller than plaza avatar for third-person view */}
-      <primitive object={clonedScene} scale={1.75} position={[0, 1, 0]} />
+      <primitive object={scene} scale={1.75} position={[0, 1, 0]} />
     </group>
   );
 }
