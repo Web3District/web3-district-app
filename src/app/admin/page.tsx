@@ -208,6 +208,22 @@ export default function AdminPanelPage() {
             <div className="absolute top-2 right-2 text-xs text-[#4a4a5a]">⌘7</div>
           </a>
 
+          {/* Daily Missions */}
+          <a
+            href="/admin/dailies"
+            className="group relative overflow-hidden rounded-none border-4 border-[#1a1a24] bg-[#101018] p-8 hover:border-[#ed0584] transition-all hover:scale-105 hover:shadow-lg hover:shadow-[#ed0584]/20"
+          >
+            <div className="text-5xl mb-4">🎯</div>
+            <h3 className="text-xl text-[#ed0584] mb-2">Daily Missions</h3>
+            <p className="text-sm text-[#8c8c9c] mb-4">Manage quest pool & rewards</p>
+            <div className="flex items-center text-xs text-[#6a6a7a]">
+              <span className="mr-2">➕ Add</span>
+              <span className="mr-2">✏️ Edit</span>
+              <span>📊 Stats</span>
+            </div>
+            <div className="absolute top-2 right-2 text-xs text-[#4a4a5a]">⌘8</div>
+          </a>
+
           {/* Analytics */}
           <a
             href="/admin/analytics"
@@ -221,7 +237,7 @@ export default function AdminPanelPage() {
               <span className="mr-2">📤 Shares</span>
               <span>👥 Users</span>
             </div>
-            <div className="absolute top-2 right-2 text-xs text-[#4a4a5a]">⌘8</div>
+            <div className="absolute top-2 right-2 text-xs text-[#4a4a5a]">⌘9</div>
           </a>
 
           {/* Users & Analytics */}
@@ -237,7 +253,7 @@ export default function AdminPanelPage() {
               <span className="mr-2">🏆 XP</span>
               <span>🚫 Ban</span>
             </div>
-            <div className="absolute top-2 right-2 text-xs text-[#4a4a5a]">⌘9</div>
+            <div className="absolute top-2 right-2 text-xs text-[#4a4a5a]">⌘10</div>
           </a>
 
           {/* City View */}
