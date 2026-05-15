@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Update arcade room name: Last room → "Web4City Agency"
- * Run this script to rename the last featured room in the COWORK page
+ * Update arcade room name: E.Arcade Lobby → "Web4City Agency"
+ * Run this script to rename the lobby room in the COWORK page
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -27,8 +27,7 @@ async function updateLastRoom() {
   const { data: rooms, error } = await supabase
     .from('arcade_rooms')
     .select('id, slug, name, is_featured')
-    .eq('is_featured', true)
-    .order('created_at', { ascending: true });
+    .eq('slug', 'lobby');  // Target: E.Arcade Lobby
 
   if (error) {
     console.error('❌ Error fetching rooms:', error.message);
@@ -36,17 +35,13 @@ async function updateLastRoom() {
   }
 
   if (!rooms || rooms.length === 0) {
-    console.error('❌ No featured rooms found');
+    console.error('❌ No room found with slug "lobby"');
     process.exit(1);
   }
 
-  console.log(`📋 Found ${rooms.length} featured rooms:`);
-  rooms.forEach((room, i) => {
-    console.log(`   ${i + 1}. ${room.name} (${room.slug})`);
-  });
-
-  const lastRoom = rooms[rooms.length - 1];
-  console.log(`\n✏️  Updating last room: "${lastRoom.name}" → "Web4City Agency"`);
+  const room = rooms[0];
+  console.log(`📋 Found room: ${room.name} (${room.slug})`);
+  console.log(`\n✏️  Updating: "${room.name}" → "Web4City Agency"`);
 
   const { error: updateError } = await supabase
     .from('arcade_rooms')
@@ -55,7 +50,7 @@ async function updateLastRoom() {
       description: 'Official Web4City agency room',
       updated_at: new Date().toISOString()
     })
-    .eq('id', lastRoom.id);
+    .eq('id', room.id);
 
   if (updateError) {
     console.error('❌ Error updating room:', updateError.message);
