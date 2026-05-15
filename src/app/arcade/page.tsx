@@ -171,7 +171,7 @@ export default function ArcadeBrowserPage() {
               <span className="text-lg" style={{ color: ACCENT }}>E.</span>
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="text-sm font-bold" style={{ color: ACCENT }}>E.Arcade</h1>
+              <h1 className="text-sm font-bold" style={{ color: ACCENT }}>COWORK</h1>
               <p className="text-[9px] text-muted normal-case">Choose a room to enter</p>
             </div>
             <div className="shrink-0 text-right">
