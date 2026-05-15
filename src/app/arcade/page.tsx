@@ -168,7 +168,7 @@ export default function ArcadeBrowserPage() {
               className="flex h-12 w-12 shrink-0 items-center justify-center border-2"
               style={{ borderColor: ACCENT, backgroundColor: ACCENT + "11" }}
             >
-              <span className="text-lg" style={{ color: ACCENT }}>E.</span>
+              <span className="text-lg" style={{ color: ACCENT }}>C.</span>
             </div>
             <div className="min-w-0 flex-1">
               <h1 className="text-sm font-bold" style={{ color: ACCENT }}>COWORK</h1>
