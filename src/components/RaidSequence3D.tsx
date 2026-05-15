@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useMemo, useEffect, useState } from "react";
+import { useRef, useMemo, useEffect, useState, useCallback } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
+import { useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 import type { RaidPhase } from "@/lib/useRaidSequence";
 import type { RaidExecuteResponse } from "@/lib/raid";
@@ -317,11 +318,95 @@ function RocketMesh() {
   );
 }
 
-export function VehicleMesh({ type }: { type: string }) {
+// ─── Superhero Avatar (Superman Pose) ────────────────────────
+
+export function SuperheroAvatar({ bankRef }: { bankRef?: React.MutableRefObject<number> }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const leftArmRef = useRef<any>(null);
+  const rightArmRef = useRef<any>(null);
+  const leftLegRef = useRef<any>(null);
+  const rightLegRef = useRef<any>(null);
+  const { scene, animations } = useGLTF("/models/characters/character-b-ninja.glb");
+  const { actions } = useAnimations(animations, groupRef);
+  
+  // Find arm and leg meshes, play animation
+  useEffect(() => {
+    if (scene) {
+      // Find arm and leg meshes
+      scene.traverse((child: any) => {
+        if (child.name === 'arm-left' && child.type === 'Mesh') {
+          leftArmRef.current = child;
+        }
+        if (child.name === 'arm-right' && child.type === 'Mesh') {
+          rightArmRef.current = child;
+        }
+        if (child.name === 'leg-left' && child.type === 'Mesh') {
+          leftLegRef.current = child;
+        }
+        if (child.name === 'leg-right' && child.type === 'Mesh') {
+          rightLegRef.current = child;
+        }
+      });
+      
+      // Play animation for base movement
+      if (actions && animations.length > 0) {
+        const action = actions['Sprint'] || actions['Run'] || actions[animations[0].name];
+        if (action) {
+          action.reset();
+          action.setEffectiveTimeScale(1);
+          action.setEffectiveWeight(1);
+          action.fadeIn(0.2);
+          action.play();
+          console.log('▶️ Playing:', action.getClip().name);
+        }
+      }
+    }
+  }, [scene, actions, animations]);
+  
+  // Rotate arm and leg meshes based on bank angle
+  useFrame((state, delta) => {
+    const bank = bankRef?.current ?? 0;
+    const turnIntensity = Math.min(Math.abs(bank) * 1.5, 1.2);
+    
+    if (bank > 0.1) {
+      // Turning RIGHT: left arm/leg back, right arm/leg forward
+      if (leftArmRef.current) leftArmRef.current.rotation.x = Math.PI - turnIntensity;
+      if (rightArmRef.current) rightArmRef.current.rotation.x = Math.PI;
+      if (leftLegRef.current) leftLegRef.current.rotation.x = -turnIntensity * 0.5;
+      if (rightLegRef.current) rightLegRef.current.rotation.x = turnIntensity * 0.3;
+    } else if (bank < -0.1) {
+      // Turning LEFT: right arm/leg back, left arm/leg forward
+      if (rightArmRef.current) rightArmRef.current.rotation.x = Math.PI - turnIntensity;
+      if (leftArmRef.current) leftArmRef.current.rotation.x = Math.PI;
+      if (rightLegRef.current) rightLegRef.current.rotation.x = -turnIntensity * 0.5;
+      if (leftLegRef.current) leftLegRef.current.rotation.x = turnIntensity * 0.3;
+    } else {
+      // Straight: both arms forward, legs neutral
+      if (leftArmRef.current) leftArmRef.current.rotation.x = Math.PI;
+      if (rightArmRef.current) rightArmRef.current.rotation.x = Math.PI;
+      if (leftLegRef.current) leftLegRef.current.rotation.x = 0;
+      if (rightLegRef.current) rightLegRef.current.rotation.x = 0;
+    }
+  });
+  
+  if (!scene) return null;
+  
+  return (
+    <group ref={groupRef} rotation={[Math.PI / 2 + 0.3, 0, Math.PI]} scale={2.5} position={[0, 0, 0]}>
+      {/* X slightly more than 90° = head HIGHER, legs LOWER (Superman dive angle) */}
+      <primitive object={scene} />
+    </group>
+  );
+}
+
+useGLTF.preload("/models/characters/character-walk.glb");
+
+export function VehicleMesh({ type, bankRef }: { type: string; bankRef?: React.MutableRefObject<number> }) {
   switch (type) {
     case "raid_helicopter": return <HelicopterMesh />;
     case "raid_drone": return <DroneMesh />;
     case "raid_rocket": return <RocketMesh />;
+    case "avatar": return <SuperheroAvatar bankRef={bankRef} />;
     default: return <AirplaneMesh />;
   }
 }
@@ -558,7 +643,7 @@ function ProjectilePool({ active, vehicleRef, targetPos, onImpact }: {
 
   return (
     <group>
-      {/* Core — small bright bullet */}
+      {/* Core - small bright bullet */}
       <instancedMesh ref={meshRef} args={[undefined, undefined, PROJECTILE_COUNT]} frustumCulled={false}>
         <sphereGeometry args={[0.6, 6, 6]} />
         <meshStandardMaterial
@@ -568,7 +653,7 @@ function ProjectilePool({ active, vehicleRef, targetPos, onImpact }: {
           toneMapped={false}
         />
       </instancedMesh>
-      {/* Glow halo — larger, transparent, trails behind */}
+      {/* Glow halo - larger, transparent, trails behind */}
       <instancedMesh ref={glowRef} args={[undefined, undefined, PROJECTILE_COUNT]} frustumCulled={false}>
         <sphereGeometry args={[2, 8, 8]} />
         <meshBasicMaterial

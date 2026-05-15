@@ -414,7 +414,7 @@ function HomeContent() {
   } | null>(null);
   const [flyMode, setFlyMode] = useState(false);
   const [walkMode, setWalkMode] = useState(false);
-  const [flyVehicle, setFlyVehicle] = useState<string>("airplane");
+  const [flyVehicle, setFlyVehicle] = useState<string>("avatar"); // TEST: Superhero avatar instead of airplane
   const [introMode, setIntroMode] = useState(false);
   const [introPhase, setIntroPhase] = useState(-1); // -1 = not started, 0-3 = text phases, 4 = done
   const [exploreMode, setExploreMode] = useState(false);

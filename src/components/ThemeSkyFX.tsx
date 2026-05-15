@@ -185,33 +185,16 @@ function makeEmeraldOrbTexture(size = 256): THREE.CanvasTexture {
     ctx.closePath();
     ctx.clip();
 
-    // Radial gradient: bright green center → darker green edge
-    const g = ctx.createRadialGradient(
-        cx - r * 0.15, cy - r * 0.15, r * 0.1,
-        cx, cy, r
-    );
-    g.addColorStop(0.00, "rgba(180,255,210,1.0)");   // bright green-white center
-    g.addColorStop(0.50, "rgba(60,200,120,1.0)");    // emerald green mid
-    g.addColorStop(1.00, "rgba(30,140,80,1.0)");     // darker green edge (NOT transparent)
+    // Smooth radial gradient: bright green center → darker green edge (NO grain = no green dots!)
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    g.addColorStop(0.00, "#d0ffe8");   // bright green-white center
+    g.addColorStop(0.30, "#a0f0c8");   // light emerald
+    g.addColorStop(0.55, "#60e0a0");   // emerald green mid
+    g.addColorStop(0.75, "#40c088");   // deeper emerald
+    g.addColorStop(0.90, "#28a070");   // dark green transition
+    g.addColorStop(1.00, "#188058");   // dark green edge
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, size, size);
-
-    // Subtle grain for texture (emulates surface detail)
-    const rng = mulberry32(7777);
-    ctx.globalAlpha = 0.06;
-    for (let i = 0; i < 100; i++) {
-        const ang = rng() * Math.PI * 2;
-        const rad = Math.sqrt(rng()) * r * 0.85;
-        const x = cx + Math.cos(ang) * rad;
-        const y = cy + Math.sin(ang) * rad;
-        const rr = (1 + rng() * 3) * (size / 256);
-        ctx.fillStyle = rng() < 0.5 ? "#b8ffd8" : "#50d090";
-        ctx.beginPath();
-        ctx.arc(x, y, rr, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-    ctx.restore();
 
     // Clean alpha edge to kill any artifacts
     ctx.globalCompositeOperation = "destination-in";
@@ -323,28 +306,30 @@ function makeSunsetDiscTexture(size = 512): THREE.CanvasTexture {
     const cx = size / 2, cy = size / 2;
     const r = size * 0.46;
 
-    // Clip to circle
+    // Clip to circle for clean edge
     ctx.save();
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.clip();
 
-    // Warm disc with gentle gradient - NO grain to avoid green dots
-    const g = ctx.createRadialGradient(cx, cy, r * 0.15, cx, cy, r);
-    g.addColorStop(0.00, "rgba(255,250,240,1)");  // Bright center
-    g.addColorStop(0.30, "rgba(255,235,200,1)");  // Warm middle
-    g.addColorStop(0.60, "rgba(255,210,160,1)");  // Orange transition
-    g.addColorStop(0.90, "rgba(255,170,110,1)");  // Deep orange edge
-    g.addColorStop(1.00, "rgba(255,150,90,1)");   // Rim
+    // Smooth gradient with more color stops to prevent banding/green dots
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    g.addColorStop(0.00, "#fff8f0");  // Bright white-yellow center
+    g.addColorStop(0.20, "#fff0e0");  // Warm yellow
+    g.addColorStop(0.40, "#ffe5d0");  // Light orange
+    g.addColorStop(0.60, "#ffd5b8");  // Orange
+    g.addColorStop(0.75, "#ffc49a");  // Deeper orange
+    g.addColorStop(0.85, "#ffb078");  // Orange-red transition
+    g.addColorStop(0.93, "#ff9955");  // Deep orange edge
+    g.addColorStop(1.00, "#ff8833");  // Warm rim
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, size, size);
 
-    ctx.restore();
-
-    // Crisp alpha edge to kill muddy rings
+    // Soft alpha fade at edge (prevents harsh ring)
     ctx.globalCompositeOperation = "destination-in";
-    const edge = ctx.createRadialGradient(cx, cy, r * 0.965, cx, cy, r * 1.02);
+    const edge = ctx.createRadialGradient(cx, cy, r * 0.92, cx, cy, r);
     edge.addColorStop(0.0, "rgba(0,0,0,1)");
+    edge.addColorStop(0.5, "rgba(0,0,0,0.8)");
     edge.addColorStop(1.0, "rgba(0,0,0,0)");
     ctx.fillStyle = edge;
     ctx.fillRect(0, 0, size, size);
@@ -354,6 +339,7 @@ function makeSunsetDiscTexture(size = 512): THREE.CanvasTexture {
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.minFilter = THREE.LinearFilter;
     tex.magFilter = THREE.LinearFilter;
+    tex.generateMipmaps = false; // Prevent compression artifacts
     return tex;
 }
 
@@ -591,12 +577,13 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
         const m = new THREE.SpriteMaterial({
             map: discTex, transparent: true, opacity: discOpacity,
             depthWrite: false, depthTest: true, fog: false, color: discColor,
-            blending: themeIndex === 1 || themeIndex === 3 ? THREE.AdditiveBlending : THREE.NormalBlending
+            blending: THREE.NormalBlending, // Fixed: was causing green dots with AdditiveBlending
+            depthFunc: THREE.LessEqualDepth
         });
         m.toneMapped = false;
-        // Crisp alpha edge for Midnight moon - trims near-transparent halo pixels
+        // Crisp alpha edge for clean rendering
         if (themeIndex === 0) m.alphaTest = 0.02;
-        if (themeIndex === 1) m.alphaTest = 0.015;
+        if (themeIndex === 1) m.alphaTest = 0.02; // Sunset sun - clean edge
         if (themeIndex === 3) m.alphaTest = 0.02; // Emerald orb - clean edge
         return m;
     }, [discTex, discOpacity, discColor, themeIndex]);
@@ -611,12 +598,13 @@ export default memo(function ThemeSkyFX({ themeIndex, theme }: Props) {
         const m = new THREE.SpriteMaterial({
             map: tex,
             transparent: true,
-            opacity: 0.26,              // subtle
+            opacity: 0.18,              // more subtle (was 0.26)
             depthWrite: false,
             depthTest: true,            // buildings can occlude
             fog: false,
-            blending: THREE.AdditiveBlending,
-            color: new THREE.Color("#ffb48a"),
+            blending: THREE.NormalBlending, // Fixed: was causing gradient artifacts
+            color: new THREE.Color("#ffcc99"), // warmer, less orange
+            depthFunc: THREE.LessEqualDepth
         });
         m.toneMapped = false;
         return m;
