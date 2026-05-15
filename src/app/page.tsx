@@ -3585,7 +3585,7 @@ function HomeContent() {
                 className="flex w-full items-center justify-between px-5 py-4 active:bg-white/5"
               >
                 <span className="flex items-center gap-2 text-sm text-cream">
-                  Lobby
+                  COWORK
                   {arcadeOnline > 0 && (
                     <span className="flex items-center gap-1 text-[10px] text-muted">
                       <span className="h-1.5 w-1.5 rounded-full bg-[#4ade80] animate-pulse" />
@@ -4034,7 +4034,7 @@ function HomeContent() {
                     boxShadow: `4px 4px 0 0 ${theme.shadow}`,
                   }}
                 >
-                  Lobby
+                  COWORK
                   <span className="block text-[8px] opacity-60 normal-case">
                     {arcadeOnline > 0 ? `${arcadeOnline} online` : "Meet other devs"}
                   </span>
@@ -4213,7 +4213,7 @@ function HomeContent() {
             className="btn-press relative border-2 border-border px-3 py-1.5 text-[10px] transition-colors active:bg-white/5"
             style={{ color: theme.accent }}
           >
-            Lobby
+            COWORK
             {arcadeOnline > 0 && (
               <span
                 className="absolute -top-1.5 -right-1.5 rounded-full px-1 py-px text-[7px] font-bold leading-none text-bg"
