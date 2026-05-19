@@ -118,13 +118,13 @@ export default function EArcadeCard({ onClose, onEnter, session, onSignIn }: EAr
                 className="flex h-12 w-12 shrink-0 items-center justify-center border-2"
                 style={{ borderColor: ACCENT, backgroundColor: ACCENT + "11" }}
               >
-                <span className="text-lg" style={{ color: ACCENT }}>E.</span>
+                <span className="text-lg" style={{ color: ACCENT }}>C.</span>
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold" style={{ color: ACCENT }}>
-                  E.Arcade
+                  COWORK
                 </p>
-                <p className="text-[10px] text-muted">The city&apos;s office.</p>
+                <p className="text-[10px] text-muted">THE CITY'S BUILDERS SPACE.</p>
               </div>
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function EArcadeCard({ onClose, onEnter, session, onSignIn }: EAr
           {step === 0 && alreadyAnswered !== null && (
             <div className="px-4 py-3 space-y-3">
               <p className="text-[10px] text-muted leading-relaxed">
-                The only building in Web3 District you can walk into. Chat with other devs, sit at a terminal, discover what E. left behind.
+                Five buildings in central Web4City: meet, build, and chat with vibe coders from all districts: Web3, AI, Quantum, Growth, and VC.
               </p>
               <div className="flex items-center gap-1.5">
                 <div

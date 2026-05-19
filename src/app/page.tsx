@@ -4036,7 +4036,7 @@ function HomeContent() {
                 >
                   COWORK
                   <span className="block text-[8px] opacity-60 normal-case">
-                    {arcadeOnline > 0 ? `${arcadeOnline} online` : "Meet other devs"}
+                    {arcadeOnline > 0 ? `${arcadeOnline} online` : "Meet other vibecoders"}
                   </span>
                 </button>
               </div>

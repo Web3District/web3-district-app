@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
-  title: "E.Arcade - Web3 District",
-  description: "The city's office. A shared space for developers.",
+  title: "COWORK - Web3 District",
+  description: "THE CITY'S BUILDERS SPACE. Five buildings in central Web4City: meet, build, and chat with vibe coders from all districts—Web3, AI, Quantum, Growth, and VC.",
 };
 
 export const viewport: Viewport = {
