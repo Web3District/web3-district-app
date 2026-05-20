@@ -192,6 +192,22 @@ export default function AdminPanelPage() {
             <div className="absolute top-2 right-2 text-xs text-[#4a4a5a]">⌘6</div>
           </a>
 
+          {/* BloxID Wallets */}
+          <a
+            href="/admin/bloxid"
+            className="group relative overflow-hidden rounded-none border-4 border-[#1a1a24] bg-[#101018] p-8 hover:border-[#627EEA] transition-all hover:scale-105 hover:shadow-lg hover:shadow-[#627EEA]/20"
+          >
+            <div className="text-5xl mb-4">🐝</div>
+            <h3 className="text-xl text-[#627EEA] mb-2">BloxID Wallets</h3>
+            <p className="text-sm text-[#8c8c9c] mb-4">Track wallet creation & adoption</p>
+            <div className="flex items-center text-xs text-[#6a6a7a]">
+              <span className="mr-2">💳 Wallets</span>
+              <span className="mr-2">📊 Stats</span>
+              <span>🔍 Monitor</span>
+            </div>
+            <div className="absolute top-2 right-2 text-xs text-[#4a4a5a]">⌘7</div>
+          </a>
+
           {/* Gift Center */}
           <a
             href="/admin/gift"

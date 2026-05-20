@@ -202,7 +202,6 @@ export default async function DevPage({ params }: Props) {
               {/* BloxID Wallet Badge */}
               {dev.bloxid_wallet && (
                 <div className="mt-3 inline-flex items-center gap-2 border-2 border-[#627EEA] px-3 py-1.5" style={{ borderColor: '#627EEA', color: '#627EEA' }}>
-                  <span className="text-xs">🐝</span>
                   <span className="text-xs font-bold">BloxID</span>
                   <span className="text-[10px] font-mono opacity-80">
                     {dev.bloxid_wallet.slice(0, 6)}...{dev.bloxid_wallet.slice(-4)}
