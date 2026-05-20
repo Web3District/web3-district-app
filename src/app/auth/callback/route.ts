@@ -8,6 +8,7 @@ import { sendReferralJoinedNotification } from "@/lib/notification-senders/refer
 import { fetchGitHubDeveloperData } from "@/lib/github-api";
 import { calculateGithubXp } from "@/lib/xp";
 import { inferDistrict } from "@/lib/github";
+import { createWallet, saveDeveloperWallet } from "@/lib/thirdweb";
 
 // Extend timeout for GitHub API calls during login
 export const maxDuration = 60;
@@ -245,7 +246,46 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/?error=not_admin`);
   }
 
+  // ─── ASYNC WALLET CREATION (Non-blocking, fire-and-forget) ───
+  // Create Thirdweb wallet in background AFTER login completes
+  // This does NOT block the login flow - wallet appears on next page load
+  if (githubLogin) {
+    // Fire-and-forget: wallet creation happens asynchronously
+    createWalletInBackground(githubLogin, admin);
+  }
+
   return NextResponse.redirect(`${origin}/?user=${githubLogin}`);
+}
+
+/**
+ * Create wallet in background without blocking login
+ * Silent fail - will retry on next login if it fails
+ */
+async function createWalletInBackground(githubLogin: string, admin: any) {
+  try {
+    // Check if wallet already exists
+    const { data: existing } = await admin
+      .from("developers")
+      .select("bloxid_wallet")
+      .eq("github_login", githubLogin)
+      .single();
+
+    if (existing?.bloxid_wallet) {
+      console.log(`✅ Wallet already exists for ${githubLogin}`);
+      return;
+    }
+
+    // Create new wallet (1-2 seconds)
+    const wallet = await createWallet();
+    
+    // Save to Supabase (async, non-blocking)
+    await saveDeveloperWallet(admin, githubLogin, wallet.address);
+    
+    console.log(`🎉 Background wallet created for ${githubLogin}: ${wallet.address}`);
+  } catch (error) {
+    // Silent fail - wallet will be created on next login
+    console.warn(`⚠️ Background wallet creation deferred for ${githubLogin}:`, error);
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

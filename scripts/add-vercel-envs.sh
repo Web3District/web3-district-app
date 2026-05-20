@@ -1,0 +1,25 @@
+#!/bin/bash
+# Add Thirdweb env vars to Vercel
+# Run this in your terminal
+
+echo "🐥 Adding Thirdweb credentials to Vercel..."
+echo ""
+echo "📋 Manual steps (Vercel Dashboard):"
+echo "1. Go to: https://vercel.com/dashboard"
+echo "2. Select project: web3-district-app"
+echo "3. Settings → Environment Variables"
+echo "4. Add these variables:"
+echo ""
+echo "   THIRDWEB_CLIENT_ID"
+echo "   Value: 68e1480216de9e7d113aff6e6cb9915c"
+echo "   Environments: ✅ Production ✅ Preview ✅ Development"
+echo ""
+echo "   THIRDWEB_SECRET_KEY"
+echo "   Value: 72VjCmKqTRejk7NmCtBsvM8nvEBOct3gtoVcqKN6Pvoho-XKaU-yHAkhdcNMlbflYQufRmPxFVyEk9jjI16h5Q"
+echo "   Environments: ✅ Production ✅ Preview ✅ Development"
+echo ""
+echo "⚠️  Mark both as SENSITIVE!"
+echo ""
+echo "After adding, redeploy:"
+echo "  git add . && git commit -m 'feat: add thirdweb wallet integration' && git push"
+echo ""
